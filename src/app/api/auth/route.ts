@@ -2,12 +2,21 @@ import { NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 import { cookies } from 'next/headers'
 import { sign, verify } from 'jsonwebtoken'
+import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
 
 export async function POST(request: Request) {
   try {
     const { email, password, name } = await request.json()
+
+    // Validate required fields
+    if (!email || !password) {
+      return NextResponse.json(
+        { error: 'Email and password are required' },
+        { status: 400 }
+      )
+    }
 
     // If name is provided, it's a sign-up request
     if (name) {
@@ -23,12 +32,15 @@ export async function POST(request: Request) {
         )
       }
 
+      // Hash the password
+      const hashedPassword = await bcrypt.hash(password, 10)
+
       // Create user
       const user = await prisma.user.create({
         data: {
           name,
           email,
-          password, // In a real app, hash the password
+          password: hashedPassword,
         },
       })
 
@@ -63,7 +75,16 @@ export async function POST(request: Request) {
       where: { email },
     })
 
-    if (!user || user.password !== password) {
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Invalid credentials' },
+        { status: 401 }
+      )
+    }
+
+    // Verify password
+    const isValidPassword = await bcrypt.compare(password, user.password)
+    if (!isValidPassword) {
       return NextResponse.json(
         { error: 'Invalid credentials' },
         { status: 401 }
@@ -88,7 +109,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Auth error:', error)
     return NextResponse.json(
-      { error: 'Something went wrong' },
+      { error: error instanceof Error ? error.message : 'Something went wrong' },
       { status: 500 }
     )
   }
