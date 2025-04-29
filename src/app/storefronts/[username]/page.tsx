@@ -6,6 +6,12 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 
+interface PageProps {
+  params: {
+    username: string
+  }
+}
+
 interface Storefront {
   id: string
   title: string
@@ -26,11 +32,7 @@ interface Product {
   clicks: number
 }
 
-export default function StorefrontPage({
-  params,
-}: {
-  params: { username: string }
-}) {
+export default function StorefrontPage({ params }: PageProps) {
   const [storefront, setStorefront] = useState<Storefront | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -59,8 +61,8 @@ export default function StorefrontPage({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ productId }),
       })
-    } catch (err) {
-      console.error('Failed to track click:', err)
+    } catch (error) {
+      console.error('Failed to track click:', error)
     }
   }
 
