@@ -26,11 +26,7 @@ interface Product {
   clicks: number;
 }
 
-interface PageProps {
-  params: { username: string };
-}
-
-export default function StorefrontPage({ params }: PageProps) {
+export default function StorefrontPage({ params }: { params: { username: string } }) {
   const [storefront, setStorefront] = useState<Storefront | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
