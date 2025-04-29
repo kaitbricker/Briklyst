@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ProductCard } from "./ProductCard";
@@ -21,32 +24,44 @@ interface Storefront {
   products: Product[];
 }
 
-async function getStorefront(username: string) {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/storefronts?username=${username}`, {
-    cache: 'no-store'
-  });
-  
-  if (!response.ok) {
-    throw new Error('Failed to fetch storefront');
-  }
-  
-  return response.json();
-}
-
-export default async function Page({
+export default function Page({
   params,
 }: {
   params: { username: string };
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
-  let storefront: Storefront;
-  try {
-    storefront = await getStorefront(params.username);
-  } catch (err) {
-    console.error('Error fetching storefront:', err);
+  const [storefront, setStorefront] = useState<Storefront | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    async function fetchStorefront() {
+      try {
+        const response = await fetch(`/api/storefronts?username=${params.username}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch storefront');
+        }
+        const data = await response.json();
+        setStorefront(data);
+      } catch (err) {
+        console.error('Error fetching storefront:', err);
+        setError('Storefront not found');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchStorefront();
+  }, [params.username]);
+
+  if (loading) {
+    return <div className="p-8 text-center">Loading...</div>;
+  }
+
+  if (error || !storefront) {
     return (
       <div className="p-8 text-center text-red-600">
-        Storefront not found
+        {error || "Storefront not found"}
       </div>
     );
   }
