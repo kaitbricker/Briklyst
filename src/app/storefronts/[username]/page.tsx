@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ProductCard } from "./ProductCard";
+import { Metadata } from "next";
 
 interface Product {
   id: string;
@@ -24,11 +25,15 @@ interface Storefront {
   products: Product[];
 }
 
+export const metadata: Metadata = {
+  title: "Storefront",
+  description: "View products in this storefront",
+};
+
 export default function Page({
   params,
 }: {
   params: { username: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
 }) {
   const [storefront, setStorefront] = useState<Storefront | null>(null);
   const [loading, setLoading] = useState(true);
