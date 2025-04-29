@@ -6,6 +6,15 @@ import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import Link from "next/link";
 
+interface Product {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  imageUrl: string;
+  affiliateUrl: string;
+}
+
 interface Storefront {
   id: string;
   title: string;
@@ -16,17 +25,13 @@ interface Storefront {
   products: Product[];
 }
 
-interface Product {
-  id: string;
-  title: string;
-  description: string;
-  price: number;
-  imageUrl: string;
-  affiliateUrl: string;
-  clicks: number;
+interface PageProps {
+  params: {
+    username: string;
+  };
 }
 
-export default function StorefrontPage({ params }: { params: { username: string } }) {
+export default function StorefrontPage({ params }: PageProps) {
   const [storefront, setStorefront] = useState<Storefront | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
