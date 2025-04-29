@@ -88,3 +88,70 @@ export default function StorefrontPage({ params }: PageProps) {
         <div className="mb-8 text-center">
           {storefront.logoUrl && (
             <div className="relative mx-auto mb-4 h-32 w-32">
+              <Image
+                src={storefront.logoUrl}
+                alt={storefront.title}
+                fill
+                className="object-contain"
+              />
+            </div>
+          )}
+          <h1 className="text-3xl font-bold">{storefront.title}</h1>
+          {storefront.description && (
+            <p className="mt-2 text-gray-600">{storefront.description}</p>
+          )}
+        </div>
+
+        <div className="mb-8 text-center">
+          <Link
+            href="/"
+            className="text-sm text-gray-600 hover:text-gray-900"
+            style={{ color: storefront.accentColor }}
+          >
+            ← Back to home
+          </Link>
+        </div>
+
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {storefront.products.map((product) => (
+            <Card
+              key={product.id}
+              className="p-4"
+              style={{
+                backgroundColor: storefront.accentColor,
+                color: storefront.primaryColor,
+              }}
+            >
+              {product.imageUrl && (
+                <div className="relative h-48 w-full">
+                  <Image
+                    src={product.imageUrl}
+                    alt={product.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              )}
+              <h3 className="text-lg font-medium">{product.title}</h3>
+              <p className="mt-1 text-sm text-gray-600">{product.description}</p>
+              <p className="mt-2 font-medium">${product.price}</p>
+              <Button
+                className="mt-4 w-full"
+                onClick={() => {
+                  handleProductClick(product.id);
+                  window.open(product.affiliateUrl, "_blank");
+                }}
+                style={{
+                  backgroundColor: storefront.primaryColor,
+                  color: storefront.accentColor,
+                }}
+              >
+                View Product
+              </Button>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
