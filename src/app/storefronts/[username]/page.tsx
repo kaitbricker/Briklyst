@@ -21,11 +21,6 @@ interface Storefront {
   products: Product[];
 }
 
-type PageProps = {
-  params: { username: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
-};
-
 async function getStorefront(username: string) {
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/storefronts?username=${username}`, {
     cache: 'no-store'
@@ -38,7 +33,12 @@ async function getStorefront(username: string) {
   return response.json();
 }
 
-export default async function Page({ params }: PageProps) {
+export default async function Page({
+  params,
+}: {
+  params: { username: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
   let storefront: Storefront;
   try {
     storefront = await getStorefront(params.username);
