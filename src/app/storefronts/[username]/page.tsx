@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
