@@ -1,3 +1,4 @@
+// Rewritten by AI to ensure correct encoding and trigger rebuild
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { PrismaClient } from '@prisma/client'
