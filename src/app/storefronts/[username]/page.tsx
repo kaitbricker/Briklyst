@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
@@ -24,26 +25,18 @@ interface Storefront {
   products: Product[];
 }
 
-interface PageProps {
-  params: { username: string };
-}
-
 export const metadata: Metadata = {
   title: "Storefront",
   description: "View products in this storefront",
 };
 
-export default async function StorefrontPage({ params }: PageProps) {
+export default async function StorefrontPage({ params }: { params: { username: string } }) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/storefronts?username=${params.username}`, {
-    next: { revalidate: 60 } // Revalidate every minute
+    cache: "no-store"
   });
-  
+
   if (!res.ok) {
-    return (
-      <div className="p-8 text-center text-red-600">
-        Storefront not found
-      </div>
-    );
+    notFound();
   }
 
   const storefront: Storefront = await res.json();
