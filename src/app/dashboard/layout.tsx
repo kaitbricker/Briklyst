@@ -27,12 +27,8 @@ export default function DashboardLayout({
         }
 
         setUser(data.user)
-      } catch (err) {
-        toast({
-          title: 'Error',
-          description: 'Please sign in to access the dashboard',
-          variant: 'destructive',
-        })
+      } catch (error) {
+        console.error('Auth error:', error)
         router.push('/auth/sign-in')
       } finally {
         setLoading(false)
@@ -53,7 +49,8 @@ export default function DashboardLayout({
       }
 
       router.push('/auth/sign-in')
-    } catch (err) {
+    } catch (error) {
+      console.error('Sign out error:', error)
       toast({
         title: 'Error',
         description: 'Failed to sign out',

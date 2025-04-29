@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import Image from 'next/image'
 
 interface Storefront {
   id: string
@@ -34,21 +35,22 @@ export default function StorefrontPage({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
-  useEffect(() => {
-    fetchStorefront()
-  }, [params.username])
-
-  async function fetchStorefront() {
+  const fetchStorefront = useCallback(async () => {
     try {
       const response = await fetch(`/api/storefronts?username=${params.username}`)
       const data = await response.json()
       setStorefront(data)
-    } catch (err) {
+    } catch (error) {
+      console.error('Failed to fetch storefront:', error)
       setError('Failed to fetch storefront')
     } finally {
       setLoading(false)
     }
-  }
+  }, [params.username])
+
+  useEffect(() => {
+    fetchStorefront()
+  }, [fetchStorefront])
 
   async function handleProductClick(productId: string) {
     try {
@@ -85,11 +87,14 @@ export default function StorefrontPage({
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-8 text-center">
           {storefront.logoUrl && (
-            <img
-              src={storefront.logoUrl}
-              alt={storefront.title}
-              className="mx-auto mb-4 h-32 w-32 object-contain"
-            />
+            <div className="relative mx-auto mb-4 h-32 w-32">
+              <Image
+                src={storefront.logoUrl}
+                alt={storefront.title}
+                fill
+                className="object-contain"
+              />
+            </div>
           )}
           <h1 className="text-3xl font-bold">{storefront.title}</h1>
           {storefront.description && (
@@ -118,11 +123,14 @@ export default function StorefrontPage({
               }}
             >
               {product.imageUrl && (
-                <img
-                  src={product.imageUrl}
-                  alt={product.title}
-                  className="mb-4 h-48 w-full object-cover"
-                />
+                <div className="relative h-48 w-full">
+                  <Image
+                    src={product.imageUrl}
+                    alt={product.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
               )}
               <h3 className="text-lg font-medium">{product.title}</h3>
               <p className="mt-1 text-sm text-gray-600">{product.description}</p>

@@ -1,12 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/use-toast'
+import Image from 'next/image'
 
 interface Product {
   id: string
@@ -25,24 +26,20 @@ export default function DashboardPage() {
   const [error, setError] = useState('')
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
 
-  useEffect(() => {
-    fetchProducts()
-  }, [])
-
-  async function fetchProducts() {
+  const fetchProducts = useCallback(async () => {
     try {
       const response = await fetch('/api/products')
       const data = await response.json()
       setProducts(data)
-    } catch (err) {
+    } catch (error) {
+      console.error('Failed to fetch products:', error)
       setError('Failed to fetch products')
-      toast({
-        title: 'Error',
-        description: 'Failed to fetch products',
-        variant: 'destructive',
-      })
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    fetchProducts()
+  }, [fetchProducts])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -191,11 +188,14 @@ export default function DashboardPage() {
         {products.map((product) => (
           <Card key={product.id} className="p-4">
             {product.imageUrl && (
-              <img
-                src={product.imageUrl}
-                alt={product.title}
-                className="mb-4 h-48 w-full object-cover"
-              />
+              <div className="relative h-48 w-full">
+                <Image
+                  src={product.imageUrl}
+                  alt={product.title}
+                  fill
+                  className="object-cover"
+                />
+              </div>
             )}
             <h3 className="text-lg font-medium">{product.title}</h3>
             <p className="mt-1 text-sm text-gray-600">{product.description}</p>

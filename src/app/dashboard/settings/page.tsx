@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/use-toast'
+import Image from 'next/image'
 
 interface Storefront {
   id: string
@@ -22,24 +23,20 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  useEffect(() => {
-    fetchStorefront()
-  }, [])
-
-  async function fetchStorefront() {
+  const fetchStorefront = useCallback(async () => {
     try {
       const response = await fetch('/api/storefronts')
       const data = await response.json()
       setStorefront(data)
-    } catch (err) {
-      setError('Failed to fetch storefront settings')
-      toast({
-        title: 'Error',
-        description: 'Failed to fetch storefront settings',
-        variant: 'destructive',
-      })
+    } catch (error) {
+      console.error('Failed to fetch storefront:', error)
+      setError('Failed to fetch storefront')
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    fetchStorefront()
+  }, [fetchStorefront])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -154,14 +151,17 @@ export default function SettingsPage() {
         </Button>
       </form>
 
-      {storefront.logoUrl && (
-        <div className="mt-6">
-          <h2 className="mb-2 text-sm font-medium">Logo Preview</h2>
-          <img
-            src={storefront.logoUrl}
-            alt="Storefront logo"
-            className="h-32 w-32 object-contain"
-          />
+      {storefront?.logoUrl && (
+        <div className="mt-4">
+          <h3 className="text-sm font-medium">Logo Preview</h3>
+          <div className="relative mt-2 h-32 w-32">
+            <Image
+              src={storefront.logoUrl}
+              alt="Storefront logo"
+              fill
+              className="object-contain"
+            />
+          </div>
         </div>
       )}
 
