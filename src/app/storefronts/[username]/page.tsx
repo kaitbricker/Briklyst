@@ -7,10 +7,11 @@ export const metadata: Metadata = {
 };
 
 type Props = {
-  params: { username: string };
+  params: Promise<{ username: string }>;
   searchParams: { [key: string]: string | string[] | undefined };
 };
 
-export default function Page({ params }: Props) {
-  return <StorefrontContent username={params.username} />;
+export default async function Page({ params }: Props) {
+  const resolvedParams = await params;
+  return <StorefrontContent username={resolvedParams.username} />;
 }
