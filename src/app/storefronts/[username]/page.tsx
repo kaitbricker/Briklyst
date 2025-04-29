@@ -6,10 +6,11 @@ export const metadata: Metadata = {
   description: "View products in this storefront",
 };
 
-export default function Page({
-  params,
-}: {
+type Props = {
   params: { username: string };
-}) {
+  searchParams: { [key: string]: string | string[] | undefined };
+};
+
+export default function Page({ params }: Props) {
   return <StorefrontContent username={params.username} />;
 }
