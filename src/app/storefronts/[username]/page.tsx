@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -41,7 +39,7 @@ export default async function StorefrontPage({ params }: { params: { username: s
     notFound();
   }
 
-  const storefront: Storefront = await res.json();
+  const storefront = await res.json() as Storefront;
 
   return (
     <div
