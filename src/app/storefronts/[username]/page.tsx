@@ -22,11 +22,12 @@ interface Storefront {
   userId: string;
 }
 
-export default function StorefrontPage({
-  params,
-}: {
+type Props = {
   params: { username: string };
-}) {
+  searchParams?: { [key: string]: string | string[] | undefined };
+};
+
+export default function StorefrontPage({ params }: Props) {
   const [storefront, setStorefront] = useState<Storefront | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
