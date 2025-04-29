@@ -1,10 +1,8 @@
-"use client";
-
-import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import Link from "next/link";
+import { ProductCard } from "./ProductCard";
 
 interface Product {
   id: string;
@@ -32,48 +30,26 @@ interface PageProps {
   searchParams?: { [key: string]: string | string[] | undefined };
 }
 
-export default function StorefrontPage({ params }: PageProps) {
-  const [storefront, setStorefront] = useState<Storefront | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  const fetchStorefront = useCallback(async () => {
-    try {
-      const response = await fetch(`/api/storefronts?username=${params.username}`);
-      const data = await response.json();
-      setStorefront(data);
-    } catch (error) {
-      console.error("Failed to fetch storefront:", error);
-      setError("Failed to fetch storefront");
-    } finally {
-      setLoading(false);
-    }
-  }, [params.username]);
-
-  useEffect(() => {
-    fetchStorefront();
-  }, [fetchStorefront]);
-
-  async function handleProductClick(productId: string) {
-    try {
-      await fetch("/api/analytics", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId }),
-      });
-    } catch (error) {
-      console.error("Failed to track click:", error);
-    }
+async function getStorefront(username: string) {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/storefronts?username=${username}`, {
+    cache: 'no-store'
+  });
+  
+  if (!response.ok) {
+    throw new Error('Failed to fetch storefront');
   }
+  
+  return response.json();
+}
 
-  if (loading) {
-    return <div className="p-8 text-center">Loading...</div>;
-  }
-
-  if (error || !storefront) {
+export default async function StorefrontPage({ params }: PageProps) {
+  let storefront: Storefront;
+  try {
+    storefront = await getStorefront(params.username);
+  } catch (error) {
     return (
       <div className="p-8 text-center text-red-600">
-        {error || "Storefront not found"}
+        Storefront not found
       </div>
     );
   }
@@ -116,41 +92,12 @@ export default function StorefrontPage({ params }: PageProps) {
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {storefront.products.map((product) => (
-            <Card
+            <ProductCard
               key={product.id}
-              className="p-4"
-              style={{
-                backgroundColor: storefront.accentColor,
-                color: storefront.primaryColor,
-              }}
-            >
-              {product.imageUrl && (
-                <div className="relative h-48 w-full">
-                  <Image
-                    src={product.imageUrl}
-                    alt={product.title}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              )}
-              <h3 className="text-lg font-medium">{product.title}</h3>
-              <p className="mt-1 text-sm text-gray-600">{product.description}</p>
-              <p className="mt-2 font-medium">${product.price}</p>
-              <Button
-                className="mt-4 w-full"
-                onClick={() => {
-                  handleProductClick(product.id);
-                  window.open(product.affiliateUrl, "_blank");
-                }}
-                style={{
-                  backgroundColor: storefront.primaryColor,
-                  color: storefront.accentColor,
-                }}
-              >
-                View Product
-              </Button>
-            </Card>
+              product={product}
+              primaryColor={storefront.primaryColor}
+              accentColor={storefront.accentColor}
+            />
           ))}
         </div>
       </div>
