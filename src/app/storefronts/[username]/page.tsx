@@ -1,5 +1,3 @@
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import Link from "next/link";
 import { ProductCard } from "./ProductCard";
@@ -46,7 +44,8 @@ export default async function StorefrontPage({ params }: PageProps) {
   let storefront: Storefront;
   try {
     storefront = await getStorefront(params.username);
-  } catch (error) {
+  } catch (err) {
+    console.error('Error fetching storefront:', err);
     return (
       <div className="p-8 text-center text-red-600">
         Storefront not found
