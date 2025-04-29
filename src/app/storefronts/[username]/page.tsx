@@ -1,20 +1,8 @@
-"use client";
-
-import { useState, useEffect, useCallback } from "react";
+import { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import Link from "next/link";
-
-interface Storefront {
-  id: string;
-  title: string;
-  description: string;
-  logoUrl: string;
-  primaryColor: string;
-  accentColor: string;
-  products: Product[];
-}
 
 interface Product {
   id: string;
@@ -26,56 +14,39 @@ interface Product {
   clicks: number;
 }
 
-type Props = {
+interface Storefront {
+  id: string;
+  title: string;
+  description: string;
+  logoUrl: string;
+  primaryColor: string;
+  accentColor: string;
+  products: Product[];
+}
+
+interface PageProps {
   params: { username: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
+}
+
+export const metadata: Metadata = {
+  title: "Storefront",
+  description: "View products in this storefront",
 };
 
-export default function StorefrontPage({ params }: Props) {
-  const [storefront, setStorefront] = useState<Storefront | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  const fetchStorefront = useCallback(async () => {
-    try {
-      const response = await fetch(`/api/storefronts?username=${params.username}`);
-      const data = await response.json();
-      setStorefront(data);
-    } catch (error) {
-      console.error("Failed to fetch storefront:", error);
-      setError("Failed to fetch storefront");
-    } finally {
-      setLoading(false);
-    }
-  }, [params.username]);
-
-  useEffect(() => {
-    fetchStorefront();
-  }, [fetchStorefront]);
-
-  async function handleProductClick(productId: string) {
-    try {
-      await fetch("/api/analytics", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId }),
-      });
-    } catch (error) {
-      console.error("Failed to track click:", error);
-    }
-  }
-
-  if (loading) {
-    return <div className="p-8 text-center">Loading...</div>;
-  }
-
-  if (error || !storefront) {
+export default async function StorefrontPage({ params }: PageProps) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/storefronts?username=${params.username}`, {
+    next: { revalidate: 60 } // Revalidate every minute
+  });
+  
+  if (!res.ok) {
     return (
       <div className="p-8 text-center text-red-600">
-        {error || "Storefront not found"}
+        Storefront not found
       </div>
     );
   }
+
+  const storefront: Storefront = await res.json();
 
   return (
     <div
@@ -138,16 +109,19 @@ export default function StorefrontPage({ params }: Props) {
               <p className="mt-2 font-medium">${product.price}</p>
               <Button
                 className="mt-4 w-full"
-                onClick={() => {
-                  handleProductClick(product.id);
-                  window.open(product.affiliateUrl, "_blank");
-                }}
+                asChild
                 style={{
                   backgroundColor: storefront.primaryColor,
                   color: storefront.accentColor,
                 }}
               >
-                View Product
+                <Link 
+                  href={product.affiliateUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  View Product
+                </Link>
               </Button>
             </Card>
           ))}
