@@ -30,10 +30,17 @@ export default function DashboardPage() {
     try {
       const response = await fetch('/api/products')
       const data = await response.json()
-      setProducts(data)
+      if (Array.isArray(data)) {
+        setProducts(data)
+      } else if (Array.isArray(data.products)) {
+        setProducts(data.products)
+      } else {
+        setProducts([])
+      }
     } catch (error) {
       console.error('Failed to fetch products:', error)
       setError('Failed to fetch products')
+      setProducts([])
     }
   }, [])
 
@@ -185,7 +192,7 @@ export default function DashboardPage() {
       </form>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {products.map((product) => (
+        {Array.isArray(products) && products.map((product) => (
           <Card key={product.id} className="p-4">
             {product.imageUrl && (
               <div className="relative h-48 w-full">
