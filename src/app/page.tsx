@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { TikTokIcon, InstagramIcon } from '@/components/icons'
 import { FadeIn, FadeInStagger, ScaleIn, SlideIn } from '@/components/animations'
 import { StorefrontCarousel } from '@/components/StorefrontCarousel'
+import React, { useEffect, useState } from 'react'
 
 export const metadata = {
   title: 'Briklyst - Create Your Storefront',
@@ -184,23 +185,57 @@ function Features() {
 // Preview Storefronts Section
 function StorefrontPreviews() {
   const storefronts = [
-    { image: '/storefront1.png', title: 'Beauty & Lifestyle', username: '@beautyessentials' },
-    { image: '/storefront2.png', title: 'Fitness Gear', username: '@fitnessfirst' },
-    { image: '/storefront3.png', title: 'Tech Finds', username: '@techsavvy' },
+    { image: '/storefront1.png', title: 'Beauty & Lifestyle', username: '@beautyessentials', bg: 'bg-pink-100', text: 'text-pink-700' },
+    { image: '/storefront2.png', title: 'Fitness Gear', username: '@fitnessfirst', bg: 'bg-green-100', text: 'text-green-700' },
+    { image: '/storefront3.png', title: 'Tech Reviews', username: '@techinsider', bg: 'bg-blue-100', text: 'text-blue-700' },
+    { image: '/storefront4.png', title: 'Home Finds', username: '@homefinds', bg: 'bg-yellow-100', text: 'text-yellow-800' },
   ]
+
+  // Carousel state for Storefront Previews
+  const [currentStore, setCurrentStore] = useState(0)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentStore((prev) => (prev + 1) % storefronts.length)
+    }, 3500)
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <section id="examples" className="bg-white py-20 w-full">
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="max-w-4xl mx-auto px-4">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-[#1D1E33]">Storefront Previews</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-          {storefronts.map((store) => (
-            <div key={store.title} className="bg-gray-50 rounded-2xl shadow-md p-6 flex flex-col items-center border border-gray-100">
-              <Image src={store.image} alt={store.title} width={320} height={180} className="rounded-lg mb-4 object-cover" />
-              <h3 className="font-bold text-xl text-[#1D1E33] mb-1">{store.title}</h3>
-              <span className="text-gray-500 text-sm">{store.username}</span>
+        <div className="relative flex flex-col items-center">
+          {storefronts.map((store, idx) => (
+            <div
+              key={store.title}
+              className={`transition-all duration-700 ease-in-out absolute w-full ${idx === currentStore ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-95 z-0'} ${store.bg} rounded-2xl shadow-md p-6 flex flex-col items-center border border-gray-100`}
+              style={{ minHeight: 400 }}
+            >
+              <div className="flex w-full items-center justify-between mb-4">
+                <div>
+                  <h3 className={`font-bold text-xl mb-1 ${store.text}`}>{store.title}</h3>
+                  <span className="text-gray-700 text-sm">{store.username}</span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="w-3 h-3 rounded-full bg-red-400 inline-block" />
+                  <span className="w-3 h-3 rounded-full bg-yellow-400 inline-block" />
+                  <span className="w-3 h-3 rounded-full bg-green-400 inline-block" />
+                </div>
+              </div>
+              <Image src={store.image} alt={store.title} width={900} height={400} className="rounded-lg object-cover w-full h-72" />
             </div>
           ))}
+          {/* Carousel dots */}
+          <div className="flex gap-2 mt-6 z-20 relative">
+            {storefronts.map((_, idx) => (
+              <button
+                key={idx}
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${idx === currentStore ? 'bg-[#1D1E33]' : 'bg-gray-300'}`}
+                onClick={() => setCurrentStore(idx)}
+                aria-label={`Show ${storefronts[idx].title}`}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -355,12 +390,6 @@ const features = [
   { icon: '/icons/dashboard.svg', title: 'Earnings dashboard (coming soon)' },
 ];
 
-const storefronts = [
-  { image: '/storefront1.png', title: 'Beauty & Lifestyle', username: '@beautyessentials' },
-  { image: '/storefront2.png', title: 'Fitness Gear', username: '@fitnessfirst' },
-  { image: '/storefront3.png', title: 'Tech Finds', username: '@techsavvy' },
-];
-
 const testimonials = [
   {
     avatar: '/avatars/user1.jpg',
@@ -380,6 +409,21 @@ const testimonials = [
 ];
 
 export default function Home() {
+  // Storefront carousel data and state
+  const storefronts = [
+    { image: '/storefront1.png', title: 'Beauty & Lifestyle', username: '@beautyessentials', bg: 'bg-pink-100', text: 'text-pink-700' },
+    { image: '/storefront2.png', title: 'Fitness Gear', username: '@fitnessfirst', bg: 'bg-green-100', text: 'text-green-700' },
+    { image: '/storefront3.png', title: 'Tech Reviews', username: '@techinsider', bg: 'bg-blue-100', text: 'text-blue-700' },
+    { image: '/storefront4.png', title: 'Home Finds', username: '@homefinds', bg: 'bg-yellow-100', text: 'text-yellow-800' },
+  ];
+  const [currentStore, setCurrentStore] = useState(0);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentStore((prev) => (prev + 1) % storefronts.length);
+    }, 3500);
+    return () => clearInterval(interval);
+  }, [storefronts.length]);
+
   return (
     <>
       {/* Hero Section */}
@@ -486,18 +530,42 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Storefront Previews Section */}
+      {/* Storefront Previews Carousel Section */}
       <section id="examples" className="bg-white py-20 w-full">
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="max-w-4xl mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-[#1D1E33]">Storefront Previews</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            {storefronts.map((store) => (
-              <div key={store.title} className="bg-gray-50 rounded-2xl shadow-md p-6 flex flex-col items-center border border-gray-100">
-                <Image src={store.image} alt={store.title} width={320} height={180} className="rounded-lg mb-4 object-cover" />
-                <h3 className="font-bold text-xl text-[#1D1E33] mb-1">{store.title}</h3>
-                <span className="text-gray-500 text-sm">{store.username}</span>
+          <div className="relative flex flex-col items-center">
+            {storefronts.map((store, idx) => (
+              <div
+                key={store.title}
+                className={`transition-all duration-700 ease-in-out absolute w-full ${idx === currentStore ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-95 z-0'} ${store.bg} rounded-2xl shadow-md p-6 flex flex-col items-center border border-gray-100`}
+                style={{ minHeight: 400 }}
+              >
+                <div className="flex w-full items-center justify-between mb-4">
+                  <div>
+                    <h3 className={`font-bold text-xl mb-1 ${store.text}`}>{store.title}</h3>
+                    <span className="text-gray-700 text-sm">{store.username}</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <span className="w-3 h-3 rounded-full bg-red-400 inline-block" />
+                    <span className="w-3 h-3 rounded-full bg-yellow-400 inline-block" />
+                    <span className="w-3 h-3 rounded-full bg-green-400 inline-block" />
+                  </div>
+                </div>
+                <Image src={store.image} alt={store.title} width={900} height={400} className="rounded-lg object-cover w-full h-72" />
               </div>
             ))}
+            {/* Carousel dots */}
+            <div className="flex gap-2 mt-6 z-20 relative">
+              {storefronts.map((_, idx) => (
+                <button
+                  key={idx}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${idx === currentStore ? 'bg-[#1D1E33]' : 'bg-gray-300'}`}
+                  onClick={() => setCurrentStore(idx)}
+                  aria-label={`Show ${storefronts[idx].title}`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </section>
