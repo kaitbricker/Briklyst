@@ -75,6 +75,8 @@ export async function PUT(request: Request) {
       accentColor,
       backgroundColor,
       textColor,
+      fontFamily,
+      themeId,
     } = await request.json()
 
     if (!id || !title) {
@@ -96,6 +98,8 @@ export async function PUT(request: Request) {
         accentColor,
         backgroundColor,
         textColor,
+        fontFamily,
+        themeId,
       },
     })
 
