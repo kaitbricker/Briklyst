@@ -4,7 +4,8 @@ import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { UserCircle, BarChart2, Mail, PlusCircle, Palette, Users, Settings } from "lucide-react"
+import { BarChart2, Mail, PlusCircle, Palette, Users, Settings } from "lucide-react"
+import Image from "next/image"
 
 const mockClicks = {
   week: 123,
@@ -61,7 +62,7 @@ export default function DashboardPage() {
       <div className="max-w-4xl mx-auto mt-8 bg-white rounded-xl shadow p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-6 border border-gray-100">
         <div className="flex items-center gap-4">
           {user?.image ? (
-            <img src={user.image} alt="avatar" className="w-16 h-16 rounded-full object-cover border" />
+            <Image src={user.image} alt="avatar" width={64} height={64} className="w-16 h-16 rounded-full object-cover border" />
           ) : (
             <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-2xl text-gray-500 border">
               {initials}
