@@ -178,7 +178,7 @@ function Testimonials() {
           <div className="mt-16">
             <blockquote className="mx-auto max-w-2xl rounded-lg bg-white/10 p-8 text-center text-white">
               <p className="text-xl italic">
-                "Exactly what I needed — clean, simple, and actually makes me money."
+                &quot;Exactly what I needed — clean, simple, and actually makes me money.&quot;
               </p>
               <footer className="mt-4">
                 <cite className="text-gray-300">— @earlyuser</cite>
