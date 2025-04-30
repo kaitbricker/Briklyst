@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error
 import NextAuth from 'next-auth/next'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import { prisma } from '@/lib/prisma'
