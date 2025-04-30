@@ -447,7 +447,7 @@ export default function Home() {
   return (
     <>
       {/* Hero Section */}
-      <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-pink-100 to-blue-100 relative overflow-hidden">
+      <main className="min-h-[950px] flex flex-col items-center justify-center bg-gradient-to-br from-pink-100 to-blue-100 relative overflow-hidden">
         {/* Background Image Overlay */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -459,7 +459,7 @@ export default function Home() {
           />
         </div>
         {/* Hero Content */}
-        <div className="relative z-10 flex flex-col items-center justify-center text-center px-4 py-32 w-full max-w-3xl">
+        <div className="relative z-10 flex flex-col items-center justify-center text-center px-4 py-56 w-full max-w-3xl">
           <h1 className="text-5xl md:text-7xl font-extrabold text-[#1D1E33] leading-tight mb-6 drop-shadow-xl">
             Where Influence Becomes Enterprise
           </h1>
@@ -484,7 +484,7 @@ export default function Home() {
               <div
                 key={store.title}
                 className={`transition-all duration-700 ease-in-out absolute w-full ${idx === currentStore ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-95 z-0'} ${store.bg} rounded-2xl shadow-md p-6 flex flex-col items-center border border-gray-100`}
-                style={{ minHeight: 320 }}
+                style={{ minHeight: 400 }}
               >
                 <div className="flex w-full items-center justify-between mb-4">
                   <div>
@@ -497,7 +497,7 @@ export default function Home() {
                     <span className="w-3 h-3 rounded-full bg-green-400 inline-block" />
                   </div>
                 </div>
-                <Image src={store.image} alt={store.title} width={900} height={320} className="rounded-lg object-cover w-full h-48" />
+                <Image src={store.image} alt={store.title} width={900} height={400} className="rounded-lg object-cover w-full h-72" />
               </div>
             ))}
             {/* Carousel dots */}
