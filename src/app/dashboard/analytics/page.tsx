@@ -55,7 +55,7 @@ export default function AnalyticsDashboard() {
         if (!res.ok) return
         const data = await res.json()
         if (data.products) {
-          setProducts(data.products.map((p: any) => ({ id: p.id, title: p.title })))
+          setProducts(data.products.map((p: { id: string; title: string }) => ({ id: p.id, title: p.title })))
         }
       } catch {}
     }
@@ -252,7 +252,7 @@ export default function AnalyticsDashboard() {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" interval={0} angle={-20} textAnchor="end" height={60} />
                 <YAxis allowDecimals={false} />
-                <Tooltip formatter={(value: any, name: string) => name?.toLowerCase().includes('ctr') ? `${value.toFixed(2)}%` : value} />
+                <Tooltip formatter={(value: number, name: string) => name?.toLowerCase().includes('ctr') ? `${value.toFixed(2)}%` : value} />
                 <Legend />
                 <Bar dataKey="clicks" fill="#10b981" name="Clicks" />
                 {compareMode && compareAnalytics && (
