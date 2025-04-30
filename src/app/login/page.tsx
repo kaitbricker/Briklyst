@@ -39,11 +39,14 @@ export default function LoginPage() {
         throw new Error(response.error)
       }
 
-      router.push('/dashboard')
-      toast({
-        title: 'Welcome back!',
-        description: 'You have successfully signed in.',
-      })
+      // Wait for session to update before redirecting
+      setTimeout(() => {
+        router.replace('/dashboard')
+        toast({
+          title: 'Welcome back!',
+          description: 'You have successfully signed in.',
+        })
+      }, 100)
     } catch (error) {
       toast({
         title: 'Error',
