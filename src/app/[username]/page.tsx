@@ -6,19 +6,11 @@ import StorefrontFooter from "@/components/storefront/StorefrontFooter"
 import SubscribeForm from "@/components/storefront/SubscribeForm"
 import { ThemeProvider } from "@/components/theme/ThemeProvider"
 import Link from 'next/link'
+import StorefrontDescriptionCard from '@/components/storefront/StorefrontDescriptionCard'
+import type { Product } from '@prisma/client'
 
 interface StorefrontPageProps {
   params: { username: string }
-}
-
-interface Product {
-  id: string
-  title: string
-  description?: string | null
-  imageUrl?: string | null
-  affiliateUrl: string
-  price: number
-  featured: boolean
 }
 
 interface Storefront {
@@ -61,11 +53,7 @@ export default async function StorefrontPage({ params }: StorefrontPageProps) {
         storefront: {
           include: {
             products: {
-              where: {
-                // Only show active products (if we add an active field later)
-              },
               orderBy: [
-                { featured: 'desc' },
                 { order: 'asc' },
               ],
             },
@@ -84,16 +72,32 @@ export default async function StorefrontPage({ params }: StorefrontPageProps) {
       notFound()
     }
 
-    const featuredProducts = user.storefront.products.filter(p => p.featured)
-    const regularProducts = user.storefront.products.filter(p => !p.featured)
+    // Determine if the viewer is the owner (for demo, always false; replace with session check in real app)
+    const isOwner = false;
+
+    // Patch products to ensure 'featured' and 'tags' fields exist
+    const patchedProducts = user.storefront.products.map((p: any) => ({
+      ...p,
+      featured: typeof p.featured === 'boolean' ? p.featured : false,
+      tags: Array.isArray(p.tags) ? p.tags : [],
+    }))
+
+    const featuredProducts = patchedProducts.filter((p) => p.featured)
+    const regularProducts = patchedProducts.filter((p) => !p.featured)
+    const allTags = Array.from(new Set(patchedProducts.flatMap((p) => p.tags)))
 
     return (
       <ThemeProvider themeId={user.storefront.themeId}>
         <StorefrontHeader 
           storefront={user.storefront}
           user={user}
+          isOwner={isOwner}
         />
-        
+        <StorefrontDescriptionCard
+          description={user.storefront.description || ''}
+          tags={allTags}
+          category="Travel"
+        />
         <main className="flex-1 container mx-auto px-4 py-8">
           {user.storefront.products.length === 0 ? (
             <div className="text-center py-12">
