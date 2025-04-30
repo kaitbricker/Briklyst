@@ -5,6 +5,14 @@ import { sendPasswordResetEmail } from '@/lib/email'
 
 export async function POST(req: Request) {
   try {
+    // Check if email service is configured
+    if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASSWORD) {
+      return NextResponse.json(
+        { error: 'Email service not configured' },
+        { status: 500 }
+      )
+    }
+
     const { email } = await req.json()
 
     if (!email) {

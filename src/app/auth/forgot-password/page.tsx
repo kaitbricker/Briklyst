@@ -28,6 +28,9 @@ export default function ForgotPasswordPage() {
       const data = await response.json()
 
       if (!response.ok) {
+        if (data.error === 'Email service not configured') {
+          throw new Error('Password reset is currently unavailable. Please contact support.')
+        }
         throw new Error(data.error || 'Something went wrong')
       }
 
@@ -37,10 +40,10 @@ export default function ForgotPasswordPage() {
       })
 
       router.push('/auth/sign-in')
-    } catch {
+    } catch (error) {
       toast({
         title: 'Error',
-        description: 'Something went wrong. Please try again.',
+        description: error instanceof Error ? error.message : 'Something went wrong. Please try again.',
         variant: 'destructive',
       })
     } finally {
