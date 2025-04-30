@@ -8,11 +8,6 @@ import { FadeIn, FadeInStagger, ScaleIn, SlideIn } from '@/components/animations
 import { StorefrontCarousel } from '@/components/StorefrontCarousel'
 import React, { useEffect, useState } from 'react'
 
-export const metadata = {
-  title: 'Briklyst - Create Your Storefront',
-  description: 'Create and customize your own storefront to showcase your products.',
-}
-
 // Hero Section Component
 function Hero() {
   return (
