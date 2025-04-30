@@ -44,22 +44,6 @@ export default function StorefrontPage() {
   const [storefront, setStorefront] = useState<Storefront | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const fetchProducts = useCallback(async () => {
-    try {
-      const response = await fetch('/api/products')
-      const data = await response.json()
-      setProducts(data)
-    } catch (error) {
-      console.error('Failed to fetch products:', error)
-      setError('Failed to fetch products')
-    }
-  }, [])
-
-  useEffect(() => {
-    fetchProducts()
-    fetchStorefront()
-  }, [fetchProducts])
-
   const fetchStorefront = async () => {
     try {
       const response = await fetch('/api/storefronts?userId=current')
@@ -77,6 +61,22 @@ export default function StorefrontPage() {
       setLoading(false)
     }
   }
+
+  const fetchProducts = useCallback(async () => {
+    try {
+      const response = await fetch('/api/products')
+      const data = await response.json()
+      setProducts(data)
+    } catch (error) {
+      console.error('Failed to fetch products:', error)
+      setError('Failed to fetch products')
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchProducts()
+    fetchStorefront()
+  }, [fetchProducts, fetchStorefront])
 
   const handleAddProduct = (data: {
     title: string

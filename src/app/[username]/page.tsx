@@ -44,12 +44,11 @@ interface ProductGridProps {
   products: Product[]
   primaryColor: string
   accentColor: string
-  backgroundColor: string
   textColor: string
   layoutStyle: string
 }
 
-function ProductGrid({ products, primaryColor, accentColor, backgroundColor, textColor, layoutStyle }: ProductGridProps & { layoutStyle: string }) {
+function ProductGrid({ products, primaryColor, accentColor, textColor, layoutStyle }: ProductGridProps) {
   if (products.length === 0) {
     return <p>This user hasn&apos;t added any products yet.</p>
   }
@@ -227,7 +226,6 @@ export default async function StorefrontPage({ params }: StorefrontPageProps) {
           products={user.storefront.products}
           primaryColor={user.storefront.primaryColor}
           accentColor={user.storefront.accentColor}
-          backgroundColor={user.storefront.backgroundColor}
           textColor={user.storefront.textColor}
           layoutStyle={user.storefront.layoutStyle || 'grid'}
         />
