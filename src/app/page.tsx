@@ -17,12 +17,12 @@ function Hero() {
       <div className="absolute inset-0 z-0 bg-[url('/images/hero-bg-texture.png')] bg-cover bg-center opacity-20" />
       <div className="relative z-10 max-w-4xl mx-auto">
         <SlideIn direction="up">
-          <h1 className="text-5xl md:text-7xl font-extrabold text-bubblegum-pink leading-tight mb-8 drop-shadow-xl text-center">
+          <h1 className="text-5xl md:text-7xl font-extrabold text-midnight-navy leading-tight mb-8 drop-shadow-xl text-center">
             Where Influence Becomes Enterprise
           </h1>
         </SlideIn>
         <FadeIn delay={0.2}>
-          <p className="text-xl md:text-2xl text-sunset-orange mb-10 font-medium text-center">
+          <p className="text-xl md:text-2xl text-sunset-orange/90 mb-10 font-medium text-center">
             Turn your affiliate links into a fully-branded income engine. No code. No limits. Just results.
           </p>
         </FadeIn>
@@ -97,9 +97,9 @@ function UseCases() {
       <FadeInStagger className="grid md:grid-cols-3 gap-16 max-w-7xl mx-auto">
         {useCases.map((item, index) => (
           <ScaleIn key={index} delay={index * 0.1}>
-            <div className="text-left hover:scale-[1.02] transition-transform p-6 rounded-xl bg-white shadow-lg">
-              <div className="text-4xl mb-6">{item.icon}</div>
-              <h3 className="font-bold text-2xl mb-2">{item.title}</h3>
+            <div className="text-left hover:scale-[1.02] transition-transform p-6 rounded-xl bg-white/80 shadow-lg border border-gray-100">
+              <div className="text-4xl mb-6 text-bubblegum-pink">{item.icon}</div>
+              <h3 className="font-bold text-2xl mb-2 text-midnight-navy">{item.title}</h3>
               <p className="text-gray-700 text-lg leading-relaxed">{item.desc}</p>
             </div>
           </ScaleIn>
@@ -245,10 +245,10 @@ function Testimonials() {
 // Final CTA Section
 function FinalCTA() {
   return (
-    <section className="bg-lilac-purple/10 py-24 px-6 text-center">
+    <section className="bg-lilac-purple/20 py-24 px-6 text-center">
       <FadeIn>
         <h2 className="text-4xl md:text-5xl font-extrabold mb-6 text-midnight-navy">Ready to Launch Your Digital Brand?</h2>
-        <p className="text-xl max-w-2xl mx-auto text-gray-700 mb-8">
+        <p className="text-xl max-w-2xl mx-auto text-gray-800 mb-8">
           Start building your Briklyst today and be part of a movement reshaping how creators grow and earn online.
         </p>
       </FadeIn>
