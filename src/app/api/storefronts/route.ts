@@ -1,23 +1,35 @@
 import { NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import { prisma } from '@/lib/prisma'
+import { auth } from '@/lib/auth'
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
     const userId = searchParams.get('userId')
     const username = searchParams.get('username')
+    const isCurrentUser = searchParams.get('userId') === 'current'
 
-    if (!userId && !username) {
+    if (!userId && !username && !isCurrentUser) {
       return NextResponse.json(
         { error: 'User ID or username is required' },
         { status: 400 }
       )
     }
 
+    let finalUserId = userId
+    if (isCurrentUser) {
+      const session = await auth()
+      if (!session?.user?.id) {
+        return NextResponse.json(
+          { error: 'Not authenticated' },
+          { status: 401 }
+        )
+      }
+      finalUserId = session.user.id
+    }
+
     const storefront = await prisma.storefront.findFirst({
-      where: userId ? { userId } : { user: { name: username } },
+      where: finalUserId ? { userId: finalUserId } : { user: { name: username } },
       include: {
         products: {
           orderBy: { createdAt: 'desc' },
@@ -44,9 +56,28 @@ export async function GET(request: Request) {
 
 export async function PUT(request: Request) {
   try {
-    const { userId, title, description, logoUrl } = await request.json()
+    const session = await auth()
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: 'Not authenticated' },
+        { status: 401 }
+      )
+    }
 
-    if (!userId || !title) {
+    const {
+      id,
+      title,
+      description,
+      domain,
+      logoUrl,
+      bannerUrl,
+      primaryColor,
+      accentColor,
+      backgroundColor,
+      textColor,
+    } = await request.json()
+
+    if (!id || !title) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -54,11 +85,17 @@ export async function PUT(request: Request) {
     }
 
     const storefront = await prisma.storefront.update({
-      where: { userId },
+      where: { id },
       data: {
         title,
         description,
+        domain,
         logoUrl,
+        bannerUrl,
+        primaryColor,
+        accentColor,
+        backgroundColor,
+        textColor,
       },
     })
 

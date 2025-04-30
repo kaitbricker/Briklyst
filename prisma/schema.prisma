@@ -19,6 +19,12 @@ model User {
   accounts      Account[]
   sessions      Session[]
   storefront    Storefront?
+  bio           String?
+  profileImage  String?
+  twitter       String?
+  instagram     String?
+  linkedin      String?
+  clickEvents   ClickEvent[]
 }
 
 model Account {
@@ -58,18 +64,23 @@ model VerificationToken {
 }
 
 model Storefront {
-  id          String    @id @default(cuid())
-  userId      String    @unique
-  title       String
-  description String?
-  domain      String?   @unique
-  logoUrl     String?
-  primaryColor String   @default("#FFFFFF")
-  accentColor String    @default("#000000")
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  products    Product[]
+  id            String    @id @default(cuid())
+  userId        String    @unique
+  title         String
+  description   String?
+  domain        String?   @unique
+  logoUrl       String?
+  bannerUrl     String?
+  primaryColor  String    @default("#FFFFFF")
+  accentColor   String    @default("#000000")
+  backgroundColor String  @default("#F9FAFB")
+  textColor     String    @default("#111827")
+  fontFamily    String    @default("sans-serif")
+  layoutStyle   String    @default("grid")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products      Product[]
 }
 
 model Product {
@@ -81,7 +92,21 @@ model Product {
   imageUrl     String?
   affiliateUrl String
   clicks       Int       @default(0)
+  order        Int       @default(0)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   storefront   Storefront @relation(fields: [storefrontId], references: [id], onDelete: Cascade)
+  clickEvents  ClickEvent[]
+}
+
+model ClickEvent {
+  id        String   @id @default(cuid())
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([productId, createdAt])
 } 

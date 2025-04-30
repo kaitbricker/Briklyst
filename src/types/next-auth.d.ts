@@ -5,6 +5,11 @@ declare module "next-auth" {
       name?: string | null
       email?: string | null
       image?: string | null
+      profileImage?: string | null
+      bio?: string | null
+      twitter?: string | null
+      instagram?: string | null
+      linkedin?: string | null
     }
   }
 
@@ -13,5 +18,10 @@ declare module "next-auth" {
     name?: string | null
     email?: string | null
     image?: string | null
+    profileImage?: string | null
+    bio?: string | null
+    twitter?: string | null
+    instagram?: string | null
+    linkedin?: string | null
   }
 } 
