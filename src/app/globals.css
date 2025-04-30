@@ -1,3 +1,4 @@
+/* Force Vercel to re-bundle CSS */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
