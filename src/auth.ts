@@ -1,4 +1,4 @@
-// @ts-expect-error
+// @ts-expect-error Type conflicts between NextAuth's built-in types and our custom types for email preferences
 import NextAuth from 'next-auth/next'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import { prisma } from '@/lib/prisma'
