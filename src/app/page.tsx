@@ -13,16 +13,16 @@ export const metadata = {
 // Hero Section Component
 function Hero() {
   return (
-    <section className="relative min-h-screen flex flex-col justify-center items-center text-center px-6 py-32 overflow-hidden bg-gradient-to-br from-bubblegum-pink/20 to-lilac-purple/30">
+    <section className="relative min-h-screen flex flex-col justify-center items-center text-center px-6 py-32 overflow-hidden bg-gradient-to-br from-[#FFE0F4] to-[#E0F4FF]">
       <div className="absolute inset-0 z-0 bg-[url('/images/hero-bg-texture.png')] bg-cover bg-center opacity-20" />
       <div className="relative z-10 max-w-4xl mx-auto">
         <SlideIn direction="up">
-          <h1 className="text-5xl md:text-7xl font-extrabold text-midnight-navy leading-tight mb-8 drop-shadow-xl text-center">
+          <h1 className="text-5xl md:text-7xl font-extrabold text-[#1D1E33] leading-tight mb-8 drop-shadow-xl text-center">
             Where Influence Becomes Enterprise
           </h1>
         </SlideIn>
         <FadeIn delay={0.2}>
-          <p className="text-xl md:text-2xl text-sunset-orange/90 mb-10 font-medium text-center">
+          <p className="text-xl md:text-2xl text-[#1D1E33]/80 mb-10 font-medium text-center">
             Turn your affiliate links into a fully-branded income engine. No code. No limits. Just results.
           </p>
         </FadeIn>
@@ -31,14 +31,14 @@ function Hero() {
             <Button 
               asChild
               size="lg"
-              className="bg-midnight-navy hover:bg-midnight-navy/90 text-white font-bold text-lg px-10 py-4 rounded-full shadow-xl hover:scale-105 transition-transform"
+              className="bg-[#1D1E33] hover:bg-[#1D1E33]/90 text-white font-bold text-lg px-10 py-4 rounded-full shadow-xl hover:scale-105 transition-transform"
             >
               <Link href="/signup">Start Your Storefront</Link>
             </Button>
             <Button
               variant="link"
               asChild
-              className="text-midnight-navy underline text-base font-medium self-center"
+              className="text-[#1D1E33] hover:text-[#1D1E33]/80 underline text-base font-medium self-center"
             >
               <Link href="#examples">Explore Examples</Link>
             </Button>
@@ -245,10 +245,10 @@ function Testimonials() {
 // Final CTA Section
 function FinalCTA() {
   return (
-    <section className="bg-lilac-purple/20 py-24 px-6 text-center">
+    <section className="bg-[#E0F4FF] py-24 px-6 text-center">
       <FadeIn>
-        <h2 className="text-4xl md:text-5xl font-extrabold mb-6 text-midnight-navy">Ready to Launch Your Digital Brand?</h2>
-        <p className="text-xl max-w-2xl mx-auto text-gray-800 mb-8">
+        <h2 className="text-4xl md:text-5xl font-extrabold mb-6 text-[#1D1E33]">Ready to Launch Your Digital Brand?</h2>
+        <p className="text-xl max-w-2xl mx-auto text-[#1D1E33]/80 mb-8">
           Start building your Briklyst today and be part of a movement reshaping how creators grow and earn online.
         </p>
       </FadeIn>
@@ -256,7 +256,7 @@ function FinalCTA() {
         <Button 
           asChild
           size="lg"
-          className="bg-midnight-navy hover:bg-midnight-navy/90 text-white text-lg font-bold px-10 py-4 rounded-full shadow-lg hover:scale-105 transition"
+          className="bg-[#1D1E33] hover:bg-[#1D1E33]/90 text-white text-lg font-bold px-10 py-4 rounded-full shadow-lg hover:scale-105 transition"
         >
           <Link href="/signup">Get Started Now</Link>
         </Button>
