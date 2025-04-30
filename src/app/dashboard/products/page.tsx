@@ -41,27 +41,26 @@ export default function ProductsPage() {
   const [error, setError] = useState<string | null>(null)
   const { toast } = useToast()
 
-  const fetchProducts = async () => {
-    try {
-      const response = await fetch('/api/storefronts?userId=current')
-      if (!response.ok) throw new Error('Failed to fetch products')
-      const data = await response.json()
-      setProducts(data.products)
-    } catch (err) {
-      setError('Failed to load products')
-      toast({
-        title: 'Error',
-        description: 'Failed to load products',
-        variant: 'destructive',
-      })
-    } finally {
-      setLoading(false)
-    }
-  }
-
   useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('/api/storefronts?userId=current')
+        if (!response.ok) throw new Error('Failed to fetch products')
+        const data = await response.json()
+        setProducts(data.products)
+      } catch {
+        setError('Failed to load products')
+        toast({
+          title: 'Error',
+          description: 'Failed to load products',
+          variant: 'destructive',
+        })
+      } finally {
+        setLoading(false)
+      }
+    }
     fetchProducts()
-  }, [fetchProducts])
+  }, [])
 
   const handleAddProduct = async (product: Omit<Product, 'id' | 'clicks'>) => {
     try {
@@ -78,8 +77,13 @@ export default function ProductsPage() {
         description: 'Product added successfully',
       })
       setIsAddProductOpen(false)
-      fetchProducts()
-    } catch (err) {
+      // Refresh products
+      const res = await fetch('/api/storefronts?userId=current')
+      if (res.ok) {
+        const data = await res.json()
+        setProducts(data.products)
+      }
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to add product',
@@ -107,8 +111,13 @@ export default function ProductsPage() {
         description: 'Product updated successfully',
       })
       setIsEditProductOpen(false)
-      fetchProducts()
-    } catch (err) {
+      // Refresh products
+      const res = await fetch('/api/storefronts?userId=current')
+      if (res.ok) {
+        const data = await res.json()
+        setProducts(data.products)
+      }
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to update product',
@@ -131,8 +140,13 @@ export default function ProductsPage() {
         title: 'Success',
         description: 'Product deleted successfully',
       })
-      fetchProducts()
-    } catch (err) {
+      // Refresh products
+      const res = await fetch('/api/storefronts?userId=current')
+      if (res.ok) {
+        const data = await res.json()
+        setProducts(data.products)
+      }
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to delete product',

@@ -44,39 +44,37 @@ export default function StorefrontPage() {
   const [storefront, setStorefront] = useState<Storefront | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const fetchStorefront = async () => {
-    try {
-      const response = await fetch('/api/storefronts?userId=current')
-      if (!response.ok) throw new Error('Failed to fetch storefront')
-      const data = await response.json()
-      setStorefront(data)
-    } catch {
-      setError('Failed to load storefront settings')
-      toast({
-        title: 'Error',
-        description: 'Failed to load storefront settings',
-        variant: 'destructive',
-      })
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const fetchProducts = useCallback(async () => {
-    try {
-      const response = await fetch('/api/products')
-      const data = await response.json()
-      setProducts(data)
-    } catch (error) {
-      console.error('Failed to fetch products:', error)
-      setError('Failed to fetch products')
-    }
-  }, [])
-
   useEffect(() => {
+    const fetchStorefront = async () => {
+      try {
+        const response = await fetch('/api/storefronts?userId=current')
+        if (!response.ok) throw new Error('Failed to fetch storefront')
+        const data = await response.json()
+        setStorefront(data)
+      } catch {
+        setError('Failed to load storefront settings')
+        toast({
+          title: 'Error',
+          description: 'Failed to load storefront settings',
+          variant: 'destructive',
+        })
+      } finally {
+        setLoading(false)
+      }
+    }
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('/api/products')
+        const data = await response.json()
+        setProducts(data)
+      } catch (error) {
+        console.error('Failed to fetch products:', error)
+        setError('Failed to fetch products')
+      }
+    }
     fetchProducts()
     fetchStorefront()
-  }, [fetchProducts, fetchStorefront])
+  }, [])
 
   const handleAddProduct = (data: {
     title: string
