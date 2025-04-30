@@ -23,7 +23,7 @@ export async function POST(req: Request) {
       },
     })
     return NextResponse.json({ message: 'Profile updated' })
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to update profile' }, { status: 500 })
   }
 } 

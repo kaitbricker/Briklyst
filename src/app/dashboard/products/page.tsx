@@ -41,7 +41,6 @@ export default function ProductsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const { toast } = useToast()
-  const router = useRouter()
 
   const fetchProducts = async () => {
     try {

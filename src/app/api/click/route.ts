@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     })
 
     return NextResponse.json({ message: 'Click recorded' })
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to record click' }, { status: 500 })
   }
 } 

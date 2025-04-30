@@ -6,7 +6,6 @@ import { ProductCard } from '@/components/ProductCard'
 import { ProductForm } from '@/components/forms/ProductForm'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { useToast } from '@/components/ui/use-toast'
-import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -42,7 +41,6 @@ export default function StorefrontPage() {
   const [isAddProductOpen, setIsAddProductOpen] = useState(false)
   const [error, setError] = useState('')
   const { toast } = useToast()
-  const router = useRouter()
   const [storefront, setStorefront] = useState<Storefront | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -68,7 +66,7 @@ export default function StorefrontPage() {
       if (!response.ok) throw new Error('Failed to fetch storefront')
       const data = await response.json()
       setStorefront(data)
-    } catch (err) {
+    } catch {
       setError('Failed to load storefront settings')
       toast({
         title: 'Error',
@@ -129,7 +127,7 @@ export default function StorefrontPage() {
         title: 'Success',
         description: 'Storefront settings updated successfully',
       })
-    } catch (err) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to update storefront settings',
