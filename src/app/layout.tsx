@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Inter } from 'next/font/google'
 import { ScrollProgress } from '@/components/ScrollProgress'
+import { Providers } from './providers'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,15 +29,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}>
-      <body className="min-h-screen bg-white font-sans antialiased">
-        <ScrollProgress />
-        {children}
-        <Toaster />
+    <html lang="en">
+      <body className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} font-sans`}>
+        <Providers>
+          <ScrollProgress />
+          {children}
+          <Toaster />
+        </Providers>
       </body>
     </html>
   );

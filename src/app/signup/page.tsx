@@ -2,106 +2,115 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import Link from 'next/link'
+import { toast } from '@/components/ui/use-toast'
 
 export default function SignUpPage() {
   const router = useRouter()
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
-
-    const formData = new FormData(e.currentTarget)
-    const email = formData.get('email') as string
-    const password = formData.get('password') as string
-    const name = formData.get('name') as string
+  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setIsLoading(true)
 
     try {
-      const response = await fetch('/api/auth', {
+      const formData = new FormData(event.currentTarget)
+      const response = await fetch('/api/auth/signup', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, name }),
+        body: JSON.stringify({
+          email: formData.get('email'),
+          password: formData.get('password'),
+          name: formData.get('name'),
+        }),
       })
 
-      const data = await response.json()
-
       if (!response.ok) {
-        throw new Error(data.error || 'Something went wrong')
+        throw new Error('Failed to sign up')
       }
 
-      router.push('/dashboard')
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong')
+      router.push('/login')
+      toast({
+        title: 'Account created!',
+        description: 'Please sign in with your new account.',
+      })
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Something went wrong. Please try again.',
+        variant: 'destructive',
+      })
     } finally {
-      setLoading(false)
+      setIsLoading(false)
     }
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="w-full max-w-md space-y-8 rounded-lg border p-6 shadow-lg">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold">Create an account</h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Already have an account?{' '}
-            <Link href="/login" className="text-blue-600 hover:underline">
-              Sign in
-            </Link>
+    <div className="container flex h-screen w-screen flex-col items-center justify-center">
+      <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+        <div className="flex flex-col space-y-2 text-center">
+          <h1 className="text-2xl font-semibold tracking-tight">Create an account</h1>
+          <p className="text-sm text-gray-500">
+            Enter your information below to create your account
           </p>
         </div>
-
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-          {error && (
-            <div className="rounded-md bg-red-50 p-4 text-sm text-red-600">
-              {error}
-            </div>
-          )}
-
-          <div className="space-y-4">
-            <div>
+        <form onSubmit={onSubmit}>
+          <div className="grid gap-2">
+            <div className="grid gap-1">
               <Label htmlFor="name">Name</Label>
               <Input
                 id="name"
                 name="name"
+                placeholder="John Doe"
                 type="text"
-                required
-                className="mt-1"
+                autoCapitalize="none"
+                autoComplete="name"
+                autoCorrect="off"
+                disabled={isLoading}
               />
             </div>
-
-            <div>
+            <div className="grid gap-1">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 name="email"
+                placeholder="name@example.com"
                 type="email"
-                required
-                className="mt-1"
+                autoCapitalize="none"
+                autoComplete="email"
+                autoCorrect="off"
+                disabled={isLoading}
               />
             </div>
-
-            <div>
+            <div className="grid gap-1">
               <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
                 name="password"
+                placeholder="••••••••"
                 type="password"
-                required
-                className="mt-1"
+                autoCapitalize="none"
+                autoComplete="new-password"
+                autoCorrect="off"
+                disabled={isLoading}
               />
             </div>
+            <Button disabled={isLoading}>
+              {isLoading && (
+                <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              )}
+              Sign Up
+            </Button>
           </div>
-
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Creating account...' : 'Create account'}
-          </Button>
         </form>
+        <p className="px-8 text-center text-sm text-gray-500">
+          Already have an account?{' '}
+          <Link href="/login" className="underline hover:text-gray-900">
+            Sign in
+          </Link>
+        </p>
       </div>
     </div>
   )
