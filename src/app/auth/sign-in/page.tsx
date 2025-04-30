@@ -2,10 +2,10 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import Link from 'next/link'
 import { useToast } from '@/components/ui/use-toast'
 
 export default function SignInPage() {
@@ -98,6 +98,15 @@ export default function SignInPage() {
                 disabled={loading}
               />
             </div>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <Link
+              href="/auth/forgot-password"
+              className="text-sm text-blue-600 hover:underline"
+            >
+              Forgot password?
+            </Link>
           </div>
 
           <Button type="submit" className="w-full" disabled={loading}>
