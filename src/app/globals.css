@@ -125,3 +125,8 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* TEMP: Test Tailwind utility */
+body {
+  @apply bg-gradient-to-br from-pink-100 to-blue-100;
+}

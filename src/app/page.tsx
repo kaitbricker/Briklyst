@@ -331,15 +331,10 @@ function Footer() {
 
 export default function Home() {
   return (
-    <main className="bg-[#FFFBEF] text-[#1D1E33] font-sans scroll-smooth">
-      <Hero />
-      <UseCases />
-      <HowItWorks />
-      <Features />
-      <StorefrontPreviews />
-      <Testimonials />
-      <FinalCTA />
-      <Footer />
+    <main className="flex min-h-screen flex-col items-center justify-center">
+      <h1 className="text-5xl font-extrabold text-center text-gray-900">
+        Where Influence Becomes Enterprise
+      </h1>
     </main>
-  )
+  );
 }
