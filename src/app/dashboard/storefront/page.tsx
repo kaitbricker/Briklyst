@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { ProductCard } from '@/components/ProductCard'
 import { ProductForm } from '@/components/forms/ProductForm'
@@ -74,7 +74,7 @@ export default function StorefrontPage() {
     }
     fetchProducts()
     fetchStorefront()
-  }, [])
+  }, [toast])
 
   const handleAddProduct = (data: {
     title: string

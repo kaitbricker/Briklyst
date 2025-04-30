@@ -60,7 +60,7 @@ export default function ProductsPage() {
       }
     }
     fetchProducts()
-  }, [])
+  }, [toast])
 
   const handleAddProduct = async (product: Omit<Product, 'id' | 'clicks'>) => {
     try {
