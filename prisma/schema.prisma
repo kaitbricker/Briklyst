@@ -25,6 +25,9 @@ model User {
   instagram     String?
   linkedin      String?
   clickEvents   ClickEvent[]
+  emailAlerts   Boolean   @default(true)
+  weeklyReport  Boolean   @default(true)
+  monthlyReport Boolean   @default(true)
 }
 
 model Account {

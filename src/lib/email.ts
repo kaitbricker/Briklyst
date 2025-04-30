@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer'
+import sgMail from '@sendgrid/mail'
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
@@ -9,6 +10,36 @@ const transporter = nodemailer.createTransport({
     pass: process.env.SMTP_PASSWORD,
   },
 })
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY as string)
+
+interface SendEmailOptions {
+  to: string
+  subject: string
+  html: string
+}
+
+export async function sendEmail({ to, subject, html }: SendEmailOptions) {
+  const msg = {
+    to,
+    from: process.env.SENDGRID_FROM_EMAIL as string,
+    subject,
+    html,
+  }
+  await sgMail.send(msg)
+}
+
+export function newClickAlertTemplate({ productTitle, clickTime }: { productTitle: string; clickTime: string }) {
+  return `
+    <div style="font-family: Arial, sans-serif;">
+      <h2>🔔 New Click on Your Product!</h2>
+      <p>Your product <strong>${productTitle}</strong> just received a new click at <strong>${clickTime}</strong>.</p>
+      <p>Log in to your dashboard to see more analytics.</p>
+      <hr />
+      <small>This is an automated notification from Briklyst.</small>
+    </div>
+  `
+}
 
 export async function sendVerificationEmail(email: string, token: string) {
   const verificationUrl = `${process.env.NEXT_PUBLIC_APP_URL}/auth/verify-email?token=${token}`

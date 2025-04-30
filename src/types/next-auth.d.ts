@@ -10,6 +10,9 @@ declare module "next-auth" {
       twitter?: string | null
       instagram?: string | null
       linkedin?: string | null
+      emailAlerts?: boolean
+      weeklyReport?: boolean
+      monthlyReport?: boolean
     }
   }
 
@@ -23,5 +26,8 @@ declare module "next-auth" {
     twitter?: string | null
     instagram?: string | null
     linkedin?: string | null
+    emailAlerts?: boolean
+    weeklyReport?: boolean
+    monthlyReport?: boolean
   }
 } 

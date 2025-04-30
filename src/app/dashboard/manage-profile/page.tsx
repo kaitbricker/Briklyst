@@ -17,6 +17,9 @@ export default function ManageProfilePage() {
     twitter: "",
     instagram: "",
     linkedin: "",
+    emailAlerts: true,
+    weeklyReport: true,
+    monthlyReport: true,
   })
   const [loading, setLoading] = useState(false)
 
@@ -28,6 +31,9 @@ export default function ManageProfilePage() {
         twitter: user.twitter || "",
         instagram: user.instagram || "",
         linkedin: user.linkedin || "",
+        emailAlerts: user.emailAlerts ?? true,
+        weeklyReport: user.weeklyReport ?? true,
+        monthlyReport: user.monthlyReport ?? true,
       })
     }
   }, [user])
@@ -51,7 +57,11 @@ export default function ManageProfilePage() {
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    setForm({ ...form, [e.target.name]: e.target.value })
+    const { name, type, value, checked } = e.target
+    setForm({
+      ...form,
+      [name]: type === 'checkbox' ? checked : value,
+    })
   }
 
   if (!user) return <div>Loading...</div>
@@ -79,6 +89,38 @@ export default function ManageProfilePage() {
         <div>
           <Label htmlFor="linkedin">LinkedIn</Label>
           <Input id="linkedin" name="linkedin" value={form.linkedin} onChange={handleChange} placeholder="username or full URL" />
+        </div>
+        <div className="pt-4 border-t mt-6">
+          <h2 className="text-lg font-semibold mb-2">Email Preferences</h2>
+          <div className="flex flex-col gap-2">
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                name="emailAlerts"
+                checked={form.emailAlerts}
+                onChange={handleChange}
+              />
+              Email alerts for new clicks
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                name="weeklyReport"
+                checked={form.weeklyReport}
+                onChange={handleChange}
+              />
+              Weekly analytics report
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                name="monthlyReport"
+                checked={form.monthlyReport}
+                onChange={handleChange}
+              />
+              Monthly analytics report
+            </label>
+          </div>
         </div>
         <Button type="submit" disabled={loading}>{loading ? "Saving..." : "Save Changes"}</Button>
       </form>
