@@ -13,6 +13,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
     const range = searchParams.get('range')
     const interval = searchParams.get('interval') || 'daily'
+    const productIdFilter = searchParams.get('productId')
 
     let startDate: Date | undefined
     let endDate: Date | undefined
@@ -36,7 +37,10 @@ export async function GET(request: Request) {
       where: { storefrontId: storefront.id },
       select: { id: true, title: true },
     })
-    const productIds = products.map(p => p.id)
+    let productIds = products.map(p => p.id)
+    if (productIdFilter) {
+      productIds = productIds.filter(id => id === productIdFilter)
+    }
 
     // Get click events for these products, filtered by date if provided
     const clickEvents = await prisma.clickEvent.findMany({
@@ -72,11 +76,18 @@ export async function GET(request: Request) {
     const clicksByProduct: Record<string, number> = {}
     const clicksByInterval: Record<string, number> = {}
     const productTitles: Record<string, string> = {}
-    products.forEach(p => { clicksByProduct[p.id] = 0; productTitles[p.id] = p.title })
+    products.forEach(p => {
+      if (!productIdFilter || p.id === productIdFilter) {
+        clicksByProduct[p.id] = 0;
+        productTitles[p.id] = p.title;
+      }
+    })
     clickEvents.forEach((ev: { productId: string; createdAt: Date | string }) => {
-      clicksByProduct[ev.productId]++
-      const group = groupByFn(new Date(ev.createdAt))
-      clicksByInterval[group] = (clicksByInterval[group] || 0) + 1
+      if (!productIdFilter || ev.productId === productIdFilter) {
+        clicksByProduct[ev.productId]++
+        const group = groupByFn(new Date(ev.createdAt))
+        clicksByInterval[group] = (clicksByInterval[group] || 0) + 1
+      }
     })
 
     // Most popular products
