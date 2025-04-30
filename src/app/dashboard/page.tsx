@@ -1,272 +1,71 @@
-'use client'
+"use client"
 
-import { useState, useEffect, useCallback, useRef } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { useToast } from '@/components/ui/use-toast'
-import Image from 'next/image'
-
-interface Product {
-  id: string
-  title: string
-  description: string
-  price: number
-  imageUrl: string
-  affiliateUrl: string
-  clicks: number
-}
+import { useSession } from "next-auth/react"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
 
 export default function DashboardPage() {
-  const { toast } = useToast()
-  const [products, setProducts] = useState<Product[]>([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null)
-  const [user, setUser] = useState<{ id: string } | null>(null)
-  const [storefront, setStorefront] = useState<{ id: string } | null>(null)
-
-  const formRef = useRef<HTMLFormElement>(null)
-
-  useEffect(() => {
-    // Fetch user data
-    async function fetchUser() {
-      try {
-        const response = await fetch('/api/auth/me')
-        const data = await response.json()
-        if (data.user) {
-          setUser(data.user)
-          // Fetch storefront data
-          const storefrontResponse = await fetch(`/api/storefronts?userId=${data.user.id}`)
-          const storefrontData = await storefrontResponse.json()
-          if (storefrontData) {
-            setStorefront(storefrontData)
-          }
-        }
-      } catch (error) {
-        console.error('Failed to fetch user:', error)
-      }
-    }
-    fetchUser()
-  }, [])
-
-  const fetchProducts = useCallback(async () => {
-    if (!storefront?.id) return
-    try {
-      const response = await fetch(`/api/products?storefrontId=${storefront.id}`)
-      const data = await response.json()
-      if (Array.isArray(data)) {
-        setProducts(data)
-      } else if (Array.isArray(data.products)) {
-        setProducts(data.products)
-      } else {
-        setProducts([])
-      }
-    } catch (error) {
-      console.error('Failed to fetch products:', error)
-      setError('Failed to fetch products')
-      setProducts([])
-    }
-  }, [storefront?.id])
-
-  useEffect(() => {
-    fetchProducts()
-  }, [fetchProducts])
-
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    if (!user?.id || !storefront?.id) {
-      setError('User or storefront not found')
-      return
-    }
-
-    setLoading(true)
-    setError('')
-
-    const formData = new FormData(e.currentTarget)
-    const product = {
-      userId: user.id,
-      storefrontId: storefront.id,
-      title: formData.get('title') as string,
-      description: formData.get('description') as string,
-      price: parseFloat(formData.get('price') as string),
-      imageUrl: formData.get('imageUrl') as string,
-      affiliateUrl: formData.get('affiliateUrl') as string,
-    }
-
-    try {
-      const response = await fetch('/api/products', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(product),
-      })
-
-      if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || 'Failed to create product')
-      }
-
-      toast({
-        title: 'Success',
-        description: 'Product created successfully',
-      })
-      fetchProducts()
-      formRef.current?.reset()
-      setEditingProduct(null)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong')
-      toast({
-        title: 'Error',
-        description: 'Failed to create product',
-        variant: 'destructive',
-      })
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  async function handleDelete(id: string) {
-    if (!confirm('Are you sure you want to delete this product?')) return
-
-    try {
-      const response = await fetch(`/api/products?id=${id}`, {
-        method: 'DELETE',
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to delete product')
-      }
-
-      toast({
-        title: 'Success',
-        description: 'Product deleted successfully',
-      })
-      fetchProducts()
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong')
-      toast({
-        title: 'Error',
-        description: 'Failed to delete product',
-        variant: 'destructive',
-      })
-    }
-  }
+  const { data: session } = useSession()
+  const user = session?.user
+  const username = user?.name ? user.name.replace(/\s+/g, '').toLowerCase() : ""
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Your Products</h1>
-        <Button onClick={() => setEditingProduct(null)}>Add Product</Button>
+    <div className="min-h-screen bg-gray-50">
+      {/* Top Navigation Bar */}
+      <nav className="flex items-center justify-between px-8 py-4 bg-white shadow">
+        <div className="flex items-center gap-8">
+          <span className="font-bold text-xl">Briklyst</span>
+          <Link href="/dashboard" className="text-gray-700 hover:underline">Dashboard</Link>
+          <Link href={`/storefront/${username}`} className="text-gray-700 hover:underline">Storefront</Link>
+          <Link href="/dashboard/manage-products" className="text-gray-700 hover:underline">Manage Products</Link>
+          <Link href="/dashboard/emails" className="text-gray-700 hover:underline">Email Tools</Link>
+          <Link href="/dashboard/settings" className="text-gray-700 hover:underline">Settings</Link>
+        </div>
+        <div className="flex items-center gap-4">
+          <span className="text-gray-600 text-sm">{user?.email}</span>
+          <Link href="/api/auth/signout" className="text-red-600 hover:underline">Sign out</Link>
+        </div>
+      </nav>
+
+      {/* User Info Panel */}
+      <div className="max-w-4xl mx-auto mt-8 bg-white rounded-lg shadow p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        <div>
+          <div className="text-lg font-semibold">{user?.name}</div>
+          <div className="text-gray-500 text-sm">@{username}</div>
+          <div className="text-gray-500 text-sm">{user?.email}</div>
+          <div className="text-gray-500 text-sm mt-1">Plan: Free</div>
+          <Link href={`/storefront/${username}`} className="text-blue-600 underline mt-2 inline-block">View Public Storefront</Link>
+        </div>
       </div>
 
-      {error && (
-        <div className="rounded-md bg-red-50 p-4 text-sm text-red-600">
-          {error}
+      {/* Analytics & Quick Actions */}
+      <div className="max-w-4xl mx-auto mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Storefront Performance Overview */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-xl font-bold mb-4">Storefront Performance</h2>
+          <div className="text-gray-500">[Product click analytics will go here]</div>
         </div>
-      )}
-
-      <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div>
-            <Label htmlFor="title">Title</Label>
-            <Input
-              id="title"
-              name="title"
-              required
-              defaultValue={editingProduct?.title}
-              autoComplete="off"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="price">Price</Label>
-            <Input
-              id="price"
-              name="price"
-              type="number"
-              step="0.01"
-              required
-              defaultValue={editingProduct?.price}
-              autoComplete="off"
-            />
-          </div>
-
-          <div className="sm:col-span-2">
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              name="description"
-              defaultValue={editingProduct?.description}
-              autoComplete="off"
-            />
-          </div>
-
-          <div className="sm:col-span-2">
-            <Label htmlFor="imageUrl">Image URL</Label>
-            <Input
-              id="imageUrl"
-              name="imageUrl"
-              type="url"
-              defaultValue={editingProduct?.imageUrl}
-              autoComplete="off"
-            />
-          </div>
-
-          <div className="sm:col-span-2">
-            <Label htmlFor="affiliateUrl">Affiliate URL</Label>
-            <Input
-              id="affiliateUrl"
-              name="affiliateUrl"
-              type="url"
-              required
-              defaultValue={editingProduct?.affiliateUrl}
-              autoComplete="off"
-            />
-          </div>
+        {/* Email Engagement */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-xl font-bold mb-4">Email Engagement</h2>
+          <div className="text-gray-500">[Email stats will go here]</div>
         </div>
+      </div>
 
-        <Button type="submit" disabled={loading}>
-          {loading ? 'Saving...' : 'Save Product'}
-        </Button>
-      </form>
+      {/* Quick Access Actions */}
+      <div className="max-w-4xl mx-auto mt-8 flex flex-wrap gap-4">
+        <Button asChild><Link href="/dashboard/manage-products">Add New Product</Link></Button>
+        <Button asChild variant="secondary"><Link href="/dashboard/emails">Create Email Campaign</Link></Button>
+        <Button asChild variant="secondary"><Link href="/dashboard/settings">Customize Storefront Theme</Link></Button>
+        <Button asChild variant="secondary"><Link href="/dashboard/collaborators">Invite a Collaborator</Link></Button>
+      </div>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {Array.isArray(products) && products.map((product) => (
-          <Card key={product.id} className="p-4">
-            {product.imageUrl && (
-              <div className="relative h-48 w-full">
-                <Image
-                  src={product.imageUrl}
-                  alt={product.title}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            )}
-            <h3 className="text-lg font-medium">{product.title}</h3>
-            <p className="mt-1 text-sm text-gray-600">{product.description}</p>
-            <p className="mt-2 font-medium">${product.price}</p>
-            <p className="mt-1 text-sm text-gray-500">
-              Clicks: {product.clicks}
-            </p>
-            <div className="mt-4 flex space-x-2">
-              <Button
-                variant="outline"
-                onClick={() => setEditingProduct(product)}
-              >
-                Edit
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={() => handleDelete(product.id)}
-              >
-                Delete
-              </Button>
-            </div>
-          </Card>
-        ))}
+      {/* Settings Access */}
+      <div className="max-w-4xl mx-auto mt-8 mb-12">
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-xl font-bold mb-4">Settings</h2>
+          <Link href="/dashboard/settings" className="text-blue-600 underline">Go to Account Settings</Link>
+        </div>
       </div>
     </div>
   )
