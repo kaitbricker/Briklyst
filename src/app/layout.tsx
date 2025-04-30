@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { GeistSans, GeistMono } from "geist/font";
 import "./globals.css";
-import "./test.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Inter } from 'next/font/google'
 import { ScrollProgress } from '@/components/ScrollProgress'
