@@ -19,14 +19,24 @@ export default function LoginPage() {
 
     try {
       const formData = new FormData(event.currentTarget)
+      const email = formData.get('email') as string
+      const password = formData.get('password') as string
+
+      if (!email || !password) {
+        throw new Error('Please enter both email and password')
+      }
+
       const response = await signIn('credentials', {
-        email: formData.get('email'),
-        password: formData.get('password'),
+        email,
+        password,
         redirect: false,
       })
 
       if (response?.error) {
-        throw new Error('Invalid credentials')
+        if (response.error === 'CredentialsSignin') {
+          throw new Error('Invalid email or password')
+        }
+        throw new Error(response.error)
       }
 
       router.push('/dashboard')
@@ -34,10 +44,10 @@ export default function LoginPage() {
         title: 'Welcome back!',
         description: 'You have successfully signed in.',
       })
-    } catch {
+    } catch (error) {
       toast({
         title: 'Error',
-        description: 'Invalid email or password.',
+        description: error instanceof Error ? error.message : 'Something went wrong. Please try again.',
         variant: 'destructive',
       })
     } finally {
@@ -81,6 +91,11 @@ export default function LoginPage() {
                 autoCorrect="off"
                 disabled={isLoading}
               />
+              <div className="text-right">
+                <Link href="/auth/forgot-password" className="text-sm text-blue-600 hover:underline">
+                  Forgot password?
+                </Link>
+              </div>
             </div>
             <Button disabled={isLoading}>
               {isLoading && (
