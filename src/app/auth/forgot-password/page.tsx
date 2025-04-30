@@ -37,7 +37,7 @@ export default function ForgotPasswordPage() {
       })
 
       router.push('/auth/sign-in')
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Something went wrong. Please try again.',
