@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { TikTokIcon, InstagramIcon } from '@/components/icons'
-import { FadeIn, FadeInStagger, ScaleIn, SlideIn, FloatingAnimation } from '@/components/animations'
+import { FadeIn, FadeInStagger, ScaleIn, SlideIn } from '@/components/animations'
 import { StorefrontCarousel } from '@/components/StorefrontCarousel'
 
 export const metadata = {
