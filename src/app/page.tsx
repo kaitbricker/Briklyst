@@ -31,14 +31,14 @@ function Hero() {
             <Button 
               asChild
               size="lg"
-              className="bg-bubblegum-pink hover:bg-bubblegum-pink/90 text-white font-bold text-lg px-10 py-4 rounded-full shadow-xl hover:scale-105 transition-transform"
+              className="bg-midnight-navy hover:bg-midnight-navy/90 text-white font-bold text-lg px-10 py-4 rounded-full shadow-xl hover:scale-105 transition-transform"
             >
               <Link href="/signup">Start Your Storefront</Link>
             </Button>
             <Button
               variant="link"
               asChild
-              className="text-sunset-orange underline text-base font-medium self-center"
+              className="text-midnight-navy underline text-base font-medium self-center"
             >
               <Link href="#examples">Explore Examples</Link>
             </Button>
@@ -256,7 +256,7 @@ function FinalCTA() {
         <Button 
           asChild
           size="lg"
-          className="bg-bubblegum-pink hover:bg-bubblegum-pink/90 text-white text-lg font-bold px-10 py-4 rounded-full shadow-lg hover:scale-105 transition"
+          className="bg-midnight-navy hover:bg-midnight-navy/90 text-white text-lg font-bold px-10 py-4 rounded-full shadow-lg hover:scale-105 transition"
         >
           <Link href="/signup">Get Started Now</Link>
         </Button>
