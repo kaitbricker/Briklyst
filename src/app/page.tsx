@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { TikTokIcon, InstagramIcon } from '@/components/icons'
 import { FadeIn, FadeInStagger, ScaleIn, SlideIn, FloatingAnimation } from '@/components/animations'
+import { StorefrontCarousel } from '@/components/StorefrontCarousel'
 
 export const metadata = {
   title: 'Briklyst - Create Your Storefront',
@@ -12,48 +13,98 @@ export const metadata = {
 // Hero Section Component
 function Hero() {
   return (
-    <section className="relative overflow-hidden bg-midnight-navy py-20 sm:py-32">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
-          <div className="flex flex-col justify-center">
-            <SlideIn direction="left">
-              <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
-                Where influence becomes enterprise.
-              </h1>
-            </SlideIn>
-            <FadeIn delay={0.2}>
-              <p className="mt-6 text-lg text-gray-300">
-                Briklyst transforms your affiliate links into a powerful, personalized storefront — in minutes.
-              </p>
-            </FadeIn>
-            <FadeIn delay={0.4}>
-              <div className="mt-8 flex gap-4">
-                <Button 
-                  asChild
-                  size="lg"
-                  className="bg-bubblegum-pink hover:bg-bubblegum-pink/90"
-                >
-                  <Link href="/signup">Start Your Storefront</Link>
-                </Button>
-                <Button
-                  variant="link"
-                  asChild
-                  className="text-white hover:text-bubblegum-pink"
-                >
-                  <Link href="#examples">See Live Examples</Link>
-                </Button>
-              </div>
-            </FadeIn>
+    <section className="relative min-h-screen flex flex-col justify-center items-center text-center px-6 py-32 overflow-hidden bg-gradient-to-br from-bubblegum-pink/20 to-lilac-purple/30">
+      <div className="absolute inset-0 z-0 bg-[url('/images/hero-bg-texture.png')] bg-cover bg-center opacity-20" />
+      <div className="relative z-10 max-w-4xl mx-auto">
+        <SlideIn direction="up">
+          <h1 className="text-5xl md:text-7xl font-extrabold text-bubblegum-pink leading-tight mb-8 drop-shadow-xl text-center">
+            Where Influence Becomes Enterprise
+          </h1>
+        </SlideIn>
+        <FadeIn delay={0.2}>
+          <p className="text-xl md:text-2xl text-sunset-orange mb-10 font-medium text-center">
+            Turn your affiliate links into a fully-branded income engine. No code. No limits. Just results.
+          </p>
+        </FadeIn>
+        <FadeIn delay={0.4}>
+          <div className="flex flex-wrap justify-center gap-6 mb-16">
+            <Button 
+              asChild
+              size="lg"
+              className="bg-bubblegum-pink hover:bg-bubblegum-pink/90 text-white font-bold text-lg px-10 py-4 rounded-full shadow-xl hover:scale-105 transition-transform"
+            >
+              <Link href="/signup">Start Your Storefront</Link>
+            </Button>
+            <Button
+              variant="link"
+              asChild
+              className="text-sunset-orange underline text-base font-medium self-center"
+            >
+              <Link href="#examples">Explore Examples</Link>
+            </Button>
           </div>
-          <div className="relative">
-            <FloatingAnimation>
-              <div className="rounded-lg bg-white/10 p-8">
-                <div className="aspect-[4/3] rounded-lg bg-white/5"></div>
-              </div>
-            </FloatingAnimation>
+        </FadeIn>
+        <FadeIn delay={0.6}>
+          <div className="w-full max-w-5xl rounded-2xl overflow-hidden shadow-2xl">
+            <StorefrontCarousel />
           </div>
-        </div>
+        </FadeIn>
       </div>
+    </section>
+  )
+}
+
+// Use Cases Section
+function UseCases() {
+  const useCases = [
+    {
+      title: 'Lifestyle Influencers',
+      desc: 'Turn product recs into passive revenue without relying on brand deals.',
+      icon: '🎯'
+    },
+    {
+      title: 'Fashion Bloggers',
+      desc: 'Curate collections that reflect your taste and monetize every item.',
+      icon: '👗'
+    },
+    {
+      title: 'Affiliate Marketers',
+      desc: 'Finally, one branded space to house links from every program you use.',
+      icon: '📊'
+    },
+    {
+      title: 'Solo Creators & Coaches',
+      desc: 'Build trust with a clean storefront and track what your audience clicks.',
+      icon: '🎓'
+    },
+    {
+      title: 'Product Roundups & TikTokers',
+      desc: 'Make viral link drops look polished and on-brand.',
+      icon: '📱'
+    },
+    {
+      title: 'Anyone Monetizing Online',
+      desc: 'If you share links, Briklyst makes them work harder for you.',
+      icon: '💡'
+    }
+  ]
+
+  return (
+    <section className="bg-white py-28 px-6 text-center">
+      <FadeIn>
+        <h2 className="text-4xl md:text-5xl font-bold mb-16">Who is Briklyst Perfect For?</h2>
+      </FadeIn>
+      <FadeInStagger className="grid md:grid-cols-3 gap-16 max-w-7xl mx-auto">
+        {useCases.map((item, index) => (
+          <ScaleIn key={index} delay={index * 0.1}>
+            <div className="text-left hover:scale-[1.02] transition-transform p-6 rounded-xl bg-white shadow-lg">
+              <div className="text-4xl mb-6">{item.icon}</div>
+              <h3 className="font-bold text-2xl mb-2">{item.title}</h3>
+              <p className="text-gray-700 text-lg leading-relaxed">{item.desc}</p>
+            </div>
+          </ScaleIn>
+        ))}
+      </FadeInStagger>
     </section>
   )
 }
@@ -194,22 +245,22 @@ function Testimonials() {
 // Final CTA Section
 function FinalCTA() {
   return (
-    <section className="bg-sunset-orange py-20">
-      <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-        <FadeIn>
-          <h2 className="text-3xl font-bold text-white">Ready to turn your links into a brand?</h2>
-          <p className="mt-4 text-lg text-white/80">Where influence becomes enterprise.</p>
-        </FadeIn>
-        <ScaleIn delay={0.2}>
-          <Button 
-            asChild
-            size="lg"
-            className="mt-8 bg-bubblegum-pink hover:bg-bubblegum-pink/90"
-          >
-            <Link href="/signup">Join the First 100 Creators</Link>
-          </Button>
-        </ScaleIn>
-      </div>
+    <section className="bg-lilac-purple/10 py-24 px-6 text-center">
+      <FadeIn>
+        <h2 className="text-4xl md:text-5xl font-extrabold mb-6 text-midnight-navy">Ready to Launch Your Digital Brand?</h2>
+        <p className="text-xl max-w-2xl mx-auto text-gray-700 mb-8">
+          Start building your Briklyst today and be part of a movement reshaping how creators grow and earn online.
+        </p>
+      </FadeIn>
+      <ScaleIn delay={0.2}>
+        <Button 
+          asChild
+          size="lg"
+          className="bg-bubblegum-pink hover:bg-bubblegum-pink/90 text-white text-lg font-bold px-10 py-4 rounded-full shadow-lg hover:scale-105 transition"
+        >
+          <Link href="/signup">Get Started Now</Link>
+        </Button>
+      </ScaleIn>
     </section>
   )
 }
@@ -280,8 +331,9 @@ function Footer() {
 
 export default function Home() {
   return (
-    <main>
+    <main className="bg-[#FFFBEF] text-[#1D1E33] font-sans scroll-smooth">
       <Hero />
+      <UseCases />
       <HowItWorks />
       <Features />
       <StorefrontPreviews />
