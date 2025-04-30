@@ -42,16 +42,39 @@ function Hero() {
             </a>
           </Link>
         </div>
-        {/* Showcase Image or Carousel */}
-        <div className="w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl">
-          <Image
-            src="/showcase.png"
-            alt="Storefront Showcase"
-            width={900}
-            height={500}
-            className="object-cover w-full h-auto"
-            priority
-          />
+        {/* Storefront Previews Carousel (moved here) */}
+        <div className="relative flex flex-col items-center w-full max-w-2xl mx-auto mb-8">
+          {storefronts.map((store, idx) => (
+            <div
+              key={store.title}
+              className={`transition-all duration-700 ease-in-out absolute w-full ${idx === currentStore ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-95 z-0'} ${store.bg} rounded-2xl shadow-md p-6 flex flex-col items-center border border-gray-100`}
+              style={{ minHeight: 320 }}
+            >
+              <div className="flex w-full items-center justify-between mb-4">
+                <div>
+                  <h3 className={`font-bold text-xl mb-1 ${store.text}`}>{store.title}</h3>
+                  <span className="text-gray-700 text-sm">{store.username}</span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="w-3 h-3 rounded-full bg-red-400 inline-block" />
+                  <span className="w-3 h-3 rounded-full bg-yellow-400 inline-block" />
+                  <span className="w-3 h-3 rounded-full bg-green-400 inline-block" />
+                </div>
+              </div>
+              <Image src={store.image} alt={store.title} width={900} height={320} className="rounded-lg object-cover w-full h-48" />
+            </div>
+          ))}
+          {/* Carousel dots */}
+          <div className="flex gap-2 mt-6 z-20 relative">
+            {storefronts.map((_, idx) => (
+              <button
+                key={idx}
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${idx === currentStore ? 'bg-[#1D1E33]' : 'bg-gray-300'}`}
+                onClick={() => setCurrentStore(idx)}
+                aria-label={`Show ${storefronts[idx].title}`}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </main>
@@ -455,16 +478,39 @@ export default function Home() {
               </a>
             </Link>
           </div>
-          {/* Showcase Image or Carousel */}
-          <div className="w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl">
-            <Image
-              src="/showcase.png"
-              alt="Storefront Showcase"
-              width={900}
-              height={500}
-              className="object-cover w-full h-auto"
-              priority
-            />
+          {/* Storefront Previews Carousel (moved here) */}
+          <div className="relative flex flex-col items-center w-full max-w-2xl mx-auto mb-8">
+            {storefronts.map((store, idx) => (
+              <div
+                key={store.title}
+                className={`transition-all duration-700 ease-in-out absolute w-full ${idx === currentStore ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-95 z-0'} ${store.bg} rounded-2xl shadow-md p-6 flex flex-col items-center border border-gray-100`}
+                style={{ minHeight: 320 }}
+              >
+                <div className="flex w-full items-center justify-between mb-4">
+                  <div>
+                    <h3 className={`font-bold text-xl mb-1 ${store.text}`}>{store.title}</h3>
+                    <span className="text-gray-700 text-sm">{store.username}</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <span className="w-3 h-3 rounded-full bg-red-400 inline-block" />
+                    <span className="w-3 h-3 rounded-full bg-yellow-400 inline-block" />
+                    <span className="w-3 h-3 rounded-full bg-green-400 inline-block" />
+                  </div>
+                </div>
+                <Image src={store.image} alt={store.title} width={900} height={320} className="rounded-lg object-cover w-full h-48" />
+              </div>
+            ))}
+            {/* Carousel dots */}
+            <div className="flex gap-2 mt-6 z-20 relative">
+              {storefronts.map((_, idx) => (
+                <button
+                  key={idx}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${idx === currentStore ? 'bg-[#1D1E33]' : 'bg-gray-300'}`}
+                  onClick={() => setCurrentStore(idx)}
+                  aria-label={`Show ${storefronts[idx].title}`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </main>
