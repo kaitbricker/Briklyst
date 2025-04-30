@@ -5,6 +5,7 @@ import ProductGrid from "@/components/storefront/ProductGrid"
 import StorefrontFooter from "@/components/storefront/StorefrontFooter"
 import SubscribeForm from "@/components/storefront/SubscribeForm"
 import { ThemeProvider } from "@/components/theme/ThemeProvider"
+import Link from 'next/link'
 
 interface StorefrontPageProps {
   params: { username: string }
@@ -95,12 +96,12 @@ export default async function StorefrontPage({ params }: StorefrontPageProps) {
             <p className="text-gray-600 mb-6">
               Add products to make it shine.
             </p>
-            <a
+            <Link
               href="/dashboard/products"
               className="theme-button text-white"
             >
               Add Products
-            </a>
+            </Link>
           </div>
         ) : (
           <>

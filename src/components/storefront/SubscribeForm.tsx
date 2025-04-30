@@ -40,13 +40,14 @@ export default function SubscribeForm({ storefrontId }: SubscribeFormProps) {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to subscribe');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to subscribe');
       }
 
       setIsSuccess(true);
       reset();
-    } catch (err) {
-      setError('Something went wrong. Please try again.');
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Something went wrong. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
