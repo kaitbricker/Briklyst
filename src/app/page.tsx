@@ -13,44 +13,50 @@ export const metadata = {
 // Hero Section Component
 function Hero() {
   return (
-    <section className="relative min-h-screen flex flex-col justify-center items-center text-center px-6 py-32 overflow-hidden bg-gradient-to-br from-[#FFE0F4] to-[#E0F4FF]">
-      <div className="absolute inset-0 z-0 bg-[url('/images/hero-bg-texture.png')] bg-cover bg-center opacity-20" />
-      <div className="relative z-10 max-w-4xl mx-auto">
-        <SlideIn direction="up">
-          <h1 className="text-5xl md:text-7xl font-extrabold text-[#1D1E33] leading-tight mb-8 drop-shadow-xl text-center">
-            Where Influence Becomes Enterprise
-          </h1>
-        </SlideIn>
-        <FadeIn delay={0.2}>
-          <p className="text-xl md:text-2xl text-[#1D1E33]/80 mb-10 font-medium text-center">
-            Turn your affiliate links into a fully-branded income engine. No code. No limits. Just results.
-          </p>
-        </FadeIn>
-        <FadeIn delay={0.4}>
-          <div className="flex flex-wrap justify-center gap-6 mb-16">
-            <Button 
-              asChild
-              size="lg"
-              className="bg-[#1D1E33] hover:bg-[#1D1E33]/90 text-white font-bold text-lg px-10 py-4 rounded-full shadow-xl hover:scale-105 transition-transform"
-            >
-              <Link href="/signup">Start Your Storefront</Link>
-            </Button>
-            <Button
-              variant="link"
-              asChild
-              className="text-[#1D1E33] hover:text-[#1D1E33]/80 underline text-base font-medium self-center"
-            >
-              <Link href="#examples">Explore Examples</Link>
-            </Button>
-          </div>
-        </FadeIn>
-        <FadeIn delay={0.6}>
-          <div className="w-full max-w-5xl rounded-2xl overflow-hidden shadow-2xl">
-            <StorefrontCarousel />
-          </div>
-        </FadeIn>
+    <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-pink-100 to-blue-100 relative overflow-hidden">
+      {/* Background Image Overlay */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="/hero-bg.jpg"
+          alt="Briklyst Hero Background"
+          fill
+          className="object-cover object-center opacity-30"
+          priority
+        />
       </div>
-    </section>
+      {/* Hero Content */}
+      <div className="relative z-10 flex flex-col items-center justify-center text-center px-4 py-32 w-full max-w-3xl">
+        <h1 className="text-5xl md:text-7xl font-extrabold text-[#1D1E33] leading-tight mb-6 drop-shadow-xl">
+          Where Influence Becomes Enterprise
+        </h1>
+        <p className="text-xl md:text-2xl text-[#1D1E33]/80 mb-10 font-medium">
+          Turn your affiliate links into a fully-branded income engine. No code. No limits. Just results.
+        </p>
+        <div className="flex flex-wrap justify-center gap-6 mb-12">
+          <Link href="/signup" passHref legacyBehavior>
+            <a className="bg-[#1D1E33] hover:bg-[#1D1E33]/90 text-white font-bold text-lg px-10 py-4 rounded-full shadow-xl transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-pink-300">
+              Start Your Storefront
+            </a>
+          </Link>
+          <Link href="#examples" passHref legacyBehavior>
+            <a className="text-[#1D1E33] hover:text-[#1D1E33]/80 underline text-base font-medium self-center transition-colors">
+              Explore Examples
+            </a>
+          </Link>
+        </div>
+        {/* Showcase Image or Carousel */}
+        <div className="w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl">
+          <Image
+            src="/showcase.png"
+            alt="Storefront Showcase"
+            width={900}
+            height={500}
+            className="object-cover w-full h-auto"
+            priority
+          />
+        </div>
+      </div>
+    </main>
   )
 }
 
@@ -114,45 +120,34 @@ function HowItWorks() {
   const steps = [
     {
       title: 'Paste Your Links',
-      description: 'Add links from Amazon, LTK, Sephora, and more.',
-      icon: '🔗'
+      desc: 'Add links from Amazon, LTK, Sephora, and more.',
+      icon: '/icons/link.svg',
     },
     {
       title: 'Auto-Generate Products',
-      description: "We'll pull the product info and images for you.",
-      icon: '✨'
+      desc: 'We pull product info and images for you.',
+      icon: '/icons/auto.svg',
     },
     {
       title: 'Launch Your Storefront',
-      description: 'Get a branded URL or connect your own domain.',
-      icon: '🚀'
-    }
+      desc: 'Get a branded URL or connect your own domain.',
+      icon: '/icons/launch.svg',
+    },
   ]
 
   return (
-    <section className="bg-white py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <FadeIn>
-          <h2 className="text-center text-3xl font-bold">Build your brand in 3 simple steps</h2>
-        </FadeIn>
-        <FadeInStagger className="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-3">
-          {steps.map((step, index) => (
-            <ScaleIn key={index} delay={index * 0.1}>
-              <div className="text-center">
-                <div className="mb-4 text-4xl">{step.icon}</div>
-                <h3 className="mb-2 text-xl font-semibold">{step.title}</h3>
-                <p className="text-gray-600">{step.description}</p>
-              </div>
-            </ScaleIn>
+    <section className="bg-white py-20 w-full">
+      <div className="max-w-7xl mx-auto px-4">
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-[#1D1E33]">How It Works</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          {steps.map((step) => (
+            <div key={step.title} className="flex flex-col items-center bg-gray-50 rounded-2xl shadow-md p-8 border border-gray-100">
+              <Image src={step.icon} alt={step.title} width={56} height={56} className="mb-6 object-contain" />
+              <h3 className="font-bold text-xl mb-2 text-[#1D1E33] text-center">{step.title}</h3>
+              <p className="text-gray-700 text-center">{step.desc}</p>
+            </div>
           ))}
-        </FadeInStagger>
-        <FadeIn delay={0.6}>
-          <div className="mt-12 text-center">
-            <Button asChild variant="link" className="text-lg">
-              <Link href="/signup">Try it in under 5 minutes →</Link>
-            </Button>
-          </div>
-        </FadeIn>
+        </div>
       </div>
     </section>
   )
@@ -161,30 +156,26 @@ function HowItWorks() {
 // Features Section
 function Features() {
   const features = [
-    { icon: '⚡', title: 'No tech skills required' },
-    { icon: '🎨', title: 'Fully branded to you' },
-    { icon: '📈', title: 'Click tracking & engagement insights' },
-    { icon: '🧠', title: 'AI-generated product descriptions' },
-    { icon: '🔗', title: 'Works with any affiliate platform' },
-    { icon: '💼', title: 'Coming soon: Earnings dashboard' }
+    { icon: '/icons/no-code.svg', title: 'No tech skills required' },
+    { icon: '/icons/branding.svg', title: 'Fully branded to you' },
+    { icon: '/icons/analytics.svg', title: 'Click tracking & engagement insights' },
+    { icon: '/icons/ai.svg', title: 'AI-generated product descriptions' },
+    { icon: '/icons/platform.svg', title: 'Works with any affiliate platform' },
+    { icon: '/icons/dashboard.svg', title: 'Earnings dashboard (coming soon)' },
   ]
 
   return (
-    <section className="bg-lilac-purple py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <FadeIn>
-          <h2 className="text-center text-3xl font-bold text-white">Built for creators who mean business</h2>
-        </FadeIn>
-        <FadeInStagger className="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map((feature, index) => (
-            <ScaleIn key={index} delay={index * 0.1}>
-              <div className="rounded-lg bg-white p-6">
-                <div className="mb-4 text-4xl">{feature.icon}</div>
-                <h3 className="text-xl font-semibold">{feature.title}</h3>
-              </div>
-            </ScaleIn>
+    <section className="bg-blue-50 py-20 w-full">
+      <div className="max-w-7xl mx-auto px-4">
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-[#1D1E33]">Features</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+          {features.map((feature) => (
+            <div key={feature.title} className="flex flex-col items-center bg-white rounded-2xl shadow-md p-8 border border-gray-100">
+              <Image src={feature.icon} alt={feature.title} width={48} height={48} className="mb-4 object-contain" />
+              <h3 className="text-lg font-semibold text-[#1D1E33] text-center">{feature.title}</h3>
+            </div>
           ))}
-        </FadeInStagger>
+        </div>
       </div>
     </section>
   )
@@ -192,26 +183,25 @@ function Features() {
 
 // Preview Storefronts Section
 function StorefrontPreviews() {
+  const storefronts = [
+    { image: '/storefront1.png', title: 'Beauty & Lifestyle', username: '@beautyessentials' },
+    { image: '/storefront2.png', title: 'Fitness Gear', username: '@fitnessfirst' },
+    { image: '/storefront3.png', title: 'Tech Finds', username: '@techsavvy' },
+  ]
+
   return (
-    <section id="examples" className="bg-white py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <FadeIn>
-          <h2 className="text-center text-3xl font-bold">Real Storefronts. Real Results.</h2>
-        </FadeIn>
-        <FadeInStagger className="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3].map((index) => (
-            <ScaleIn key={index} delay={index * 0.1}>
-              <div className="group relative overflow-hidden rounded-lg bg-gray-100">
-                <div className="aspect-[4/3]"></div>
-                <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
-                  <Button className="bg-bubblegum-pink hover:bg-bubblegum-pink/90">
-                    View Storefront
-                  </Button>
-                </div>
-              </div>
-            </ScaleIn>
+    <section id="examples" className="bg-white py-20 w-full">
+      <div className="max-w-7xl mx-auto px-4">
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-[#1D1E33]">Storefront Previews</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          {storefronts.map((store) => (
+            <div key={store.title} className="bg-gray-50 rounded-2xl shadow-md p-6 flex flex-col items-center border border-gray-100">
+              <Image src={store.image} alt={store.title} width={320} height={180} className="rounded-lg mb-4 object-cover" />
+              <h3 className="font-bold text-xl text-[#1D1E33] mb-1">{store.title}</h3>
+              <span className="text-gray-500 text-sm">{store.username}</span>
+            </div>
           ))}
-        </FadeInStagger>
+        </div>
       </div>
     </section>
   )
@@ -219,24 +209,37 @@ function StorefrontPreviews() {
 
 // Testimonials Section
 function Testimonials() {
+  const testimonials = [
+    {
+      avatar: '/avatars/user1.jpg',
+      name: 'Alex Kim',
+      quote: 'Briklyst made it so easy to monetize my recommendations. My followers love the new look!',
+    },
+    {
+      avatar: '/avatars/user2.jpg',
+      name: 'Jordan Lee',
+      quote: 'The analytics and branding features are a game changer for my affiliate business.',
+    },
+    {
+      avatar: '/avatars/user3.jpg',
+      name: 'Taylor Smith',
+      quote: 'I launched my storefront in minutes and started earning right away. Highly recommend!',
+    },
+  ]
+
   return (
-    <section className="bg-midnight-navy py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <FadeIn>
-          <h2 className="text-center text-3xl font-bold text-white">What early users are saying</h2>
-        </FadeIn>
-        <FadeIn delay={0.2}>
-          <div className="mt-16">
-            <blockquote className="mx-auto max-w-2xl rounded-lg bg-white/10 p-8 text-center text-white">
-              <p className="text-xl italic">
-                &quot;Exactly what I needed — clean, simple, and actually makes me money.&quot;
-              </p>
-              <footer className="mt-4">
-                <cite className="text-gray-300">— @earlyuser</cite>
-              </footer>
-            </blockquote>
-          </div>
-        </FadeIn>
+    <section className="bg-pink-50 py-20 w-full">
+      <div className="max-w-7xl mx-auto px-4">
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-[#1D1E33]">What Our Users Say</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          {testimonials.map((t) => (
+            <div key={t.name} className="bg-white rounded-2xl shadow-md p-8 flex flex-col items-center border border-gray-100">
+              <Image src={t.avatar} alt={t.name} width={64} height={64} className="rounded-full mb-4 object-cover" />
+              <p className="italic text-gray-700 text-center mb-4">“{t.quote}”</p>
+              <span className="font-semibold text-[#1D1E33]">{t.name}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   )
@@ -245,22 +248,18 @@ function Testimonials() {
 // Final CTA Section
 function FinalCTA() {
   return (
-    <section className="bg-[#E0F4FF] py-24 px-6 text-center">
-      <FadeIn>
+    <section className="bg-gradient-to-r from-pink-200 to-blue-200 py-20 w-full text-center">
+      <div className="max-w-2xl mx-auto px-4">
         <h2 className="text-4xl md:text-5xl font-extrabold mb-6 text-[#1D1E33]">Ready to Launch Your Digital Brand?</h2>
-        <p className="text-xl max-w-2xl mx-auto text-[#1D1E33]/80 mb-8">
+        <p className="text-xl text-[#1D1E33]/80 mb-8">
           Start building your Briklyst today and be part of a movement reshaping how creators grow and earn online.
         </p>
-      </FadeIn>
-      <ScaleIn delay={0.2}>
-        <Button 
-          asChild
-          size="lg"
-          className="bg-[#1D1E33] hover:bg-[#1D1E33]/90 text-white text-lg font-bold px-10 py-4 rounded-full shadow-lg hover:scale-105 transition"
-        >
-          <Link href="/signup">Get Started Now</Link>
-        </Button>
-      </ScaleIn>
+        <Link href="/signup" passHref legacyBehavior>
+          <a className="bg-[#1D1E33] hover:bg-[#1D1E33]/90 text-white text-lg font-bold px-10 py-4 rounded-full shadow-lg hover:scale-105 transition focus:outline-none focus:ring-2 focus:ring-pink-300">
+            Get Started Now
+          </a>
+        </Link>
+      </div>
     </section>
   )
 }
@@ -268,73 +267,298 @@ function FinalCTA() {
 // Footer
 function Footer() {
   return (
-    <footer className="bg-midnight-navy py-12">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <FadeInStagger className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          <FadeIn>
-            <div>
-              <Image 
-                src="/logo.png" 
-                alt="Briklyst" 
-                width={120} 
-                height={40}
-                className="invert"
-              />
-            </div>
-          </FadeIn>
-          <FadeIn delay={0.1}>
-            <div>
-              <h3 className="mb-4 font-semibold text-white">Links</h3>
-              <ul className="space-y-2 text-gray-300">
-                <li><Link href="/about">About</Link></li>
-                <li><Link href="/contact">Contact</Link></li>
-                <li><Link href="/terms">Terms of Use</Link></li>
-                <li><Link href="/privacy">Privacy Policy</Link></li>
-              </ul>
-            </div>
-          </FadeIn>
-          <FadeIn delay={0.2}>
-            <div>
-              <h3 className="mb-4 font-semibold text-white">Social</h3>
-              <div className="flex space-x-4">
-                <Link 
-                  href="#" 
-                  className="text-gray-300 hover:text-white transition-colors"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <TikTokIcon className="h-6 w-6" />
-                </Link>
-                <Link 
-                  href="#" 
-                  className="text-gray-300 hover:text-white transition-colors"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <InstagramIcon className="h-6 w-6" />
-                </Link>
-              </div>
-            </div>
-          </FadeIn>
-        </FadeInStagger>
-        <FadeIn delay={0.3}>
-          <div className="mt-8 border-t border-white/10 pt-8 text-center">
-            <p className="text-sm text-gray-300">
-              Briklyst — Where influence becomes enterprise.
-            </p>
-          </div>
-        </FadeIn>
+    <footer className="bg-[#1D1E33] py-12 w-full">
+      <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="flex items-center gap-4">
+          <Image src="/logo.png" alt="Briklyst Logo" width={120} height={40} className="object-contain invert" />
+          <span className="text-white font-bold text-lg">Briklyst</span>
+        </div>
+        <div className="flex gap-8 text-gray-300">
+          <Link href="/about">About</Link>
+          <Link href="/contact">Contact</Link>
+          <Link href="/terms">Terms</Link>
+          <Link href="/privacy">Privacy</Link>
+        </div>
+        <div className="flex gap-4">
+          <a href="#" target="_blank" rel="noopener noreferrer" className="hover:text-white">
+            <Image src="/icons/instagram.svg" alt="Instagram" width={28} height={28} />
+          </a>
+          <a href="#" target="_blank" rel="noopener noreferrer" className="hover:text-white">
+            <Image src="/icons/tiktok.svg" alt="TikTok" width={28} height={28} />
+          </a>
+        </div>
+      </div>
+      <div className="mt-8 text-center text-gray-400 text-sm">
+        Briklyst — Where influence becomes enterprise.
       </div>
     </footer>
   )
 }
 
+const personas = [
+  {
+    title: 'Lifestyle Influencers',
+    desc: 'Turn product recommendations into passive revenue without relying on brand deals.',
+    icon: '/icons/influencer.svg',
+  },
+  {
+    title: 'Fashion Bloggers',
+    desc: 'Curate collections that reflect your taste and monetize every item.',
+    icon: '/icons/blogger.svg',
+  },
+  {
+    title: 'Affiliate Marketers',
+    desc: 'One branded space to house links from every program you use.',
+    icon: '/icons/affiliate.svg',
+  },
+  {
+    title: 'Solo Creators & Coaches',
+    desc: 'Build trust with a clean storefront and track what your audience clicks.',
+    icon: '/icons/coach.svg',
+  },
+  {
+    title: 'Product Roundups & TikTokers',
+    desc: 'Make viral link drops look polished and on-brand.',
+    icon: '/icons/tiktok.svg',
+  },
+  {
+    title: 'Anyone Monetizing Online',
+    desc: 'If you share links, Briklyst makes them work harder for you.',
+    icon: '/icons/monetize.svg',
+  },
+];
+
+const steps = [
+  {
+    title: 'Paste Your Links',
+    desc: 'Add links from Amazon, LTK, Sephora, and more.',
+    icon: '/icons/link.svg',
+  },
+  {
+    title: 'Auto-Generate Products',
+    desc: 'We pull product info and images for you.',
+    icon: '/icons/auto.svg',
+  },
+  {
+    title: 'Launch Your Storefront',
+    desc: 'Get a branded URL or connect your own domain.',
+    icon: '/icons/launch.svg',
+  },
+];
+
+const features = [
+  { icon: '/icons/no-code.svg', title: 'No tech skills required' },
+  { icon: '/icons/branding.svg', title: 'Fully branded to you' },
+  { icon: '/icons/analytics.svg', title: 'Click tracking & engagement insights' },
+  { icon: '/icons/ai.svg', title: 'AI-generated product descriptions' },
+  { icon: '/icons/platform.svg', title: 'Works with any affiliate platform' },
+  { icon: '/icons/dashboard.svg', title: 'Earnings dashboard (coming soon)' },
+];
+
+const storefronts = [
+  { image: '/storefront1.png', title: 'Beauty & Lifestyle', username: '@beautyessentials' },
+  { image: '/storefront2.png', title: 'Fitness Gear', username: '@fitnessfirst' },
+  { image: '/storefront3.png', title: 'Tech Finds', username: '@techsavvy' },
+];
+
+const testimonials = [
+  {
+    avatar: '/avatars/user1.jpg',
+    name: 'Alex Kim',
+    quote: 'Briklyst made it so easy to monetize my recommendations. My followers love the new look!',
+  },
+  {
+    avatar: '/avatars/user2.jpg',
+    name: 'Jordan Lee',
+    quote: 'The analytics and branding features are a game changer for my affiliate business.',
+  },
+  {
+    avatar: '/avatars/user3.jpg',
+    name: 'Taylor Smith',
+    quote: 'I launched my storefront in minutes and started earning right away. Highly recommend!',
+  },
+];
+
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center">
-      <h1 className="text-5xl font-extrabold text-center text-gray-900">
-        Where Influence Becomes Enterprise
-      </h1>
-    </main>
+    <>
+      {/* Hero Section */}
+      <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-pink-100 to-blue-100 relative overflow-hidden">
+        {/* Background Image Overlay */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/hero-bg.jpg"
+            alt="Briklyst Hero Background"
+            fill
+            className="object-cover object-center opacity-30"
+            priority
+          />
+        </div>
+        {/* Hero Content */}
+        <div className="relative z-10 flex flex-col items-center justify-center text-center px-4 py-32 w-full max-w-3xl">
+          <h1 className="text-5xl md:text-7xl font-extrabold text-[#1D1E33] leading-tight mb-6 drop-shadow-xl">
+            Where Influence Becomes Enterprise
+          </h1>
+          <p className="text-xl md:text-2xl text-[#1D1E33]/80 mb-10 font-medium">
+            Turn your affiliate links into a fully-branded income engine. No code. No limits. Just results.
+          </p>
+          <div className="flex flex-wrap justify-center gap-6 mb-12">
+            <Link href="/signup" passHref legacyBehavior>
+              <a className="bg-[#1D1E33] hover:bg-[#1D1E33]/90 text-white font-bold text-lg px-10 py-4 rounded-full shadow-xl transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-pink-300">
+                Start Your Storefront
+              </a>
+            </Link>
+            <Link href="#examples" passHref legacyBehavior>
+              <a className="text-[#1D1E33] hover:text-[#1D1E33]/80 underline text-base font-medium self-center transition-colors">
+                Explore Examples
+              </a>
+            </Link>
+          </div>
+          {/* Showcase Image or Carousel */}
+          <div className="w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl">
+            <Image
+              src="/showcase.png"
+              alt="Storefront Showcase"
+              width={900}
+              height={500}
+              className="object-cover w-full h-auto"
+              priority
+            />
+          </div>
+        </div>
+      </main>
+
+      {/* Who is Briklyst Perfect For? Section */}
+      <section className="bg-white py-24 px-4 w-full">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-[#1D1E33]">Who is Briklyst Perfect For?</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+            {personas.map((persona) => (
+              <div
+                key={persona.title}
+                className="flex flex-col items-center bg-gray-50 rounded-2xl shadow-md p-8 transition-transform hover:-translate-y-1 hover:shadow-xl border border-gray-100"
+              >
+                <div className="mb-6">
+                  <Image
+                    src={persona.icon}
+                    alt={persona.title}
+                    width={64}
+                    height={64}
+                    className="object-contain"
+                  />
+                </div>
+                <h3 className="font-bold text-2xl mb-2 text-[#1D1E33] text-center">{persona.title}</h3>
+                <p className="text-gray-700 text-lg text-center">{persona.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section className="bg-white py-20 w-full">
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-[#1D1E33]">How It Works</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            {steps.map((step) => (
+              <div key={step.title} className="flex flex-col items-center bg-gray-50 rounded-2xl shadow-md p-8 border border-gray-100">
+                <Image src={step.icon} alt={step.title} width={56} height={56} className="mb-6 object-contain" />
+                <h3 className="font-bold text-xl mb-2 text-[#1D1E33] text-center">{step.title}</h3>
+                <p className="text-gray-700 text-center">{step.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="bg-blue-50 py-20 w-full">
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-[#1D1E33]">Features</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+            {features.map((feature) => (
+              <div key={feature.title} className="flex flex-col items-center bg-white rounded-2xl shadow-md p-8 border border-gray-100">
+                <Image src={feature.icon} alt={feature.title} width={48} height={48} className="mb-4 object-contain" />
+                <h3 className="text-lg font-semibold text-[#1D1E33] text-center">{feature.title}</h3>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Storefront Previews Section */}
+      <section id="examples" className="bg-white py-20 w-full">
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-[#1D1E33]">Storefront Previews</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            {storefronts.map((store) => (
+              <div key={store.title} className="bg-gray-50 rounded-2xl shadow-md p-6 flex flex-col items-center border border-gray-100">
+                <Image src={store.image} alt={store.title} width={320} height={180} className="rounded-lg mb-4 object-cover" />
+                <h3 className="font-bold text-xl text-[#1D1E33] mb-1">{store.title}</h3>
+                <span className="text-gray-500 text-sm">{store.username}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="bg-pink-50 py-20 w-full">
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-[#1D1E33]">What Our Users Say</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            {testimonials.map((t) => (
+              <div key={t.name} className="bg-white rounded-2xl shadow-md p-8 flex flex-col items-center border border-gray-100">
+                <Image src={t.avatar} alt={t.name} width={64} height={64} className="rounded-full mb-4 object-cover" />
+                <p className="italic text-gray-700 text-center mb-4">“{t.quote}”</p>
+                <span className="font-semibold text-[#1D1E33]">{t.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA Section */}
+      <section className="bg-gradient-to-r from-pink-200 to-blue-200 py-20 w-full text-center">
+        <div className="max-w-2xl mx-auto px-4">
+          <h2 className="text-4xl md:text-5xl font-extrabold mb-6 text-[#1D1E33]">Ready to Launch Your Digital Brand?</h2>
+          <p className="text-xl text-[#1D1E33]/80 mb-8">
+            Start building your Briklyst today and be part of a movement reshaping how creators grow and earn online.
+          </p>
+          <Link href="/signup" passHref legacyBehavior>
+            <a className="bg-[#1D1E33] hover:bg-[#1D1E33]/90 text-white text-lg font-bold px-10 py-4 rounded-full shadow-lg hover:scale-105 transition focus:outline-none focus:ring-2 focus:ring-pink-300">
+              Get Started Now
+            </a>
+          </Link>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-[#1D1E33] py-12 w-full">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="flex items-center gap-4">
+            <Image src="/logo.png" alt="Briklyst Logo" width={120} height={40} className="object-contain invert" />
+            <span className="text-white font-bold text-lg">Briklyst</span>
+          </div>
+          <div className="flex gap-8 text-gray-300">
+            <Link href="/about">About</Link>
+            <Link href="/contact">Contact</Link>
+            <Link href="/terms">Terms</Link>
+            <Link href="/privacy">Privacy</Link>
+          </div>
+          <div className="flex gap-4">
+            <a href="#" target="_blank" rel="noopener noreferrer" className="hover:text-white">
+              <Image src="/icons/instagram.svg" alt="Instagram" width={28} height={28} />
+            </a>
+            <a href="#" target="_blank" rel="noopener noreferrer" className="hover:text-white">
+              <Image src="/icons/tiktok.svg" alt="TikTok" width={28} height={28} />
+            </a>
+          </div>
+        </div>
+        <div className="mt-8 text-center text-gray-400 text-sm">
+          Briklyst — Where influence becomes enterprise.
+        </div>
+      </footer>
+    </>
   );
 }
