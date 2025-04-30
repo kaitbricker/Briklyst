@@ -9,6 +9,11 @@ import Link from 'next/link'
 import StorefrontDescriptionCard from '@/components/storefront/StorefrontDescriptionCard'
 import type { Product } from '@prisma/client'
 
+type ExtendedProduct = Product & {
+  featured?: boolean;
+  tags?: string[];
+}
+
 interface StorefrontPageProps {
   params: { username: string }
 }
@@ -76,7 +81,7 @@ export default async function StorefrontPage({ params }: StorefrontPageProps) {
     const isOwner = false;
 
     // Patch products to ensure 'featured' and 'tags' fields exist
-    const patchedProducts = user.storefront.products.map((p: any) => ({
+    const patchedProducts = user.storefront.products.map((p: ExtendedProduct) => ({
       ...p,
       featured: typeof p.featured === 'boolean' ? p.featured : false,
       tags: Array.isArray(p.tags) ? p.tags : [],
