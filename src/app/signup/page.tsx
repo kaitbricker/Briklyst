@@ -36,7 +36,7 @@ export default function SignUpPage() {
         title: 'Account created!',
         description: 'Please sign in with your new account.',
       })
-    } catch (err) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Something went wrong. Please try again.',
