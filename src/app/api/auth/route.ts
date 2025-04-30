@@ -4,6 +4,14 @@ import { cookies } from 'next/headers'
 import { sign, verify } from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
 
+// Check required environment variables
+if (!process.env.DATABASE_URL) {
+  throw new Error('DATABASE_URL environment variable is not set')
+}
+if (!process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable is not set')
+}
+
 const prisma = new PrismaClient()
 
 export async function POST(request: Request) {
@@ -18,56 +26,91 @@ export async function POST(request: Request) {
       )
     }
 
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      return NextResponse.json(
+        { error: 'Invalid email format' },
+        { status: 400 }
+      )
+    }
+
+    // Validate password strength
+    if (password.length < 8) {
+      return NextResponse.json(
+        { error: 'Password must be at least 8 characters long' },
+        { status: 400 }
+      )
+    }
+
     // If name is provided, it's a sign-up request
     if (name) {
-      // Check if user already exists
-      const existingUser = await prisma.user.findUnique({
-        where: { email },
-      })
+      try {
+        // Check if user already exists
+        const existingUser = await prisma.user.findUnique({
+          where: { email },
+        })
 
-      if (existingUser) {
-        return NextResponse.json(
-          { error: 'User already exists' },
-          { status: 400 }
-        )
+        if (existingUser) {
+          return NextResponse.json(
+            { error: 'User already exists' },
+            { status: 400 }
+          )
+        }
+
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10)
+
+        // Create user
+        const user = await prisma.user.create({
+          data: {
+            name,
+            email,
+            password: hashedPassword,
+          },
+        })
+
+        // Create storefront for the user
+        await prisma.storefront.create({
+          data: {
+            userId: user.id,
+            title: `${name}'s Storefront`,
+            description: 'Welcome to my storefront!',
+          },
+        })
+
+        // Generate session token
+        const token = sign({ userId: user.id }, process.env.JWT_SECRET!, {
+          expiresIn: '7d',
+        })
+
+        // Set cookie
+        const response = NextResponse.json({ 
+          user: { 
+            id: user.id, 
+            email: user.email,
+            name: user.name 
+          },
+          message: 'Account created successfully'
+        })
+        response.cookies.set('session-token', token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          maxAge: 60 * 60 * 24 * 7, // 7 days
+        })
+
+        return response
+      } catch (error) {
+        console.error('User creation error:', error)
+        if (error instanceof Error && error.message.includes('Unique constraint')) {
+          return NextResponse.json(
+            { error: 'Email already in use' },
+            { status: 400 }
+          )
+        }
+        throw error // Re-throw for general error handling
       }
-
-      // Hash the password
-      const hashedPassword = await bcrypt.hash(password, 10)
-
-      // Create user
-      const user = await prisma.user.create({
-        data: {
-          name,
-          email,
-          password: hashedPassword,
-        },
-      })
-
-      // Create storefront for the user
-      await prisma.storefront.create({
-        data: {
-          userId: user.id,
-          title: `${name}'s Storefront`,
-          description: 'Welcome to my storefront!',
-        },
-      })
-
-      // Generate session token
-      const token = sign({ userId: user.id }, process.env.JWT_SECRET!, {
-        expiresIn: '7d',
-      })
-
-      // Set cookie
-      const response = NextResponse.json({ user: { id: user.id, email: user.email } })
-      response.cookies.set('session-token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 7, // 7 days
-      })
-
-      return response
     }
 
     // Otherwise, it's a sign-in request

@@ -25,10 +25,35 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
+  const [user, setUser] = useState<{ id: string } | null>(null)
+  const [storefront, setStorefront] = useState<{ id: string } | null>(null)
+
+  useEffect(() => {
+    // Fetch user data
+    async function fetchUser() {
+      try {
+        const response = await fetch('/api/auth/me')
+        const data = await response.json()
+        if (data.user) {
+          setUser(data.user)
+          // Fetch storefront data
+          const storefrontResponse = await fetch(`/api/storefronts?userId=${data.user.id}`)
+          const storefrontData = await storefrontResponse.json()
+          if (storefrontData) {
+            setStorefront(storefrontData)
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch user:', error)
+      }
+    }
+    fetchUser()
+  }, [])
 
   const fetchProducts = useCallback(async () => {
+    if (!storefront?.id) return
     try {
-      const response = await fetch('/api/products')
+      const response = await fetch(`/api/products?storefrontId=${storefront.id}`)
       const data = await response.json()
       if (Array.isArray(data)) {
         setProducts(data)
@@ -42,7 +67,7 @@ export default function DashboardPage() {
       setError('Failed to fetch products')
       setProducts([])
     }
-  }, [])
+  }, [storefront?.id])
 
   useEffect(() => {
     fetchProducts()
@@ -50,11 +75,18 @@ export default function DashboardPage() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    if (!user?.id || !storefront?.id) {
+      setError('User or storefront not found')
+      return
+    }
+
     setLoading(true)
     setError('')
 
     const formData = new FormData(e.currentTarget)
     const product = {
+      userId: user.id,
+      storefrontId: storefront.id,
       title: formData.get('title') as string,
       description: formData.get('description') as string,
       price: parseFloat(formData.get('price') as string),
@@ -70,7 +102,8 @@ export default function DashboardPage() {
       })
 
       if (!response.ok) {
-        throw new Error('Failed to create product')
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to create product')
       }
 
       toast({
@@ -140,6 +173,7 @@ export default function DashboardPage() {
               name="title"
               required
               defaultValue={editingProduct?.title}
+              autoComplete="off"
             />
           </div>
 
@@ -152,6 +186,7 @@ export default function DashboardPage() {
               step="0.01"
               required
               defaultValue={editingProduct?.price}
+              autoComplete="off"
             />
           </div>
 
@@ -161,6 +196,7 @@ export default function DashboardPage() {
               id="description"
               name="description"
               defaultValue={editingProduct?.description}
+              autoComplete="off"
             />
           </div>
 
@@ -171,6 +207,7 @@ export default function DashboardPage() {
               name="imageUrl"
               type="url"
               defaultValue={editingProduct?.imageUrl}
+              autoComplete="off"
             />
           </div>
 
@@ -182,6 +219,7 @@ export default function DashboardPage() {
               type="url"
               required
               defaultValue={editingProduct?.affiliateUrl}
+              autoComplete="off"
             />
           </div>
         </div>
