@@ -34,7 +34,7 @@ export default function LoginPage() {
         title: 'Welcome back!',
         description: 'You have successfully signed in.',
       })
-    } catch (error) {
+    } catch (err) {
       toast({
         title: 'Error',
         description: 'Invalid email or password.',
