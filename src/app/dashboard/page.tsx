@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -27,6 +27,8 @@ export default function DashboardPage() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [user, setUser] = useState<{ id: string } | null>(null)
   const [storefront, setStorefront] = useState<{ id: string } | null>(null)
+
+  const formRef = useRef<HTMLFormElement>(null)
 
   useEffect(() => {
     // Fetch user data
@@ -111,7 +113,8 @@ export default function DashboardPage() {
         description: 'Product created successfully',
       })
       fetchProducts()
-      e.currentTarget.reset()
+      formRef.current?.reset()
+      setEditingProduct(null)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
       toast({
@@ -164,7 +167,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <Label htmlFor="title">Title</Label>
