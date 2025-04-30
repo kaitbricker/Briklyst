@@ -1,10 +1,9 @@
-// @ts-nocheck
+// @ts-ignore
 import NextAuth from 'next-auth/next'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import { prisma } from '@/lib/prisma'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
-import { JWT } from 'next-auth/jwt'
 
 declare module 'next-auth' {
   interface Session {
