@@ -44,21 +44,24 @@ export default function ProductsPage() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('/api/storefronts?userId=current')
-        if (!response.ok) throw new Error('Failed to fetch products')
+        const response = await fetch('/api/products')
+        if (!response.ok) {
+          throw new Error('Failed to fetch products')
+        }
         const data = await response.json()
-        setProducts(data.products)
-      } catch {
-        setError('Failed to load products')
+        setProducts(data)
+      } catch (error) {
+        console.error('Error fetching products:', error)
         toast({
           title: 'Error',
-          description: 'Failed to load products',
+          description: 'Failed to load products. Please try again.',
           variant: 'destructive',
         })
       } finally {
         setLoading(false)
       }
     }
+
     fetchProducts()
   }, [toast])
 
@@ -155,8 +158,13 @@ export default function ProductsPage() {
     }
   }
 
-  if (loading) return <div>Loading...</div>
-  if (error) return <div className="text-red-500">{error}</div>
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">

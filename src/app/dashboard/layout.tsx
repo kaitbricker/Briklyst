@@ -44,20 +44,21 @@ export default function DashboardLayout({
         const data = await response.json()
 
         if (!response.ok) {
-          throw new Error(data.error || 'Not authenticated')
+          router.push('/login')
+          return
         }
 
         setUser(data.user)
       } catch (error) {
-        console.error('Auth error:', error)
-        router.push('/auth/sign-in')
+        console.error('Auth check failed:', error)
+        router.push('/login')
       } finally {
         setLoading(false)
       }
     }
 
     checkAuth()
-  }, [router, toast])
+  }, [router])
 
   async function handleSignOut() {
     try {
