@@ -47,7 +47,7 @@ export default function DashboardPage() {
         <div className="flex items-center gap-8">
           <span className="font-bold text-xl tracking-tight">Briklyst</span>
           <Link href="/dashboard" className="text-gray-700 hover:text-blue-600 transition">Dashboard</Link>
-          <Link href={`/storefront/${username}`} className="text-gray-700 hover:text-blue-600 transition">Storefront</Link>
+          <Link href={`/${username}`} className="text-gray-700 hover:text-blue-600 transition">Storefront</Link>
           <Link href="/dashboard/manage-products" className="text-gray-700 hover:text-blue-600 transition">Manage Products</Link>
           <Link href="/dashboard/emails" className="text-gray-700 hover:text-blue-600 transition">Email Tools</Link>
           <Link href="/dashboard/settings" className="text-gray-700 hover:text-blue-600 transition">Settings</Link>
@@ -73,7 +73,7 @@ export default function DashboardPage() {
             <div className="text-gray-500 text-sm">@{username}</div>
             <div className="text-gray-500 text-sm">{user?.email}</div>
             <div className="text-gray-500 text-sm mt-1">Plan: <span className="font-medium text-green-600">Free</span></div>
-            <Link href={`/storefront/${username}`} className="text-blue-600 underline mt-2 inline-block">View Public Storefront</Link>
+            <Link href={`/${username}`} className="text-blue-600 underline mt-2 inline-block">View Public Storefront</Link>
           </div>
         </div>
       </div>
