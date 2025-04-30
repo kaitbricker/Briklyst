@@ -129,10 +129,30 @@ export default function DashboardPage() {
 
       {/* Quick Access Actions */}
       <div className="max-w-4xl mx-auto mt-10 flex flex-wrap gap-4 justify-center">
-        <Button asChild className="flex items-center gap-2"><PlusCircle size={18}/><Link href="/dashboard/manage-products">Add New Product</Link></Button>
-        <Button asChild variant="secondary" className="flex items-center gap-2"><Mail size={18}/><Link href="/dashboard/emails">Create Email Campaign</Link></Button>
-        <Button asChild variant="secondary" className="flex items-center gap-2"><Palette size={18}/><Link href="/dashboard/settings">Customize Storefront Theme</Link></Button>
-        <Button asChild variant="secondary" className="flex items-center gap-2"><Users size={18}/><Link href="/dashboard/collaborators">Invite a Collaborator</Link></Button>
+        <Button asChild className="flex items-center gap-2">
+          <Link href="/dashboard/manage-products" className="flex items-center gap-2">
+            <PlusCircle size={18}/>
+            Add New Product
+          </Link>
+        </Button>
+        <Button asChild variant="secondary" className="flex items-center gap-2">
+          <Link href="/dashboard/emails" className="flex items-center gap-2">
+            <Mail size={18}/>
+            Create Email Campaign
+          </Link>
+        </Button>
+        <Button asChild variant="secondary" className="flex items-center gap-2">
+          <Link href="/dashboard/settings" className="flex items-center gap-2">
+            <Palette size={18}/>
+            Customize Storefront Theme
+          </Link>
+        </Button>
+        <Button asChild variant="secondary" className="flex items-center gap-2">
+          <Link href="/dashboard/collaborators" className="flex items-center gap-2">
+            <Users size={18}/>
+            Invite a Collaborator
+          </Link>
+        </Button>
       </div>
 
       {/* Collaborator Activity Panel (Optional) */}
