@@ -11,9 +11,10 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { ColorPicker } from '@/components/ui/color-picker'
 import { gradients, colors } from '@/lib/colors'
-import { Plus, Settings, Layout, Globe, Palette } from 'lucide-react'
+import { Plus, Settings, Layout, Globe, Palette, Tag, Filter } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { motion, AnimatePresence } from 'framer-motion'
 
 interface Product {
   id: string
@@ -147,10 +148,14 @@ export default function StorefrontPage() {
   if (loading) {
     return (
       <div className="flex h-[50vh] items-center justify-center">
-        <div className="text-center">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center"
+        >
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1C1C2E] mx-auto"></div>
           <p className="mt-4 text-[#5F5F73]">Loading your storefront...</p>
-        </div>
+        </motion.div>
       </div>
     )
   }
@@ -158,7 +163,13 @@ export default function StorefrontPage() {
   if (error) {
     return (
       <div className="p-8">
-        <div className="bg-red-50 text-red-600 p-4 rounded-lg">{error}</div>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-red-50 text-red-600 p-4 rounded-lg"
+        >
+          {error}
+        </motion.div>
       </div>
     )
   }
@@ -166,22 +177,33 @@ export default function StorefrontPage() {
   if (!storefront) return null
 
   return (
-    <div className={`min-h-screen ${gradients.primary} p-8`}>
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className={`min-h-screen ${gradients.primary} p-8`}
+    >
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
+        <motion.div 
+          initial={{ y: -20 }}
+          animate={{ y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="flex items-center justify-between bg-white/50 backdrop-blur-sm p-6 rounded-xl shadow-sm"
+        >
+          <div className="space-y-2">
             <h1 className="text-3xl font-bold text-[#1C1C2E]">Storefront Customization</h1>
-            <p className="text-[#5F5F73] mt-2">Customize your storefront&apos;s appearance and manage your products</p>
+            <p className="text-[#5F5F73]">Customize your storefront&apos;s appearance and manage your products</p>
           </div>
           <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-[#1C1C2E] hover:bg-[#2D2D44] text-white">
+              <Button 
+                className="bg-[#1C1C2E] hover:bg-[#2D2D44] text-white transition-all duration-200 ease-in-out"
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Product
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-w-2xl">
               <DialogHeader>
                 <DialogTitle>Add New Product</DialogTitle>
               </DialogHeader>
@@ -198,29 +220,29 @@ export default function StorefrontPage() {
               />
             </DialogContent>
           </Dialog>
-        </div>
+        </motion.div>
 
         {/* Main Content */}
-        <Card className="bg-white shadow-xl rounded-xl overflow-hidden">
+        <Card className="bg-white shadow-xl rounded-xl overflow-hidden transition-all duration-200 hover:shadow-2xl">
           <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="w-full border-b bg-gray-50 p-0">
               <TabsTrigger
                 value="design"
-                className="flex items-center gap-2 px-6 py-3 data-[state=active]:text-[#1C1C2E] data-[state=active]:border-b-2 data-[state=active]:border-[#1C1C2E]"
+                className="flex items-center gap-2 px-6 py-3 data-[state=active]:text-[#1C1C2E] data-[state=active]:border-b-2 data-[state=active]:border-[#1C1C2E] transition-all duration-200"
               >
                 <Palette className="w-4 h-4" />
                 Design
               </TabsTrigger>
               <TabsTrigger
                 value="layout"
-                className="flex items-center gap-2 px-6 py-3 data-[state=active]:text-[#1C1C2E] data-[state=active]:border-b-2 data-[state=active]:border-[#1C1C2E]"
+                className="flex items-center gap-2 px-6 py-3 data-[state=active]:text-[#1C1C2E] data-[state=active]:border-b-2 data-[state=active]:border-[#1C1C2E] transition-all duration-200"
               >
                 <Layout className="w-4 h-4" />
                 Layout
               </TabsTrigger>
               <TabsTrigger
                 value="settings"
-                className="flex items-center gap-2 px-6 py-3 data-[state=active]:text-[#1C1C2E] data-[state=active]:border-b-2 data-[state=active]:border-[#1C1C2E]"
+                className="flex items-center gap-2 px-6 py-3 data-[state=active]:text-[#1C1C2E] data-[state=active]:border-b-2 data-[state=active]:border-[#1C1C2E] transition-all duration-200"
               >
                 <Settings className="w-4 h-4" />
                 Settings
@@ -228,7 +250,13 @@ export default function StorefrontPage() {
             </TabsList>
 
             <TabsContent value="design" className="p-6">
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <motion.form 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                onSubmit={handleSubmit} 
+                className="space-y-6"
+              >
                 <div className="grid gap-6 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="title" className="text-[#1C1C2E] font-medium">Storefront Title</Label>
@@ -236,7 +264,7 @@ export default function StorefrontPage() {
                       id="title"
                       value={storefront.title}
                       onChange={(e) => setStorefront({ ...storefront, title: e.target.value })}
-                      className="border-[#E5E7EB] focus:border-[#1C1C2E] focus:ring-[#1C1C2E]"
+                      className="border-[#E5E7EB] focus:border-[#1C1C2E] focus:ring-[#1C1C2E] transition-all duration-200"
                       required
                     />
                   </div>
@@ -252,7 +280,7 @@ export default function StorefrontPage() {
                         id="domain"
                         value={storefront.domain || ''}
                         onChange={(e) => setStorefront({ ...storefront, domain: e.target.value })}
-                        className="pl-10 border-[#E5E7EB] focus:border-[#1C1C2E] focus:ring-[#1C1C2E]"
+                        className="pl-10 border-[#E5E7EB] focus:border-[#1C1C2E] focus:ring-[#1C1C2E] transition-all duration-200"
                         placeholder="your-store.com"
                       />
                     </div>
@@ -265,7 +293,7 @@ export default function StorefrontPage() {
                     id="description"
                     value={storefront.description || ''}
                     onChange={(e) => setStorefront({ ...storefront, description: e.target.value })}
-                    className="min-h-[100px] border-[#E5E7EB] focus:border-[#1C1C2E] focus:ring-[#1C1C2E]"
+                    className="min-h-[100px] border-[#E5E7EB] focus:border-[#1C1C2E] focus:ring-[#1C1C2E] transition-all duration-200"
                     placeholder="Describe your storefront..."
                   />
                 </div>
@@ -288,39 +316,80 @@ export default function StorefrontPage() {
                 </div>
 
                 <div className="flex justify-end">
-                  <Button type="submit" className="bg-[#1C1C2E] hover:bg-[#2D2D44] text-white">
+                  <Button 
+                    type="submit" 
+                    className="bg-[#1C1C2E] hover:bg-[#2D2D44] text-white transition-all duration-200 ease-in-out"
+                  >
                     Save Changes
                   </Button>
                 </div>
-              </form>
+              </motion.form>
             </TabsContent>
 
             <TabsContent value="layout" className="p-6">
-              {/* Layout settings content */}
-              <div className="text-[#5F5F73]">Layout customization coming soon...</div>
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                className="text-[#5F5F73]"
+              >
+                Layout customization coming soon...
+              </motion.div>
             </TabsContent>
 
             <TabsContent value="settings" className="p-6">
-              {/* Additional settings content */}
-              <div className="text-[#5F5F73]">Additional settings coming soon...</div>
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                className="text-[#5F5F73]"
+              >
+                Additional settings coming soon...
+              </motion.div>
             </TabsContent>
           </Tabs>
         </Card>
 
         {/* Products Grid */}
-        <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-[#1C1C2E]">Your Products</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {products.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onClick={() => handleProductClick(product.id)}
-              />
-            ))}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="space-y-6"
+        >
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-semibold text-[#1C1C2E]">Your Products</h2>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" className="text-[#5F5F73] hover:text-[#1C1C2E] transition-all duration-200">
+                <Filter className="w-4 h-4 mr-2" />
+                Filter
+              </Button>
+              <Button variant="outline" size="sm" className="text-[#5F5F73] hover:text-[#1C1C2E] transition-all duration-200">
+                <Tag className="w-4 h-4 mr-2" />
+                Tags
+              </Button>
+            </div>
           </div>
-        </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <AnimatePresence>
+              {products.map((product) => (
+                <motion.div
+                  key={product.id}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <ProductCard
+                    product={product}
+                    onClick={() => handleProductClick(product.id)}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   )
 } 
