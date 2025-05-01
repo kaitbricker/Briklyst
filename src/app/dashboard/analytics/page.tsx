@@ -23,12 +23,13 @@ import {
   Area,
 } from 'recharts'
 import { ArrowUp, ArrowDown, Users, MousePointerClick, Package, DollarSign, Calendar, ChevronDown, Sun, Moon, Download, TrendingUp, TrendingDown } from 'lucide-react'
-import { Card } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useSpring, animated } from '@react-spring/web'
 import { Inter } from 'next/font/google'
 import { cn } from '@/lib/utils'
 import { useTheme } from 'next-themes'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 
 interface AnalyticsData {
   clicksByProduct: Record<string, number>
@@ -112,13 +113,19 @@ export default function AnalyticsDashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [interval, setInterval] = useState("daily")
-  const [timeRange, setTimeRange] = useState("year")
+  const [timeRange, setTimeRange] = useState("7d")
   const [dateRange, setDateRange] = useState<{ start: string; end: string } | null>(null)
   const [products, setProducts] = useState<ProductOption[]>([])
   const [selectedProduct, setSelectedProduct] = useState<string>("all")
   const [compareMode, setCompareMode] = useState(false)
   const [compareDateRange, setCompareDateRange] = useState<{ start: string; end: string } | null>(null)
   const [compareAnalytics, setCompareAnalytics] = useState<AnalyticsData | null>(null)
+  const [totalRevenue, setTotalRevenue] = useState(0)
+  const [totalClicks, setTotalClicks] = useState(0)
+  const [conversionRate, setConversionRate] = useState(0)
+  const [emailSubscribers, setEmailSubscribers] = useState(0)
+  const [revenueData, setRevenueData] = useState([])
+  const [topProducts, setTopProducts] = useState([])
 
   // Fetch all products for the dropdown
   useEffect(() => {
@@ -174,6 +181,32 @@ export default function AnalyticsDashboard() {
     }
     fetchAnalytics()
   }, [interval, dateRange, selectedProduct, compareMode, compareDateRange])
+
+  useEffect(() => {
+    // Mock data for demonstration
+    const mockData = () => {
+      setTotalRevenue(1234.56)
+      setTotalClicks(1234)
+      setConversionRate(3.2)
+      setEmailSubscribers(567)
+      setRevenueData([
+        { date: 'Jan', revenue: 400 },
+        { date: 'Feb', revenue: 300 },
+        { date: 'Mar', revenue: 600 },
+        { date: 'Apr', revenue: 800 },
+        { date: 'May', revenue: 1000 },
+        { date: 'Jun', revenue: 1200 },
+      ])
+      setTopProducts([
+        { name: 'Product A', clicks: 400 },
+        { name: 'Product B', clicks: 300 },
+        { name: 'Product C', clicks: 600 },
+        { name: 'Product D', clicks: 800 },
+        { name: 'Product E', clicks: 1000 },
+      ])
+    }
+    mockData()
+  }, [timeRange])
 
   const stats: StatCard[] = [
     {
@@ -576,6 +609,173 @@ export default function AnalyticsDashboard() {
           </div>
         </Card>
       )}
+
+      {/* Overview Cards */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">${totalRevenue.toFixed(2)}</div>
+            <p className="text-xs text-muted-foreground">
+              +20.1% from last month
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Clicks</CardTitle>
+            <MousePointerClick className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totalClicks}</div>
+            <p className="text-xs text-muted-foreground">
+              +12.3% from last month
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Conversion Rate</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{conversionRate}%</div>
+            <p className="text-xs text-muted-foreground">
+              +2.5% from last month
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Email Subscribers</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{emailSubscribers}</div>
+            <p className="text-xs text-muted-foreground">
+              +8.2% from last month
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Charts */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Revenue Over Time</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={revenueData}>
+                <XAxis dataKey="date" />
+                <YAxis />
+                <Tooltip />
+                <Line type="monotone" dataKey="revenue" stroke="#8884d8" />
+              </LineChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Top Products</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={topProducts}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="clicks" fill="#82ca9d" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Performance Tables */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Store Performance</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Metric</TableHead>
+                  <TableHead>Value</TableHead>
+                  <TableHead>Change</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell>Total Views</TableCell>
+                  <TableCell>12,345</TableCell>
+                  <TableCell className="text-green-500">+15%</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Unique Visitors</TableCell>
+                  <TableCell>8,765</TableCell>
+                  <TableCell className="text-green-500">+12%</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Average Time</TableCell>
+                  <TableCell>2m 45s</TableCell>
+                  <TableCell className="text-green-500">+5%</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Bounce Rate</TableCell>
+                  <TableCell>32%</TableCell>
+                  <TableCell className="text-red-500">-8%</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Email Engagement</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Metric</TableHead>
+                  <TableHead>Value</TableHead>
+                  <TableHead>Change</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell>Open Rate</TableCell>
+                  <TableCell>42%</TableCell>
+                  <TableCell className="text-green-500">+3%</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Click Rate</TableCell>
+                  <TableCell>18%</TableCell>
+                  <TableCell className="text-green-500">+5%</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Unsubscribe Rate</TableCell>
+                  <TableCell>0.8%</TableCell>
+                  <TableCell className="text-red-500">+0.2%</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>List Growth</TableCell>
+                  <TableCell>+234</TableCell>
+                  <TableCell className="text-green-500">+12%</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 } 
