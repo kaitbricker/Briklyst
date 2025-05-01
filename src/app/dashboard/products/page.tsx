@@ -26,6 +26,7 @@ import { Card } from '@/components/ui/card'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { ImageUpload } from '@/components/ui/image-upload'
+import BulkImportProducts from '@/components/BulkImportProducts'
 
 interface Product {
   id: string
@@ -163,6 +164,27 @@ export default function ProductsPage() {
     }
   }
 
+  // Add bulk submit handler
+  const handleBulkSubmit = async (bulkProducts) => {
+    try {
+      const response = await fetch('/api/products/bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ products: bulkProducts }),
+      });
+      if (!response.ok) throw new Error('Bulk import failed');
+      toast({ title: 'Success', description: 'Products imported successfully!' });
+      // Refresh products
+      const res = await fetch('/api/products');
+      if (res.ok) {
+        const data = await res.json();
+        setProducts(data);
+      }
+    } catch {
+      toast({ title: 'Error', description: 'Bulk import failed', variant: 'destructive' });
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -183,20 +205,23 @@ export default function ProductsPage() {
           <h1 className="text-3xl font-bold text-[#1C1C2E]">Products</h1>
           <p className="text-[#5F5F73]">Manage and track your product listings</p>
         </div>
-        <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
-          <DialogTrigger asChild>
-            <Button className="flex items-center gap-2">
-              <Plus className="w-4 h-4" />
-              Add Product
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add Product</DialogTitle>
-            </DialogHeader>
-            <ProductForm onSubmit={handleAddProduct} />
-          </DialogContent>
-        </Dialog>
+        <div className="flex gap-2">
+          <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
+            <DialogTrigger asChild>
+              <Button className="flex items-center gap-2">
+                <Plus className="w-4 h-4" />
+                Add Product
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add Product</DialogTitle>
+              </DialogHeader>
+              <ProductForm onSubmit={handleAddProduct} />
+            </DialogContent>
+          </Dialog>
+          <BulkImportProducts onBulkSubmit={handleBulkSubmit} />
+        </div>
       </motion.div>
 
       <div className="flex items-center gap-4 bg-white/50 backdrop-blur-sm p-4 rounded-xl shadow-sm">
