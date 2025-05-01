@@ -1,27 +1,26 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { getToken } from 'next-auth/jwt'
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
+  const token = await getToken({ req: request })
 
   // Check if the path is a protected route
   const isProtectedRoute = pathname.startsWith('/dashboard')
 
-  // Get the session token from cookies
-  const sessionToken = request.cookies.get('session-token')
-
-  // If it's a protected route and there's no session token, redirect to sign in
-  if (isProtectedRoute && !sessionToken) {
+  // If it's a protected route and there's no token, redirect to sign in
+  if (isProtectedRoute && !token) {
     const signInUrl = new URL('/auth/sign-in', request.url)
     signInUrl.searchParams.set('callbackUrl', pathname)
     return NextResponse.redirect(signInUrl)
   }
 
-  // If it's an auth route and there's a session token, redirect to dashboard
+  // If it's an auth route and there's a token, redirect to dashboard
   if (
     (pathname.startsWith('/auth/sign-in') ||
       pathname.startsWith('/auth/sign-up')) &&
-    sessionToken
+    token
   ) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }

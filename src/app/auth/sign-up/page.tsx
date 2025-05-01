@@ -6,11 +6,10 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import Link from 'next/link'
-import { useToast } from '@/components/ui/use-toast'
+import { toast } from '@/components/ui/use-toast'
 
 export default function SignUpPage() {
   const router = useRouter()
-  const { toast } = useToast()
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -25,7 +24,7 @@ export default function SignUpPage() {
     const name = formData.get('name') as string
 
     try {
-      const response = await fetch('/api/auth', {
+      const response = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, name }),
@@ -39,9 +38,9 @@ export default function SignUpPage() {
 
       toast({
         title: 'Account created successfully',
-        description: 'Welcome to Briklyst!',
+        description: 'Please check your email to verify your account.',
       })
-      router.push('/dashboard')
+      router.push('/auth/sign-in')
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Something went wrong'
       setError(errorMessage)
@@ -56,66 +55,74 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="w-full max-w-md space-y-8 rounded-lg border p-6 shadow-lg">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold">Create an account</h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Already have an account?{' '}
-            <Link href="/auth/sign-in" className="text-blue-600 hover:underline">
-              Sign in
-            </Link>
-          </p>
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-purple-500 to-pink-500">
+      <div className="w-full max-w-md space-y-8 rounded-lg bg-white p-8 shadow-lg">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
+            Create your account
+          </h2>
         </div>
-
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-          {error && (
-            <div className="rounded-md bg-red-50 p-4 text-sm text-red-600">
-              {error}
-            </div>
-          )}
-
-          <div className="space-y-4">
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="space-y-4 rounded-md shadow-sm">
             <div>
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name">Full name</Label>
               <Input
                 id="name"
                 name="name"
                 type="text"
+                autoComplete="name"
                 required
                 className="mt-1"
-                disabled={loading}
               />
             </div>
-
             <div>
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">Email address</Label>
               <Input
                 id="email"
                 name="email"
                 type="email"
+                autoComplete="email"
                 required
                 className="mt-1"
-                disabled={loading}
               />
             </div>
-
             <div>
               <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
                 name="password"
                 type="password"
+                autoComplete="new-password"
                 required
                 className="mt-1"
-                disabled={loading}
               />
             </div>
           </div>
 
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Creating account...' : 'Create account'}
-          </Button>
+          {error && (
+            <div className="text-sm text-red-600">
+              {error}
+            </div>
+          )}
+
+          <div>
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={loading}
+            >
+              {loading ? 'Creating account...' : 'Sign up'}
+            </Button>
+          </div>
+
+          <div className="text-center text-sm">
+            <Link
+              href="/auth/sign-in"
+              className="font-medium text-purple-600 hover:text-purple-500"
+            >
+              Already have an account? Sign in
+            </Link>
+          </div>
         </form>
       </div>
     </div>
