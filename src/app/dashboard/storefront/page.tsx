@@ -69,17 +69,22 @@ export default function StorefrontPage() {
     }
     const fetchProducts = async () => {
       try {
-        const response = await fetch('/api/products')
+        const response = await fetch(`/api/products?storefrontId=${storefront?.id}`)
+        if (!response.ok) throw new Error('Failed to fetch products')
         const data = await response.json()
-        setProducts(data)
+        setProducts(data || [])
       } catch (error) {
         console.error('Failed to fetch products:', error)
         setError('Failed to fetch products')
+        setProducts([])
       }
     }
-    fetchProducts()
+    
     fetchStorefront()
-  }, [toast])
+    if (storefront?.id) {
+      fetchProducts()
+    }
+  }, [toast, storefront?.id])
 
   const handleAddProduct = (data: {
     title: string
