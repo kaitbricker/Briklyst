@@ -15,6 +15,7 @@ import { Plus, Settings, Layout, Globe, Palette, Tag, Filter } from 'lucide-reac
 import { Card } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { motion, AnimatePresence } from 'framer-motion'
+import ThemeSelector from '@/components/dashboard/ThemeSelector'
 
 interface Product {
   id: string
@@ -24,6 +25,11 @@ interface Product {
   imageUrl: string
   affiliateUrl: string
   clicks: number
+  categoryId?: string
+  category?: {
+    id: string
+    name: string
+  }
 }
 
 interface Storefront {
@@ -39,6 +45,7 @@ interface Storefront {
   textColor: string
   fontFamily?: string
   layoutStyle?: string
+  themeId?: string
 }
 
 export default function StorefrontPage() {
@@ -49,6 +56,8 @@ export default function StorefrontPage() {
   const [storefront, setStorefront] = useState<Storefront | null>(null)
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('design')
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>([])
 
   useEffect(() => {
     const fetchStorefront = async () => {
@@ -68,6 +77,18 @@ export default function StorefrontPage() {
         setLoading(false)
       }
     }
+
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('/api/categories')
+        if (!response.ok) throw new Error('Failed to fetch categories')
+        const data = await response.json()
+        setCategories(data)
+      } catch (error) {
+        console.error('Failed to fetch categories:', error)
+      }
+    }
+
     const fetchProducts = async () => {
       try {
         const response = await fetch(`/api/products?storefrontId=${storefront?.id}`)
@@ -82,10 +103,15 @@ export default function StorefrontPage() {
     }
     
     fetchStorefront()
+    fetchCategories()
     if (storefront?.id) {
       fetchProducts()
     }
   }, [toast, storefront?.id])
+
+  const filteredProducts = selectedCategory
+    ? products.filter(product => product.categoryId === selectedCategory)
+    : products
 
   const handleAddProduct = (data: {
     title: string
@@ -93,6 +119,7 @@ export default function StorefrontPage() {
     price: number
     imageUrl: string
     affiliateUrl: string
+    categoryId?: string
   }) => {
     const newProduct: Product = {
       id: Date.now().toString(),
@@ -215,12 +242,32 @@ export default function StorefrontPage() {
                     price: 0,
                     imageUrl: data.image || '',
                     affiliateUrl: data.link,
+                    categoryId: data.categoryId
                   })
                 }}
               />
             </DialogContent>
           </Dialog>
         </motion.div>
+
+        {/* Category Filter */}
+        <div className="flex gap-2 overflow-x-auto pb-2">
+          <Button
+            variant={!selectedCategory ? 'default' : 'outline'}
+            onClick={() => setSelectedCategory(null)}
+          >
+            All Products
+          </Button>
+          {categories.map((category) => (
+            <Button
+              key={category.id}
+              variant={selectedCategory === category.id ? 'default' : 'outline'}
+              onClick={() => setSelectedCategory(category.id)}
+            >
+              {category.name}
+            </Button>
+          ))}
+        </div>
 
         {/* Main Content */}
         <Card className="bg-white shadow-xl rounded-xl overflow-hidden transition-all duration-200 hover:shadow-2xl">
@@ -257,6 +304,11 @@ export default function StorefrontPage() {
                 onSubmit={handleSubmit} 
                 className="space-y-6"
               >
+                <ThemeSelector 
+                  currentThemeId={storefront.themeId || 'bubblegum-pop'} 
+                  storefrontId={storefront.id} 
+                />
+                
                 <div className="grid gap-6 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="title" className="text-[#1C1C2E] font-medium">Storefront Title</Label>
@@ -371,22 +423,13 @@ export default function StorefrontPage() {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <AnimatePresence>
-              {products.map((product) => (
-                <motion.div
-                  key={product.id}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <ProductCard
-                    product={product}
-                    onClick={() => handleProductClick(product.id)}
-                  />
-                </motion.div>
-              ))}
-            </AnimatePresence>
+            {filteredProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onClick={() => handleProductClick(product.id)}
+              />
+            ))}
           </div>
         </motion.div>
       </div>
