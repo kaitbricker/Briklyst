@@ -248,7 +248,7 @@ export default function StorefrontPage() {
       >
         <div className="space-y-2">
           <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-pink-500">Storefront Customization</h1>
-          <p className="text-gray-500">Edit your storefront's look, feel, and content</p>
+          <p className="text-gray-500">Edit your storefront&apos;s look, feel, and content</p>
         </div>
         <div className="flex gap-2">
           <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
