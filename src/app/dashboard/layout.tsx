@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 import { cn } from '@/lib/utils'
 import { useSession, signOut } from 'next-auth/react'
+import { TopNav } from '@/components/layout/TopNav'
 
 const navItems = [
   {
@@ -70,70 +71,32 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-screen">
-      <div className="hidden w-64 border-r bg-gray-50/50 lg:block">
-        <div className="flex h-full flex-col gap-2 p-4">
-          <div className="flex h-14 items-center border-b px-4">
-            <Link href="/dashboard" className="flex items-center gap-2 font-semibold">
-              <span>Briklyst</span>
-            </Link>
+    <div className="flex min-h-screen flex-col">
+      <TopNav />
+      <div className="flex flex-1 pt-16">
+        <div className="hidden w-64 border-r bg-white/80 backdrop-blur-sm lg:block">
+          <div className="flex h-full flex-col gap-2 p-4">
+            <nav className="grid gap-1">
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    'flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 hover:bg-gray-50',
+                    pathname === item.href && 'bg-gray-100 text-gray-900'
+                  )}
+                >
+                  {item.title}
+                </Link>
+              ))}
+            </nav>
           </div>
-          <nav className="grid gap-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  'flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900',
-                  pathname === item.href && 'bg-gray-100 text-gray-900'
-                )}
-              >
-                {item.title}
-              </Link>
-            ))}
-          </nav>
         </div>
-      </div>
-      <div className="flex-1">
-        <div className="min-h-screen bg-gray-50">
-          <nav className="border-b bg-white">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <div className="flex h-16 items-center justify-between">
-                <div className="flex items-center">
-                  <Link href="/dashboard" className="text-xl font-bold">
-                    Briklyst
-                  </Link>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <span className="text-sm text-gray-600">{session.user.email}</span>
-                  <Button
-                    variant="ghost"
-                    onClick={handleSignOut}
-                    className="text-sm text-red-600 hover:text-red-800"
-                  >
-                    Sign out
-                  </Button>
-                </div>
-              </div>
+        <div className="flex-1">
+          <div className="min-h-screen bg-gray-50">
+            <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+              {children}
             </div>
-          </nav>
-
-          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-            <div className="mb-6 flex items-center space-x-4">
-              <Link
-                href="/dashboard"
-                className="text-sm font-medium text-gray-600 hover:text-gray-900"
-              >
-                Products
-              </Link>
-              <Link
-                href="/dashboard/settings"
-                className="text-sm font-medium text-gray-600 hover:text-gray-900"
-              >
-                Storefront Settings
-              </Link>
-            </div>
-            {children}
           </div>
         </div>
       </div>
