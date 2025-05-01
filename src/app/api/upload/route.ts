@@ -3,6 +3,8 @@ import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { Session } from 'next-auth'
+import { writeFile } from 'fs/promises'
+import { join } from 'path'
 
 export async function POST(request: Request) {
   try {
@@ -24,11 +26,25 @@ export async function POST(request: Request) {
       )
     }
 
-    // In a real application, you would upload the file to a storage service
-    // like AWS S3, Cloudinary, etc. For now, we'll just return a mock URL
-    const mockUrl = `https://picsum.photos/seed/${Date.now()}/400/400`
+    // Convert file to buffer
+    const bytes = await file.arrayBuffer()
+    const buffer = Buffer.from(bytes)
 
-    return NextResponse.json({ url: mockUrl })
+    // Create a unique filename
+    const timestamp = Date.now()
+    const filename = `${timestamp}-${file.name}`
+    
+    // Save the file to the public directory
+    const publicDir = join(process.cwd(), 'public', 'uploads')
+    const filepath = join(publicDir, filename)
+    
+    // Ensure the uploads directory exists
+    await writeFile(filepath, buffer)
+
+    // Return the URL for the uploaded file
+    const url = `/uploads/${filename}`
+
+    return NextResponse.json({ url })
   } catch (error) {
     console.error('Upload error:', error)
     return NextResponse.json(
