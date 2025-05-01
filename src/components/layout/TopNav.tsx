@@ -64,7 +64,7 @@ export function TopNav() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Link href="/preview" className="flex items-center w-full">
+                  <Link href="/preview" className="flex items-center w-full" target="_blank">
                     <Eye className="w-4 h-4 mr-2" />
                     Preview Storefront
                   </Link>

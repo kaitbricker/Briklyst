@@ -6,7 +6,7 @@ import { useStorefront } from '@/hooks/useStorefront';
 
 const navigationItems = [
   { name: 'Dashboard', path: '/dashboard', icon: HomeIcon },
-  { name: 'Storefront', path: '/dashboard/storefront', icon: ShoppingBagIcon },
+  { name: 'Storefront Customization', path: '/dashboard/storefront', icon: ShoppingBagIcon },
   { name: 'Analytics', path: '/dashboard/analytics', icon: ChartBarIcon },
   { name: 'Settings', path: '/dashboard/settings', icon: CogIcon },
 ];
