@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ProductCard } from "./ProductCard";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface Product {
   id: string;
@@ -12,6 +15,8 @@ interface Product {
   price: number;
   imageUrl: string;
   affiliateUrl: string;
+  tags?: string[];
+  featured?: boolean;
 }
 
 interface Storefront {
@@ -30,6 +35,8 @@ interface StorefrontContentProps {
 
 export function StorefrontContent({ username }: StorefrontContentProps) {
   const [storefront, setStorefront] = useState<Storefront | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -65,18 +72,22 @@ export function StorefrontContent({ username }: StorefrontContentProps) {
     );
   }
 
+  const featuredProducts = storefront?.products.filter(p => p.featured) || [];
+  const regularProducts = storefront?.products.filter(p => !p.featured) || [];
+  const allTags = [...new Set(storefront?.products.flatMap(p => p.tags || []))];
+
   return (
-    <div
-      className="min-h-screen"
-      style={{
-        backgroundColor: storefront.primaryColor,
-        color: storefront.accentColor,
-      }}
-    >
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-8 text-center">
-          {storefront.logoUrl && (
-            <div className="relative mx-auto mb-4 h-32 w-32">
+    <div className="min-h-screen bg-gradient-to-b from-[#fdfbfb] to-[#f5f7fa]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Header */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-12"
+        >
+          {storefront?.logoUrl && (
+            <div className="relative mx-auto mb-6 h-24 w-24">
               <Image
                 src={storefront.logoUrl}
                 alt={storefront.title}
@@ -85,32 +96,98 @@ export function StorefrontContent({ username }: StorefrontContentProps) {
               />
             </div>
           )}
-          <h1 className="text-3xl font-bold">{storefront.title}</h1>
-          {storefront.description && (
-            <p className="mt-2 text-gray-600">{storefront.description}</p>
+          <h1 className="text-4xl font-bold mb-4">{storefront?.title}</h1>
+          {storefront?.description && (
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              {storefront.description}
+            </p>
           )}
-        </div>
+        </motion.div>
 
-        <div className="mb-8 text-center">
-          <Link
-            href="/"
-            className="text-sm text-gray-600 hover:text-gray-900"
-            style={{ color: storefront.accentColor }}
-          >
-            ← Back to home
-          </Link>
-        </div>
-
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {storefront.products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              primaryColor={storefront.primaryColor}
-              accentColor={storefront.accentColor}
+        {/* Search and Filters */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mb-12"
+        >
+          <div className="relative max-w-md mx-auto mb-6">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input
+              placeholder="Search your favorites..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
             />
-          ))}
-        </div>
+          </div>
+          
+          <div className="flex flex-wrap justify-center gap-2">
+            <button
+              onClick={() => setSelectedTag(null)}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                selectedTag === null
+                  ? 'bg-orange-100 text-orange-700'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              All Products
+            </button>
+            {allTags.map((tag) => (
+              <button
+                key={tag}
+                onClick={() => setSelectedTag(tag)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  selectedTag === tag
+                    ? 'bg-orange-100 text-orange-700'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Featured Products */}
+        {featuredProducts.length > 0 && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="mb-16"
+          >
+            <h2 className="text-2xl font-bold mb-6">Featured Picks</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {featuredProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  primaryColor={storefront?.primaryColor || '#000'}
+                  accentColor={storefront?.accentColor || '#fff'}
+                />
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {/* Regular Products */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+        >
+          <h2 className="text-2xl font-bold mb-6">All Products</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {regularProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                primaryColor={storefront?.primaryColor || '#000'}
+                accentColor={storefront?.accentColor || '#fff'}
+              />
+            ))}
+          </div>
+        </motion.div>
       </div>
     </div>
   );

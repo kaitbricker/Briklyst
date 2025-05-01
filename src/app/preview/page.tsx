@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Search, ShoppingCart, Heart, Share2, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
+import { ProductCard } from '@/components/ProductCard'
 
 interface Product {
   id: string
@@ -20,6 +21,7 @@ interface Product {
   affiliateUrl: string
   collection: string
   clicks: number
+  tags?: string[]
 }
 
 interface Theme {
@@ -179,7 +181,7 @@ export default function PreviewStorefront() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <AnimatePresence>
               {filteredProducts.map((product, index) => (
                 <motion.div
@@ -189,59 +191,18 @@ export default function PreviewStorefront() {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3, delay: index * 0.1 }}
                 >
-                  <Card className="group overflow-hidden bg-white/50 backdrop-blur-sm hover:shadow-lg transition-all duration-200">
-                    <div className="relative aspect-square">
-                      {product.imageUrl ? (
-                        <Image
-                          src={product.imageUrl}
-                          alt={product.title}
-                          fill
-                          className="object-cover transition-transform group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
-                          <ShoppingCart className="w-8 h-8 text-gray-400" />
-                        </div>
-                      )}
-                      <div className="absolute top-2 right-2 flex gap-2">
-                        <Button size="icon" variant="outline" className="bg-white/80 backdrop-blur-sm">
-                          <Heart className="w-4 h-4" />
-                        </Button>
-                        <Button size="icon" variant="outline" className="bg-white/80 backdrop-blur-sm">
-                          <Share2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                    <CardContent className="p-4">
-                      <div className="mb-2">
-                        <span className="text-xs font-medium px-2 py-1 rounded-full bg-[#FF6D00]/10 text-[#FF6D00]">
-                          {product.collection}
-                        </span>
-                      </div>
-                      <h3 className="font-semibold text-lg mb-2">{product.title}</h3>
-                      <p className="text-sm text-[#5F5F73] mb-4 line-clamp-2">
-                        {product.description}
-                      </p>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <span className="text-lg font-bold">${product.price.toFixed(2)}</span>
-                          <div className="text-xs text-[#5F5F73] mt-1">
-                            {product.clicks} clicks
-                          </div>
-                        </div>
-                        <Button 
-                          size="sm"
-                          onClick={() => {
-                            handleProductClick(product.id)
-                            window.open(product.affiliateUrl, '_blank')
-                          }}
-                        >
-                          <ExternalLink className="w-4 h-4 mr-2" />
-                          View Product
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <ProductCard
+                    product={{
+                      ...product,
+                      description: product.description || '',
+                      imageUrl: product.imageUrl || '/placeholder-product.jpg',
+                      tags: [product.collection]
+                    }}
+                    onClick={() => {
+                      handleProductClick(product.id)
+                      window.open(product.affiliateUrl, '_blank')
+                    }}
+                  />
                 </motion.div>
               ))}
             </AnimatePresence>
