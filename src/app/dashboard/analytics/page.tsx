@@ -22,7 +22,7 @@ import {
   AreaChart,
   Area,
 } from 'recharts'
-import { ArrowUp, ArrowDown, Users, MousePointerClick, Package, DollarSign, Calendar, ChevronDown, Sun, Moon, Download, TrendingUp, TrendingDown } from 'lucide-react'
+import { ArrowUp, ArrowDown, Users, MousePointerClick, Package, DollarSign, Calendar, ChevronDown, Sun, Moon, Download, TrendingUp, TrendingDown, BarChart2, Mail, PlusCircle, Palette, Settings } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useSpring, animated } from '@react-spring/web'
@@ -30,6 +30,7 @@ import { Inter } from 'next/font/google'
 import { cn } from '@/lib/utils'
 import { useTheme } from 'next-themes'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import Link from 'next/link'
 
 interface AnalyticsData {
   clicksByProduct: Record<string, number>
@@ -126,6 +127,19 @@ export default function AnalyticsDashboard() {
   const [emailSubscribers, setEmailSubscribers] = useState(0)
   const [revenueData, setRevenueData] = useState([])
   const [topProducts, setTopProducts] = useState([])
+  const [timeFilter, setTimeFilter] = useState('week')
+  const [mockClicks, setMockClicks] = useState({ 
+    week: 0, 
+    month: 0,
+    topProducts: [
+      { title: "Product A", clicks: 40 },
+      { title: "Product B", clicks: 32 },
+      { title: "Product C", clicks: 25 },
+      { title: "Product D", clicks: 18 },
+      { title: "Product E", clicks: 8 },
+    ]
+  })
+  const [mockEmailStats, setMockEmailStats] = useState({ sent: 0, openRate: 0, clickRate: 0, lastCampaign: { name: '', sent: '', openRate: 0, clickRate: 0 } })
 
   // Fetch all products for the dropdown
   useEffect(() => {
@@ -204,6 +218,18 @@ export default function AnalyticsDashboard() {
         { name: 'Product D', clicks: 800 },
         { name: 'Product E', clicks: 1000 },
       ])
+      setMockClicks({ 
+        week: 1234, 
+        month: 2345,
+        topProducts: [
+          { title: "Product A", clicks: 40 },
+          { title: "Product B", clicks: 32 },
+          { title: "Product C", clicks: 25 },
+          { title: "Product D", clicks: 18 },
+          { title: "Product E", clicks: 8 },
+        ]
+      })
+      setMockEmailStats({ sent: 1000, openRate: 42, clickRate: 18, lastCampaign: { name: 'Summer Sale', sent: '1000', openRate: 42, clickRate: 18 } })
     }
     mockData()
   }, [timeRange])
@@ -696,85 +722,88 @@ export default function AnalyticsDashboard() {
         </Card>
       </div>
 
-      {/* Performance Tables */}
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Store Performance</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Metric</TableHead>
-                  <TableHead>Value</TableHead>
-                  <TableHead>Change</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow>
-                  <TableCell>Total Views</TableCell>
-                  <TableCell>12,345</TableCell>
-                  <TableCell className="text-green-500">+15%</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Unique Visitors</TableCell>
-                  <TableCell>8,765</TableCell>
-                  <TableCell className="text-green-500">+12%</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Average Time</TableCell>
-                  <TableCell>2m 45s</TableCell>
-                  <TableCell className="text-green-500">+5%</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Bounce Rate</TableCell>
-                  <TableCell>32%</TableCell>
-                  <TableCell className="text-red-500">-8%</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+      {/* Store Performance and Email Engagement Tables */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        {/* Storefront Performance Overview */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.4 }}
+        >
+          <Card className="p-6 rounded-2xl bg-white border border-gray-100 shadow-md hover:shadow-lg transition-all duration-300">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold flex items-center gap-2 text-blue-700"><BarChart2 size={20}/> Storefront Performance</h2>
+              <div className="flex gap-2">
+                <Button size="sm" variant={timeFilter === 'week' ? 'default' : 'outline'} onClick={() => setTimeFilter('week')}>7 days</Button>
+                <Button size="sm" variant={timeFilter === 'month' ? 'default' : 'outline'} onClick={() => setTimeFilter('month')}>30 days</Button>
+              </div>
+            </div>
+            <div className="mb-4">
+              <div className="text-3xl font-bold text-blue-700">{timeFilter === 'week' ? mockClicks.week : mockClicks.month}</div>
+              <div className="text-gray-500">Total Clicks ({timeFilter === 'week' ? 'This Week' : 'This Month'})</div>
+            </div>
+            <div>
+              <div className="font-semibold mb-2">Top 5 Products</div>
+              <table className="w-full text-sm border-separate border-spacing-y-1">
+                <thead>
+                  <tr className="text-left text-gray-500">
+                    <th>Product</th>
+                    <th>Clicks</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {mockClicks.topProducts.map((p, i) => (
+                    <tr key={i} className={i % 2 === 0 ? "bg-gray-50" : "bg-white"}>
+                      <td className="rounded-l-lg px-2 py-1">{p.title}</td>
+                      <td className="rounded-r-lg px-2 py-1">{p.clicks}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        </motion.div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Email Engagement</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Metric</TableHead>
-                  <TableHead>Value</TableHead>
-                  <TableHead>Change</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow>
-                  <TableCell>Open Rate</TableCell>
-                  <TableCell>42%</TableCell>
-                  <TableCell className="text-green-500">+3%</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Click Rate</TableCell>
-                  <TableCell>18%</TableCell>
-                  <TableCell className="text-green-500">+5%</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Unsubscribe Rate</TableCell>
-                  <TableCell>0.8%</TableCell>
-                  <TableCell className="text-red-500">+0.2%</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>List Growth</TableCell>
-                  <TableCell>+234</TableCell>
-                  <TableCell className="text-green-500">+12%</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+        {/* Email Engagement */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.5 }}
+        >
+          <Card className="p-6 rounded-2xl bg-white border border-gray-100 shadow-md hover:shadow-lg transition-all duration-300">
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-blue-700"><Mail size={20}/> Email Engagement</h2>
+            <div className="mb-2">Emails Sent: <span className="font-semibold text-blue-700">{mockEmailStats.sent}</span></div>
+            <div className="mb-2">Open Rate: <span className="font-semibold text-blue-700">{mockEmailStats.openRate}%</span></div>
+            <div className="mb-2">Click-Through Rate: <span className="font-semibold text-blue-700">{mockEmailStats.clickRate}%</span></div>
+            <div className="mt-4">
+              <div className="font-semibold mb-1">Most Recent Campaign</div>
+              <div className="text-gray-700">{mockEmailStats.lastCampaign.name}</div>
+              <div className="text-gray-500 text-sm">Sent: {mockEmailStats.lastCampaign.sent} | Open: {mockEmailStats.lastCampaign.openRate}% | Click: {mockEmailStats.lastCampaign.clickRate}%</div>
+            </div>
+          </Card>
+        </motion.div>
+      </div>
+
+      {/* Quick Access Actions */}
+      <div className="max-w-4xl mx-auto mt-10 flex flex-wrap gap-4 justify-center">
+        <Button asChild className="flex items-center gap-2">
+          <Link href="/dashboard/products" className="flex items-center gap-2">
+            <PlusCircle size={18}/>
+            Add New Product
+          </Link>
+        </Button>
+        <Button asChild variant="secondary" className="flex items-center gap-2">
+          <Link href="/dashboard/storefront" className="flex items-center gap-2">
+            <Palette size={18}/>
+            Customize Storefront
+          </Link>
+        </Button>
+        <Button asChild variant="secondary" className="flex items-center gap-2">
+          <Link href="/dashboard/settings" className="flex items-center gap-2">
+            <Settings size={18}/>
+            Account Settings
+          </Link>
+        </Button>
       </div>
     </div>
   )
