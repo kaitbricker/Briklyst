@@ -233,6 +233,7 @@ export default function ProductsPage() {
                     src={product.imageUrl}
                     alt={product.title}
                     fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
                     className="object-cover group-hover:scale-105 transition-transform duration-200"
                   />
                 </div>
