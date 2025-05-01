@@ -167,7 +167,7 @@ export default function StorefrontPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-[#1C1C2E]">Storefront Customization</h1>
-            <p className="text-[#5F5F73] mt-2">Customize your storefront's appearance and manage your products</p>
+            <p className="text-[#5F5F73] mt-2">Customize your storefront&apos;s appearance and manage your products</p>
           </div>
           <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
             <DialogTrigger asChild>
