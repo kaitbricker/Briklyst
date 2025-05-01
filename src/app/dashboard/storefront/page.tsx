@@ -16,6 +16,10 @@ import { Card } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { motion, AnimatePresence } from 'framer-motion'
 import ThemeSelector from '@/components/dashboard/ThemeSelector'
+import StorefrontHeader from '@/components/storefront/StorefrontHeader'
+import StorefrontDescriptionCard from '@/components/storefront/StorefrontDescriptionCard'
+import ProductGrid from '@/components/storefront/ProductGrid'
+import Link from 'next/link'
 
 interface Product {
   id: string
@@ -58,6 +62,10 @@ export default function StorefrontPage() {
   const [activeTab, setActiveTab] = useState('design')
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([])
+  const [localStorefront, setLocalStorefront] = useState<Storefront | null>(null)
+  const [saving, setSaving] = useState<{ [key: string]: boolean }>({})
+  const [saveSuccess, setSaveSuccess] = useState<{ [key: string]: boolean }>({})
+  const [saveError, setSaveError] = useState<{ [key: string]: string }>({})
 
   useEffect(() => {
     const fetchStorefront = async () => {
@@ -109,6 +117,10 @@ export default function StorefrontPage() {
     }
   }, [toast, storefront?.id])
 
+  useEffect(() => {
+    if (storefront) setLocalStorefront(storefront)
+  }, [storefront])
+
   const filteredProducts = selectedCategory
     ? products.filter(product => product.categoryId === selectedCategory)
     : products
@@ -148,13 +160,13 @@ export default function StorefrontPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!storefront) return
+    if (!localStorefront) return
 
     try {
       const response = await fetch('/api/storefronts', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(storefront),
+        body: JSON.stringify(localStorefront),
       })
 
       if (!response.ok) throw new Error('Failed to update storefront')
@@ -169,6 +181,28 @@ export default function StorefrontPage() {
         description: 'Failed to update storefront settings',
         variant: 'destructive',
       })
+    }
+  }
+
+  const handleFieldChange = async (field: keyof Storefront, value: any) => {
+    if (!localStorefront) return
+    setLocalStorefront({ ...localStorefront, [field]: value })
+    setSaving((prev) => ({ ...prev, [field]: true }))
+    setSaveSuccess((prev) => ({ ...prev, [field]: false }))
+    setSaveError((prev) => ({ ...prev, [field]: '' }))
+    try {
+      const response = await fetch('/api/storefronts', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...localStorefront, [field]: value }),
+      })
+      if (!response.ok) throw new Error('Failed to save')
+      setSaving((prev) => ({ ...prev, [field]: false }))
+      setSaveSuccess((prev) => ({ ...prev, [field]: true }))
+      setTimeout(() => setSaveSuccess((prev) => ({ ...prev, [field]: false })), 1500)
+    } catch (err: any) {
+      setSaving((prev) => ({ ...prev, [field]: false }))
+      setSaveError((prev) => ({ ...prev, [field]: err.message || 'Save failed' }))
     }
   }
 
@@ -201,238 +235,182 @@ export default function StorefrontPage() {
     )
   }
 
-  if (!storefront) return null
+  if (!localStorefront) return null
 
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className={`min-h-screen ${gradients.primary} p-8`}
-    >
-      <div className="max-w-6xl mx-auto space-y-8">
-        {/* Header */}
-        <motion.div 
-          initial={{ y: -20 }}
-          animate={{ y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="flex items-center justify-between bg-white/50 backdrop-blur-sm p-6 rounded-xl shadow-sm"
-        >
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold text-[#1C1C2E]">Storefront Customization</h1>
-            <p className="text-[#5F5F73]">Customize your storefront&apos;s appearance and manage your products</p>
-          </div>
-          <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
-            <DialogTrigger asChild>
-              <Button 
-                className="bg-[#1C1C2E] hover:bg-[#2D2D44] text-white transition-all duration-200 ease-in-out"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Product
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>Add New Product</DialogTitle>
-              </DialogHeader>
-              <ProductForm
-                onSubmit={(data) => {
-                  handleAddProduct({
-                    title: data.title,
-                    description: data.description || '',
-                    price: 0,
-                    imageUrl: data.image || '',
-                    affiliateUrl: data.link,
-                    categoryId: data.categoryId
-                  })
-                }}
-              />
-            </DialogContent>
-          </Dialog>
-        </motion.div>
-
-        {/* Category Filter */}
-        <div className="flex gap-2 overflow-x-auto pb-2">
-          <Button
-            variant={!selectedCategory ? 'default' : 'outline'}
-            onClick={() => setSelectedCategory(null)}
-          >
-            All Products
-          </Button>
-          {categories.map((category) => (
-            <Button
-              key={category.id}
-              variant={selectedCategory === category.id ? 'default' : 'outline'}
-              onClick={() => setSelectedCategory(category.id)}
-            >
-              {category.name}
-            </Button>
-          ))}
+    <div className="flex flex-col md:flex-row gap-8 p-8">
+      {/* Settings Form */}
+      <div className="w-full md:w-1/2 space-y-8">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold">Storefront Settings</h1>
+          {localStorefront && (
+            <Link href={`/${localStorefront.domain || ''}`} target="_blank">
+              <Button variant="outline">View Storefront</Button>
+            </Link>
+          )}
         </div>
-
-        {/* Main Content */}
-        <Card className="bg-white shadow-xl rounded-xl overflow-hidden transition-all duration-200 hover:shadow-2xl">
-          <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="w-full border-b bg-gray-50 p-0">
-              <TabsTrigger
-                value="design"
-                className="flex items-center gap-2 px-6 py-3 data-[state=active]:text-[#1C1C2E] data-[state=active]:border-b-2 data-[state=active]:border-[#1C1C2E] transition-all duration-200"
-              >
-                <Palette className="w-4 h-4" />
-                Design
-              </TabsTrigger>
-              <TabsTrigger
-                value="layout"
-                className="flex items-center gap-2 px-6 py-3 data-[state=active]:text-[#1C1C2E] data-[state=active]:border-b-2 data-[state=active]:border-[#1C1C2E] transition-all duration-200"
-              >
-                <Layout className="w-4 h-4" />
-                Layout
-              </TabsTrigger>
-              <TabsTrigger
-                value="settings"
-                className="flex items-center gap-2 px-6 py-3 data-[state=active]:text-[#1C1C2E] data-[state=active]:border-b-2 data-[state=active]:border-[#1C1C2E] transition-all duration-200"
-              >
-                <Settings className="w-4 h-4" />
-                Settings
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="design" className="p-6">
-              <motion.form 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                onSubmit={handleSubmit} 
-                className="space-y-6"
-              >
-                <ThemeSelector 
-                  currentThemeId={storefront.themeId || 'bubblegum-pop'} 
-                  storefrontId={storefront.id} 
-                />
-                
-                <div className="grid gap-6 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="title" className="text-[#1C1C2E] font-medium">Storefront Title</Label>
-                    <Input
-                      id="title"
-                      value={storefront.title}
-                      onChange={(e) => setStorefront({ ...storefront, title: e.target.value })}
-                      className="border-[#E5E7EB] focus:border-[#1C1C2E] focus:ring-[#1C1C2E] transition-all duration-200"
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="domain" className="text-[#1C1C2E] font-medium">
-                      Custom Domain
-                      <span className="text-[#5F5F73] ml-2 text-sm">(optional)</span>
-                    </Label>
-                    <div className="relative">
-                      <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#5F5F73]" />
-                      <Input
-                        id="domain"
-                        value={storefront.domain || ''}
-                        onChange={(e) => setStorefront({ ...storefront, domain: e.target.value })}
-                        className="pl-10 border-[#E5E7EB] focus:border-[#1C1C2E] focus:ring-[#1C1C2E] transition-all duration-200"
-                        placeholder="your-store.com"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="description" className="text-[#1C1C2E] font-medium">Description</Label>
-                  <Textarea
-                    id="description"
-                    value={storefront.description || ''}
-                    onChange={(e) => setStorefront({ ...storefront, description: e.target.value })}
-                    className="min-h-[100px] border-[#E5E7EB] focus:border-[#1C1C2E] focus:ring-[#1C1C2E] transition-all duration-200"
-                    placeholder="Describe your storefront..."
-                  />
-                </div>
-
-                <div className="grid gap-6 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label className="text-[#1C1C2E] font-medium">Primary Color</Label>
-                    <ColorPicker
-                      color={storefront.primaryColor}
-                      onChange={(color) => setStorefront({ ...storefront, primaryColor: color })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-[#1C1C2E] font-medium">Accent Color</Label>
-                    <ColorPicker
-                      color={storefront.accentColor}
-                      onChange={(color) => setStorefront({ ...storefront, accentColor: color })}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex justify-end">
-                  <Button 
-                    type="submit" 
-                    className="bg-[#1C1C2E] hover:bg-[#2D2D44] text-white transition-all duration-200 ease-in-out"
-                  >
-                    Save Changes
-                  </Button>
-                </div>
-              </motion.form>
-            </TabsContent>
-
-            <TabsContent value="layout" className="p-6">
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                className="text-[#5F5F73]"
-              >
-                Layout customization coming soon...
-              </motion.div>
-            </TabsContent>
-
-            <TabsContent value="settings" className="p-6">
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                className="text-[#5F5F73]"
-              >
-                Additional settings coming soon...
-              </motion.div>
-            </TabsContent>
-          </Tabs>
-        </Card>
-
-        {/* Products Grid */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="space-y-6"
-        >
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-semibold text-[#1C1C2E]">Your Products</h2>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" className="text-[#5F5F73] hover:text-[#1C1C2E] transition-all duration-200">
-                <Filter className="w-4 h-4 mr-2" />
-                Filter
-              </Button>
-              <Button variant="outline" size="sm" className="text-[#5F5F73] hover:text-[#1C1C2E] transition-all duration-200">
-                <Tag className="w-4 h-4 mr-2" />
-                Tags
-              </Button>
-            </div>
+        <form className="space-y-6" onSubmit={e => e.preventDefault()}>
+          {/* Title */}
+          <div className="flex items-center gap-2">
+            <Label htmlFor="title">Title</Label>
+            <span className="ml-1 text-gray-400 cursor-pointer" title="Displayed at the top of your storefront">?</span>
+            {saving.title && <span className="ml-2 animate-spin">⏳</span>}
+            {saveSuccess.title && <span className="ml-2 text-green-500">✔</span>}
+            {saveError.title && <span className="ml-2 text-red-500">{saveError.title}</span>}
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onClick={() => handleProductClick(product.id)}
-              />
-            ))}
+          <Input
+            id="title"
+            value={localStorefront.title}
+            onChange={e => handleFieldChange('title', e.target.value)}
+          />
+          {/* Domain */}
+          <div className="flex items-center gap-2">
+            <Label htmlFor="domain">Domain</Label>
+            <span className="ml-1 text-gray-400 cursor-pointer" title="Custom domain for your storefront (optional)">?</span>
+            {saving.domain && <span className="ml-2 animate-spin">⏳</span>}
+            {saveSuccess.domain && <span className="ml-2 text-green-500">✔</span>}
+            {saveError.domain && <span className="ml-2 text-red-500">{saveError.domain}</span>}
           </div>
-        </motion.div>
+          <Input
+            id="domain"
+            value={localStorefront.domain}
+            onChange={e => handleFieldChange('domain', e.target.value)}
+            placeholder="your-store.com"
+          />
+          {/* Description */}
+          <div className="flex items-center gap-2">
+            <Label htmlFor="description">Description</Label>
+            <span className="ml-1 text-gray-400 cursor-pointer" title="Describe your storefront">?</span>
+            {saving.description && <span className="ml-2 animate-spin">⏳</span>}
+            {saveSuccess.description && <span className="ml-2 text-green-500">✔</span>}
+            {saveError.description && <span className="ml-2 text-red-500">{saveError.description}</span>}
+          </div>
+          <Textarea
+            id="description"
+            value={localStorefront.description}
+            onChange={e => handleFieldChange('description', e.target.value)}
+            placeholder="Describe your storefront..."
+          />
+          {/* Logo URL */}
+          <div className="flex items-center gap-2">
+            <Label htmlFor="logoUrl">Logo URL</Label>
+            <span className="ml-1 text-gray-400 cursor-pointer" title="URL for your storefront logo image">?</span>
+            {saving.logoUrl && <span className="ml-2 animate-spin">⏳</span>}
+            {saveSuccess.logoUrl && <span className="ml-2 text-green-500">✔</span>}
+            {saveError.logoUrl && <span className="ml-2 text-red-500">{saveError.logoUrl}</span>}
+          </div>
+          <Input
+            id="logoUrl"
+            value={localStorefront.logoUrl}
+            onChange={e => handleFieldChange('logoUrl', e.target.value)}
+            placeholder="Paste logo image URL or upload"
+          />
+          {/* Banner URL */}
+          <div className="flex items-center gap-2">
+            <Label htmlFor="bannerUrl">Banner URL</Label>
+            <span className="ml-1 text-gray-400 cursor-pointer" title="URL for your storefront banner image">?</span>
+            {saving.bannerUrl && <span className="ml-2 animate-spin">⏳</span>}
+            {saveSuccess.bannerUrl && <span className="ml-2 text-green-500">✔</span>}
+            {saveError.bannerUrl && <span className="ml-2 text-red-500">{saveError.bannerUrl}</span>}
+          </div>
+          <Input
+            id="bannerUrl"
+            value={localStorefront.bannerUrl}
+            onChange={e => handleFieldChange('bannerUrl', e.target.value)}
+            placeholder="Paste banner image URL or upload"
+          />
+          {/* Theme Selector */}
+          <div className="flex items-center gap-2">
+            <Label>Theme</Label>
+            <span className="ml-1 text-gray-400 cursor-pointer" title="Choose a color and style theme for your storefront">?</span>
+            {saving.themeId && <span className="ml-2 animate-spin">⏳</span>}
+            {saveSuccess.themeId && <span className="ml-2 text-green-500">✔</span>}
+            {saveError.themeId && <span className="ml-2 text-red-500">{saveError.themeId}</span>}
+          </div>
+          <ThemeSelector
+            currentThemeId={localStorefront.themeId || 'bubblegum-pop'}
+            storefrontId={localStorefront.id || ''}
+          />
+          {/* Colors */}
+          <div className="flex items-center gap-2">
+            <Label>Primary Color</Label>
+            <span className="ml-1 text-gray-400 cursor-pointer" title="Primary color for your storefront">?</span>
+            {saving.primaryColor && <span className="ml-2 animate-spin">⏳</span>}
+            {saveSuccess.primaryColor && <span className="ml-2 text-green-500">✔</span>}
+            {saveError.primaryColor && <span className="ml-2 text-red-500">{saveError.primaryColor}</span>}
+          </div>
+          <Input
+            id="primaryColor"
+            value={localStorefront.primaryColor}
+            onChange={e => handleFieldChange('primaryColor', e.target.value)}
+            placeholder="#FF6D00"
+          />
+          <div className="flex items-center gap-2">
+            <Label>Accent Color</Label>
+            <span className="ml-1 text-gray-400 cursor-pointer" title="Accent color for your storefront">?</span>
+            {saving.accentColor && <span className="ml-2 animate-spin">⏳</span>}
+            {saveSuccess.accentColor && <span className="ml-2 text-green-500">✔</span>}
+            {saveError.accentColor && <span className="ml-2 text-red-500">{saveError.accentColor}</span>}
+          </div>
+          <Input
+            id="accentColor"
+            value={localStorefront.accentColor}
+            onChange={e => handleFieldChange('accentColor', e.target.value)}
+            placeholder="#E85F00"
+          />
+          <div className="flex items-center gap-2">
+            <Label>Background Color</Label>
+            <span className="ml-1 text-gray-400 cursor-pointer" title="Background color for your storefront">?</span>
+            {saving.backgroundColor && <span className="ml-2 animate-spin">⏳</span>}
+            {saveSuccess.backgroundColor && <span className="ml-2 text-green-500">✔</span>}
+            {saveError.backgroundColor && <span className="ml-2 text-red-500">{saveError.backgroundColor}</span>}
+          </div>
+          <Input
+            id="backgroundColor"
+            value={localStorefront.backgroundColor}
+            onChange={e => handleFieldChange('backgroundColor', e.target.value)}
+            placeholder="#FFFFFF"
+          />
+          <div className="flex items-center gap-2">
+            <Label>Text Color</Label>
+            <span className="ml-1 text-gray-400 cursor-pointer" title="Text color for your storefront">?</span>
+            {saving.textColor && <span className="ml-2 animate-spin">⏳</span>}
+            {saveSuccess.textColor && <span className="ml-2 text-green-500">✔</span>}
+            {saveError.textColor && <span className="ml-2 text-red-500">{saveError.textColor}</span>}
+          </div>
+          <Input
+            id="textColor"
+            value={localStorefront.textColor}
+            onChange={e => handleFieldChange('textColor', e.target.value)}
+            placeholder="#1C1C2E"
+          />
+          <div className="flex items-center gap-2">
+            <Label>Font Family</Label>
+            <span className="ml-1 text-gray-400 cursor-pointer" title="Font family for your storefront">?</span>
+            {saving.fontFamily && <span className="ml-2 animate-spin">⏳</span>}
+            {saveSuccess.fontFamily && <span className="ml-2 text-green-500">✔</span>}
+            {saveError.fontFamily && <span className="ml-2 text-red-500">{saveError.fontFamily}</span>}
+          </div>
+          <Input
+            id="fontFamily"
+            value={localStorefront.fontFamily || ''}
+            onChange={e => handleFieldChange('fontFamily', e.target.value)}
+            placeholder="e.g. Inter, Arial, sans-serif"
+          />
+        </form>
       </div>
-    </motion.div>
+      {/* Live Preview Panel */}
+      <div className="w-full md:w-1/2 bg-gray-50 rounded-xl shadow-lg p-6">
+        {localStorefront && (
+          <>
+            <StorefrontHeader storefront={localStorefront} user={{ name: "Preview" }} isOwner={true} />
+            <StorefrontDescriptionCard description={localStorefront.description || ''} tags={[]} category="" />
+            <main className="flex-1 container mx-auto px-4 py-8">
+              <ProductGrid products={products as any[]} />
+            </main>
+          </>
+        )}
+      </div>
+    </div>
   )
 } 
