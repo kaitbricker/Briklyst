@@ -254,16 +254,11 @@ export default function ProductsPage() {
             <Card className="group overflow-hidden bg-white/50 backdrop-blur-sm hover:shadow-lg transition-all duration-200">
               {product.imageUrl && (
                 <div className="relative w-full h-48 overflow-hidden">
-                  <Image
-                    src={product.imageUrl}
+                  <img
+                    src={product.imageUrl || '/placeholder-product.jpg'}
                     alt={product.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover group-hover:scale-105 transition-transform duration-200"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = '/placeholder-product.jpg';
-                    }}
+                    style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                    onError={e => { e.currentTarget.src = '/placeholder-product.jpg'; }}
                   />
                 </div>
               )}
