@@ -10,6 +10,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { ColorPicker } from '@/components/ui/color-picker'
+import { gradients, colors } from '@/lib/colors'
+import { Plus, Settings, Layout, Globe, Palette } from 'lucide-react'
+import { Card } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 interface Product {
   id: string
@@ -43,6 +47,7 @@ export default function StorefrontPage() {
   const { toast } = useToast()
   const [storefront, setStorefront] = useState<Storefront | null>(null)
   const [loading, setLoading] = useState(true)
+  const [activeTab, setActiveTab] = useState('design')
 
   useEffect(() => {
     const fetchStorefront = async () => {
@@ -134,189 +139,182 @@ export default function StorefrontPage() {
     }
   }
 
-  if (loading) return <div>Loading...</div>
-  if (error) return <div className="text-red-500">{error}</div>
-  if (!storefront) return <div>No storefront found</div>
+  if (loading) {
+    return (
+      <div className="flex h-[50vh] items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1C1C2E] mx-auto"></div>
+          <p className="mt-4 text-[#5F5F73]">Loading your storefront...</p>
+        </div>
+      </div>
+    )
+  }
+  
+  if (error) {
+    return (
+      <div className="p-8">
+        <div className="bg-red-50 text-red-600 p-4 rounded-lg">{error}</div>
+      </div>
+    )
+  }
+
+  if (!storefront) return null
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Your Products</h1>
-        <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
-          <DialogTrigger asChild>
-            <Button>Add Product</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add Product</DialogTitle>
-            </DialogHeader>
-            <ProductForm
-              onSubmit={(data) => {
-                handleAddProduct({
-                  title: data.title,
-                  description: data.description || '',
-                  price: 0,
-                  imageUrl: data.image || '',
-                  affiliateUrl: data.link,
-                })
-              }}
-            />
-          </DialogContent>
-        </Dialog>
-      </div>
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="space-y-2">
-            <Label htmlFor="title">Storefront Title</Label>
-            <Input
-              id="title"
-              value={storefront.title}
-              onChange={(e) =>
-                setStorefront({ ...storefront, title: e.target.value })
-              }
-              required
-            />
+    <div className={`min-h-screen ${gradients.primary} p-8`}>
+      <div className="max-w-6xl mx-auto space-y-8">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-[#1C1C2E]">Storefront Customization</h1>
+            <p className="text-[#5F5F73] mt-2">Customize your storefront's appearance and manage your products</p>
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="domain">Custom Domain (optional)</Label>
-            <Input
-              id="domain"
-              value={storefront.domain || ''}
-              onChange={(e) =>
-                setStorefront({ ...storefront, domain: e.target.value })
-              }
-              placeholder="your-store.com"
-            />
-          </div>
+          <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-[#1C1C2E] hover:bg-[#2D2D44] text-white">
+                <Plus className="w-4 h-4 mr-2" />
+                Add Product
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add New Product</DialogTitle>
+              </DialogHeader>
+              <ProductForm
+                onSubmit={(data) => {
+                  handleAddProduct({
+                    title: data.title,
+                    description: data.description || '',
+                    price: 0,
+                    imageUrl: data.image || '',
+                    affiliateUrl: data.link,
+                  })
+                }}
+              />
+            </DialogContent>
+          </Dialog>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="description">Description</Label>
-          <Textarea
-            id="description"
-            value={storefront.description || ''}
-            onChange={(e) =>
-              setStorefront({ ...storefront, description: e.target.value })
-            }
-            rows={4}
-          />
+        {/* Main Content */}
+        <Card className="bg-white shadow-xl rounded-xl overflow-hidden">
+          <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="w-full border-b bg-gray-50 p-0">
+              <TabsTrigger
+                value="design"
+                className="flex items-center gap-2 px-6 py-3 data-[state=active]:text-[#1C1C2E] data-[state=active]:border-b-2 data-[state=active]:border-[#1C1C2E]"
+              >
+                <Palette className="w-4 h-4" />
+                Design
+              </TabsTrigger>
+              <TabsTrigger
+                value="layout"
+                className="flex items-center gap-2 px-6 py-3 data-[state=active]:text-[#1C1C2E] data-[state=active]:border-b-2 data-[state=active]:border-[#1C1C2E]"
+              >
+                <Layout className="w-4 h-4" />
+                Layout
+              </TabsTrigger>
+              <TabsTrigger
+                value="settings"
+                className="flex items-center gap-2 px-6 py-3 data-[state=active]:text-[#1C1C2E] data-[state=active]:border-b-2 data-[state=active]:border-[#1C1C2E]"
+              >
+                <Settings className="w-4 h-4" />
+                Settings
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="design" className="p-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="title" className="text-[#1C1C2E] font-medium">Storefront Title</Label>
+                    <Input
+                      id="title"
+                      value={storefront.title}
+                      onChange={(e) => setStorefront({ ...storefront, title: e.target.value })}
+                      className="border-[#E5E7EB] focus:border-[#1C1C2E] focus:ring-[#1C1C2E]"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="domain" className="text-[#1C1C2E] font-medium">
+                      Custom Domain
+                      <span className="text-[#5F5F73] ml-2 text-sm">(optional)</span>
+                    </Label>
+                    <div className="relative">
+                      <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#5F5F73]" />
+                      <Input
+                        id="domain"
+                        value={storefront.domain || ''}
+                        onChange={(e) => setStorefront({ ...storefront, domain: e.target.value })}
+                        className="pl-10 border-[#E5E7EB] focus:border-[#1C1C2E] focus:ring-[#1C1C2E]"
+                        placeholder="your-store.com"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="description" className="text-[#1C1C2E] font-medium">Description</Label>
+                  <Textarea
+                    id="description"
+                    value={storefront.description || ''}
+                    onChange={(e) => setStorefront({ ...storefront, description: e.target.value })}
+                    className="min-h-[100px] border-[#E5E7EB] focus:border-[#1C1C2E] focus:ring-[#1C1C2E]"
+                    placeholder="Describe your storefront..."
+                  />
+                </div>
+
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label className="text-[#1C1C2E] font-medium">Primary Color</Label>
+                    <ColorPicker
+                      color={storefront.primaryColor}
+                      onChange={(color) => setStorefront({ ...storefront, primaryColor: color })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[#1C1C2E] font-medium">Accent Color</Label>
+                    <ColorPicker
+                      color={storefront.accentColor}
+                      onChange={(color) => setStorefront({ ...storefront, accentColor: color })}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end">
+                  <Button type="submit" className="bg-[#1C1C2E] hover:bg-[#2D2D44] text-white">
+                    Save Changes
+                  </Button>
+                </div>
+              </form>
+            </TabsContent>
+
+            <TabsContent value="layout" className="p-6">
+              {/* Layout settings content */}
+              <div className="text-[#5F5F73]">Layout customization coming soon...</div>
+            </TabsContent>
+
+            <TabsContent value="settings" className="p-6">
+              {/* Additional settings content */}
+              <div className="text-[#5F5F73]">Additional settings coming soon...</div>
+            </TabsContent>
+          </Tabs>
+        </Card>
+
+        {/* Products Grid */}
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold text-[#1C1C2E]">Your Products</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {products.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onClick={() => handleProductClick(product.id)}
+              />
+            ))}
+          </div>
         </div>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="space-y-2">
-            <Label htmlFor="logoUrl">Logo URL</Label>
-            <Input
-              id="logoUrl"
-              type="url"
-              value={storefront.logoUrl || ''}
-              onChange={(e) =>
-                setStorefront({ ...storefront, logoUrl: e.target.value })
-              }
-              placeholder="https://example.com/logo.png"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="bannerUrl">Banner URL</Label>
-            <Input
-              id="bannerUrl"
-              type="url"
-              value={storefront.bannerUrl || ''}
-              onChange={(e) =>
-                setStorefront({ ...storefront, bannerUrl: e.target.value })
-              }
-              placeholder="https://example.com/banner.png"
-            />
-          </div>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="space-y-2">
-            <Label>Primary Color</Label>
-            <ColorPicker
-              color={storefront.primaryColor}
-              onChange={(color) =>
-                setStorefront({ ...storefront, primaryColor: color })
-              }
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label>Accent Color</Label>
-            <ColorPicker
-              color={storefront.accentColor}
-              onChange={(color) =>
-                setStorefront({ ...storefront, accentColor: color })
-              }
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label>Background Color</Label>
-            <ColorPicker
-              color={storefront.backgroundColor}
-              onChange={(color) =>
-                setStorefront({ ...storefront, backgroundColor: color })
-              }
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label>Text Color</Label>
-            <ColorPicker
-              color={storefront.textColor}
-              onChange={(color) =>
-                setStorefront({ ...storefront, textColor: color })
-              }
-            />
-          </div>
-        </div>
-
-        {/* Font Family Selector */}
-        <div className="space-y-2">
-          <Label htmlFor="fontFamily">Font Family</Label>
-          <select
-            id="fontFamily"
-            className="w-full border rounded px-3 py-2"
-            value={storefront.fontFamily || 'sans-serif'}
-            onChange={e => setStorefront({ ...storefront, fontFamily: e.target.value })}
-          >
-            <option value="sans-serif">Sans</option>
-            <option value="serif">Serif</option>
-            <option value="monospace">Mono</option>
-          </select>
-        </div>
-
-        {/* Layout Style Selector */}
-        <div className="space-y-2">
-          <Label htmlFor="layoutStyle">Layout Style</Label>
-          <select
-            id="layoutStyle"
-            className="w-full border rounded px-3 py-2"
-            value={storefront.layoutStyle || 'grid'}
-            onChange={e => setStorefront({ ...storefront, layoutStyle: e.target.value })}
-          >
-            <option value="grid">Grid</option>
-            <option value="list">List</option>
-          </select>
-        </div>
-
-        <Button type="submit">Save Changes</Button>
-      </form>
-
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {products.map((product) => (
-          <ProductCard
-            key={product.id}
-            title={product.title}
-            description={product.description}
-            image={product.imageUrl}
-            link={product.affiliateUrl}
-            onClick={() => handleProductClick(product.id)}
-          />
-        ))}
       </div>
     </div>
   )
