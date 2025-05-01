@@ -4,14 +4,21 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import { compare } from "bcryptjs"
 import { prisma } from "@/lib/prisma"
 
+if (!process.env.NEXTAUTH_SECRET) {
+  throw new Error('NEXTAUTH_SECRET is not set')
+}
+
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
+  secret: process.env.NEXTAUTH_SECRET,
   session: {
-    strategy: "jwt"
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   pages: {
-    signIn: "/login",
-    signUp: "/signup",
+    signIn: "/auth/sign-in",
+    signUp: "/auth/sign-up",
+    error: "/auth/sign-in",
   },
   providers: [
     CredentialsProvider({
@@ -22,7 +29,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          return null
+          throw new Error('Invalid credentials')
         }
 
         const user = await prisma.user.findUnique({
@@ -31,8 +38,8 @@ export const authOptions: NextAuthOptions = {
           }
         })
 
-        if (!user) {
-          return null
+        if (!user || !user.password) {
+          throw new Error('Invalid credentials')
         }
 
         const isPasswordValid = await compare(
@@ -41,7 +48,7 @@ export const authOptions: NextAuthOptions = {
         )
 
         if (!isPasswordValid) {
-          return null
+          throw new Error('Invalid credentials')
         }
 
         return {
