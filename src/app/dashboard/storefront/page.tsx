@@ -20,6 +20,7 @@ import StorefrontHeader from '@/components/storefront/StorefrontHeader'
 import StorefrontDescriptionCard from '@/components/storefront/StorefrontDescriptionCard'
 import ProductGrid from '@/components/storefront/ProductGrid'
 import Link from 'next/link'
+import { ImageUpload } from '@/components/ui/image-upload'
 
 interface Product {
   id: string
@@ -293,31 +294,27 @@ export default function StorefrontPage() {
           />
           {/* Logo URL */}
           <div className="flex items-center gap-2">
-            <Label htmlFor="logoUrl">Logo URL</Label>
-            <span className="ml-1 text-gray-400 cursor-pointer" title="URL for your storefront logo image">?</span>
+            <Label htmlFor="logoUrl">Logo</Label>
+            <span className="ml-1 text-gray-400 cursor-pointer" title="Upload your storefront logo image">?</span>
             {saving.logoUrl && <span className="ml-2 animate-spin">⏳</span>}
             {saveSuccess.logoUrl && <span className="ml-2 text-green-500">✔</span>}
             {saveError.logoUrl && <span className="ml-2 text-red-500">{saveError.logoUrl}</span>}
           </div>
-          <Input
-            id="logoUrl"
+          <ImageUpload
             value={localStorefront.logoUrl}
-            onChange={e => handleFieldChange('logoUrl', e.target.value)}
-            placeholder="Paste logo image URL or upload"
+            onChange={url => handleFieldChange('logoUrl', url)}
           />
           {/* Banner URL */}
           <div className="flex items-center gap-2">
-            <Label htmlFor="bannerUrl">Banner URL</Label>
-            <span className="ml-1 text-gray-400 cursor-pointer" title="URL for your storefront banner image">?</span>
+            <Label htmlFor="bannerUrl">Banner</Label>
+            <span className="ml-1 text-gray-400 cursor-pointer" title="Upload your storefront banner image">?</span>
             {saving.bannerUrl && <span className="ml-2 animate-spin">⏳</span>}
             {saveSuccess.bannerUrl && <span className="ml-2 text-green-500">✔</span>}
             {saveError.bannerUrl && <span className="ml-2 text-red-500">{saveError.bannerUrl}</span>}
           </div>
-          <Input
-            id="bannerUrl"
+          <ImageUpload
             value={localStorefront.bannerUrl}
-            onChange={e => handleFieldChange('bannerUrl', e.target.value)}
-            placeholder="Paste banner image URL or upload"
+            onChange={url => handleFieldChange('bannerUrl', url)}
           />
           {/* Theme Selector */}
           <div className="flex items-center gap-2">
@@ -330,6 +327,7 @@ export default function StorefrontPage() {
           <ThemeSelector
             currentThemeId={localStorefront.themeId || 'bubblegum-pop'}
             storefrontId={localStorefront.id || ''}
+            onThemeChange={themeId => setLocalStorefront(ls => ls ? { ...ls, themeId } : ls)}
           />
           {/* Colors */}
           <div className="flex items-center gap-2">

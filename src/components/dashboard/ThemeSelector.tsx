@@ -7,18 +7,20 @@ import { useRouter } from 'next/navigation';
 interface ThemeSelectorProps {
   currentThemeId: string;
   storefrontId: string;
+  onThemeChange?: (themeId: string) => void;
 }
 
 export default function ThemeSelector({
   currentThemeId,
   storefrontId,
+  onThemeChange,
 }: ThemeSelectorProps) {
   const [selectedTheme, setSelectedTheme] = useState(currentThemeId);
   const router = useRouter();
 
   const handleThemeChange = async (themeId: string) => {
     setSelectedTheme(themeId);
-    
+    if (onThemeChange) onThemeChange(themeId);
     try {
       const response = await fetch('/api/storefront/theme', {
         method: 'PATCH',
