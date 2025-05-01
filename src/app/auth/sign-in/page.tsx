@@ -25,16 +25,15 @@ export default function SignInPage() {
     const password = formData.get('password') as string
 
     try {
-      const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
+      const callbackUrl = searchParams?.get('callbackUrl') || '/dashboard'
       const result = await signIn('credentials', {
         email,
         password,
         redirect: false,
-        callbackUrl,
       })
 
-      if (result?.error) {
-        throw new Error(result.error)
+      if (!result?.ok) {
+        throw new Error(result?.error || 'Failed to sign in')
       }
 
       toast({
@@ -42,11 +41,8 @@ export default function SignInPage() {
         description: 'You have successfully signed in.',
       })
 
-      // Add a small delay to ensure the session is properly set
-      setTimeout(() => {
-        router.push(callbackUrl)
-        router.refresh()
-      }, 100)
+      router.push(callbackUrl)
+      router.refresh()
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Something went wrong'
       setError(errorMessage)

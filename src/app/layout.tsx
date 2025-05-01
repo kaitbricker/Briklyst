@@ -16,8 +16,8 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: "Briklyst - Create Your Storefront",
-  description: "Create and customize your own storefront to showcase your products.",
+  title: "Briklyst",
+  description: "Your digital storefront platform",
 };
 
 export default function RootLayout({
@@ -26,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={GeistSans.className}>
       <body className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} font-sans`}>
         <Providers>
           <ScrollProgress />
