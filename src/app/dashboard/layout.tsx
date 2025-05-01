@@ -11,8 +11,12 @@ import { TopNav } from '@/components/layout/TopNav'
 
 const navItems = [
   {
-    title: 'Overview',
+    title: 'Dashboard',
     href: '/dashboard',
+  },
+  {
+    title: 'Analytics',
+    href: '/dashboard/analytics',
   },
   {
     title: 'Products',
