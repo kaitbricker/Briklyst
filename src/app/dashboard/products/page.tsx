@@ -21,6 +21,8 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { useToast } from '@/components/ui/use-toast'
+import { Pencil, Trash2 } from 'lucide-react'
+import { Card } from '@/components/ui/card'
 
 interface Product {
   id: string
@@ -172,7 +174,9 @@ export default function ProductsPage() {
         <h1 className="text-2xl font-bold">Products</h1>
         <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
           <DialogTrigger asChild>
-            <Button>Add Product</Button>
+            <Button className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800">
+              Add Product
+            </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
@@ -197,49 +201,56 @@ export default function ProductsPage() {
         </DialogContent>
       </Dialog>
 
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Clicks</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {products.map((product) => (
-              <TableRow key={product.id}>
-                <TableCell>{product.title}</TableCell>
-                <TableCell>{product.description}</TableCell>
-                <TableCell>${product.price}</TableCell>
-                <TableCell>{product.clicks}</TableCell>
-                <TableCell>
-                  <div className="flex space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedProduct(product)
-                        setIsEditProductOpen(true)
-                      }}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleDeleteProduct(product.id)}
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {products.map((product) => (
+          <Card
+            key={product.id}
+            className="p-6 rounded-xl shadow-md hover:shadow-lg hover:scale-[1.01] transition-all duration-200"
+          >
+            <div className="space-y-4">
+              <div className="flex items-start justify-between">
+                <h3 className="font-bold text-lg">{product.title}</h3>
+                <p className="font-bold">${product.price}</p>
+              </div>
+              
+              <p className="text-gray-500 text-sm">{product.description}</p>
+              
+              <div className="flex items-center justify-between">
+                <p className="text-xs text-gray-400">
+                  {product.clicks === 0 ? (
+                    <span className="italic">No clicks yet</span>
+                  ) : (
+                    `${product.clicks} clicks`
+                  )}
+                </p>
+                
+                <div className="flex gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="bg-gray-100 hover:bg-gray-200 rounded-md text-sm"
+                    onClick={() => {
+                      setSelectedProduct(product)
+                      setIsEditProductOpen(true)
+                    }}
+                  >
+                    <Pencil className="w-4 h-4 mr-1" />
+                    Edit
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="bg-red-50 text-red-600 hover:bg-red-100 rounded-md text-sm"
+                    onClick={() => handleDeleteProduct(product.id)}
+                  >
+                    <Trash2 className="w-4 h-4 mr-1" />
+                    Delete
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </Card>
+        ))}
       </div>
     </div>
   )
