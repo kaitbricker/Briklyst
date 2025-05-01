@@ -58,7 +58,7 @@ export default function AnalyticsDashboard() {
   const [timeRange, setTimeRange] = useState("year")
   const [dateRange, setDateRange] = useState<{ start: string; end: string } | null>(null)
   const [products, setProducts] = useState<ProductOption[]>([])
-  const [selectedProduct, setSelectedProduct] = useState<string>("")
+  const [selectedProduct, setSelectedProduct] = useState<string>("all")
   const [compareMode, setCompareMode] = useState(false)
   const [compareDateRange, setCompareDateRange] = useState<{ start: string; end: string } | null>(null)
   const [compareAnalytics, setCompareAnalytics] = useState<AnalyticsData | null>(null)
@@ -87,7 +87,7 @@ export default function AnalyticsDashboard() {
         if (dateRange) {
           url += `&range=${dateRange.start}_to_${dateRange.end}`
         }
-        if (selectedProduct) {
+        if (selectedProduct && selectedProduct !== "all") {
           url += `&productId=${selectedProduct}`
         }
         const res = await fetch(url)
@@ -99,7 +99,7 @@ export default function AnalyticsDashboard() {
         if (compareMode && compareDateRange?.start && compareDateRange?.end) {
           let compareUrl = `/api/analytics?interval=${interval}`
           compareUrl += `&range=${compareDateRange.start}_to_${compareDateRange.end}`
-          if (selectedProduct) {
+          if (selectedProduct && selectedProduct !== "all") {
             compareUrl += `&productId=${selectedProduct}`
           }
           const compareRes = await fetch(compareUrl)
@@ -316,7 +316,7 @@ export default function AnalyticsDashboard() {
                 <SelectValue placeholder="All Products" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Products</SelectItem>
+                <SelectItem value="all">All Products</SelectItem>
                 {products.map((product) => (
                   <SelectItem key={product.id} value={product.id}>
                     {product.title}
