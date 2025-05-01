@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Search, Sparkles, Flame } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface Product {
@@ -89,9 +89,21 @@ export function StorefrontContent({ username }: StorefrontContentProps) {
   const regularProducts = storefront?.products.filter(p => !p.featured) || [];
   const allTags = [...new Set(storefront?.products.flatMap(p => p.tags || []))];
 
+  // Example: check for live drop or featured collection
+  const hasLiveDrop = featuredProducts.some(p => p.tags?.some(tag => tag.toLowerCase().includes('drop')));
+  const liveDropText = hasLiveDrop ? '🔥 Live Drop Happening Now!' : '';
+  const bannerColor = 'bg-gradient-to-r from-orange-400 to-pink-500';
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#fdfbfb] to-[#f5f7fa]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Live Drop/Featured Banner */}
+        {hasLiveDrop && (
+          <div className={`mb-8 w-full rounded-xl text-center py-2 text-base font-semibold text-white shadow-md ${bannerColor} flex items-center justify-center gap-2 animate-pulse`}>
+            <Flame className="w-5 h-5" /> {liveDropText}
+          </div>
+        )}
+
         {/* Header */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -175,8 +187,11 @@ export function StorefrontContent({ username }: StorefrontContentProps) {
                 <ProductCard
                   key={product.id}
                   product={product}
-                  primaryColor={storefront?.primaryColor || '#000'}
-                  accentColor={storefront?.accentColor || '#fff'}
+                  primaryColor={storefront?.primaryColor || '#FF6D00'}
+                  accentColor={storefront?.accentColor || '#FF3CAC'}
+                  showBanner={product.tags?.some(tag => tag.toLowerCase().includes('drop'))}
+                  bannerText={product.tags?.some(tag => tag.toLowerCase().includes('drop')) ? '🔥 Live Drop' : ''}
+                  bannerColor={bannerColor}
                   onClick={() => {
                     handleProductClick(product.id);
                     window.open(product.affiliateUrl, '_blank');

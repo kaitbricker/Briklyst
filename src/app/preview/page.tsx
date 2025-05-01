@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Search, ShoppingCart, Heart, Share2, ExternalLink } from 'lucide-react'
+import { Search, ShoppingCart, Heart, Share2, ExternalLink, Flame } from 'lucide-react'
 import Link from 'next/link'
 import { ProductCard } from '@/components/ProductCard'
 
@@ -112,6 +112,11 @@ export default function PreviewStorefront() {
     return matchesSearch && matchesCollection
   })
 
+  // Check for live drop
+  const hasLiveDrop = filteredProducts.some(p => p.tags?.some(tag => tag.toLowerCase().includes('drop')));
+  const bannerColor = 'bg-gradient-to-r from-orange-400 to-pink-500';
+  const liveDropText = hasLiveDrop ? '🔥 Live Drop Happening Now!' : '';
+
   const style = {
     '--primary-color': storefront.theme.primaryColor,
     '--accent-color': storefront.theme.accentColor,
@@ -154,6 +159,12 @@ export default function PreviewStorefront() {
 
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col gap-6">
+          {/* Live Drop/Featured Banner */}
+          {hasLiveDrop && (
+            <div className={`mb-8 w-full rounded-xl text-center py-2 text-base font-semibold text-white shadow-md ${bannerColor} flex items-center justify-center gap-2 animate-pulse`}>
+              <Flame className="w-5 h-5" /> {liveDropText}
+            </div>
+          )}
           <div className="flex flex-col gap-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -194,8 +205,13 @@ export default function PreviewStorefront() {
                       ...product,
                       description: product.description || '',
                       imageUrl: product.imageUrl || '/placeholder-product.jpg',
-                      tags: [product.collection]
+                      tags: product.tags || [product.collection]
                     }}
+                    primaryColor={storefront.theme.primaryColor}
+                    accentColor={storefront.theme.accentColor}
+                    showBanner={product.tags?.some(tag => tag.toLowerCase().includes('drop'))}
+                    bannerText={product.tags?.some(tag => tag.toLowerCase().includes('drop')) ? '🔥 Live Drop' : ''}
+                    bannerColor={bannerColor}
                     onClick={() => {
                       handleProductClick(product.id)
                       window.open(product.affiliateUrl, '_blank')

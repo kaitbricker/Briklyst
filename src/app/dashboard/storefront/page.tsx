@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { ColorPicker } from '@/components/ui/color-picker'
 import { gradients, colors } from '@/lib/colors'
-import { Plus, Settings, Layout, Globe, Palette, Tag, Filter } from 'lucide-react'
+import { Plus, Settings, Layout, Globe, Palette, Tag, Filter, Flame } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -35,6 +35,7 @@ interface Product {
     id: string
     name: string
   }
+  tags?: string[]
 }
 
 interface Storefront {
@@ -206,6 +207,11 @@ export default function StorefrontPage() {
       setSaveError((prev) => ({ ...prev, [field]: err.message || 'Save failed' }))
     }
   }
+
+  // Check for live drop
+  const hasLiveDrop = products.some(p => p.tags?.some(tag => tag.toLowerCase().includes('drop')));
+  const bannerColor = 'bg-gradient-to-r from-orange-400 to-pink-500';
+  const liveDropText = hasLiveDrop ? '🔥 Live Drop Happening Now!' : '';
 
   if (loading) {
     return (
