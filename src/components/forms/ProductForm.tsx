@@ -126,7 +126,10 @@ export function ProductForm({ initialData, onSuccess, onSubmit }: ProductFormPro
 
   const onSubmitForm = async (data: ProductFormData) => {
     if (onSubmit) {
-      onSubmit(data)
+      onSubmit({
+        ...data,
+        collectionId: data.collectionId === 'no-collection' ? undefined : data.collectionId
+      })
       return
     }
 
@@ -137,6 +140,7 @@ export function ProductForm({ initialData, onSuccess, onSubmit }: ProductFormPro
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...data,
+          collectionId: data.collectionId === 'no-collection' ? undefined : data.collectionId,
           id: initialData?.id,
         }),
       })
@@ -254,7 +258,7 @@ export function ProductForm({ initialData, onSuccess, onSubmit }: ProductFormPro
             <SelectValue placeholder="Select a collection" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">None</SelectItem>
+            <SelectItem value="no-collection">None</SelectItem>
             {collections.map((collection) => (
               <SelectItem key={collection.id} value={collection.id}>
                 {collection.name}
