@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Search, X } from "lucide-react";
+import { ArrowRight, Search, X, Heart, Share2 } from "lucide-react";
 import { useState } from "react";
 
 interface Product {
@@ -27,8 +27,6 @@ interface Storefront {
   bannerUrl: string;
   primaryColor: string;
   accentColor: string;
-  backgroundColor: string;
-  textColor: string;
   products: Product[];
 }
 
@@ -61,68 +59,46 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
   };
 
   return (
-    <div
-      className="min-h-screen"
-      style={{
-        backgroundColor: storefront.backgroundColor,
-        color: storefront.textColor,
-      }}
-    >
+    <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <div className="relative">
-        {storefront.bannerUrl && (
-          <div className="relative h-[400px] w-full">
-            <Image
-              src={storefront.bannerUrl}
-              alt={storefront.title}
-              fill
-              className="object-cover"
-              priority
-            />
-            <div className="absolute inset-0 bg-black/30" />
-          </div>
+      <div className="relative h-[400px] w-full overflow-hidden">
+        {storefront.bannerUrl ? (
+          <Image
+            src={storefront.bannerUrl}
+            alt={storefront.title}
+            fill
+            className="object-cover"
+            priority
+          />
+        ) : (
+          <div 
+            className="h-full w-full"
+            style={{ backgroundColor: storefront.primaryColor }}
+          />
         )}
-        
-        <div className="relative -mt-20 mb-16 text-center">
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/20" />
+        <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center">
           {storefront.logoUrl && (
-            <div className="relative mx-auto h-40 w-40 rounded-full border-4 border-white bg-white shadow-lg">
+            <div className="mb-6 h-24 w-24 overflow-hidden rounded-full border-4 border-white">
               <Image
                 src={storefront.logoUrl}
                 alt={storefront.title}
-                fill
-                className="rounded-full object-cover"
+                width={96}
+                height={96}
+                className="h-full w-full object-cover"
               />
             </div>
           )}
-          <h1 className="mt-4 text-4xl font-bold">{storefront.title}</h1>
-          {storefront.description && (
-            <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
-              {storefront.description}
-            </p>
-          )}
-          <Button
-            className="mt-6 rounded-full px-8 py-6 text-lg"
-            style={{
-              backgroundColor: storefront.primaryColor,
-              color: storefront.accentColor,
-            }}
-          >
-            Subscribe
-          </Button>
+          <h1 className="mb-4 text-4xl font-bold text-white">{storefront.title}</h1>
+          <p className="max-w-2xl text-lg text-white/90">{storefront.description}</p>
         </div>
       </div>
 
-      {/* Products Section */}
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-8 text-center">
-          <h2 className="text-3xl font-bold">My Favorites</h2>
-          <p className="mt-2 text-gray-600">Discover my curated selection of products</p>
-        </div>
-
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         {/* Search and Filter Section */}
-        <div className="mb-8">
-          <div className="relative mb-4">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+        <div className="mb-12 rounded-lg bg-white p-6 shadow-sm">
+          <div className="relative mb-6">
+            <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
             <Input
               type="text"
               placeholder="Search products..."
@@ -135,7 +111,7 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
                 onClick={() => setSearchQuery("")}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
               >
-                <X className="h-4 w-4" />
+                <X className="h-5 w-5" />
               </button>
             )}
           </div>
@@ -145,7 +121,7 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
               <button
                 key={tag}
                 onClick={() => toggleTag(tag)}
-                className={`rounded-full px-4 py-2 text-sm transition-colors ${
+                className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                   selectedTags.includes(tag)
                     ? "bg-primary text-white"
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"
@@ -157,6 +133,7 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
           </div>
         </div>
 
+        {/* Products Grid */}
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {filteredProducts.map((product) => (
             <Card
@@ -164,13 +141,30 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
               className="group overflow-hidden transition-all duration-300 hover:shadow-xl"
             >
               {product.imageUrl && (
-                <div className="relative h-64 w-full overflow-hidden">
+                <div className="relative aspect-square w-full overflow-hidden">
                   <Image
                     src={product.imageUrl}
                     alt={product.title}
                     fill
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
+                  <div className="absolute inset-0 bg-black/20" />
+                  <div className="absolute right-4 top-4 flex gap-2">
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      className="rounded-full bg-white/90 text-gray-900 hover:bg-white"
+                    >
+                      <Heart className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      className="rounded-full bg-white/90 text-gray-900 hover:bg-white"
+                    >
+                      <Share2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               )}
               <div className="p-6">
@@ -178,7 +172,7 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
                   {product.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-600"
+                      className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600"
                     >
                       {tag}
                     </span>
@@ -212,7 +206,7 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
         </div>
 
         {filteredProducts.length === 0 && (
-          <div className="text-center py-12">
+          <div className="rounded-lg bg-white p-12 text-center shadow-sm">
             <p className="text-lg text-gray-600">No products found matching your criteria.</p>
             <Button
               variant="ghost"

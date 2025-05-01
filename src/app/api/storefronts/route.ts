@@ -1,74 +1,41 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
-    const { searchParams } = new URL(request.url)
-    const userId = searchParams.get('userId')
-    const username = searchParams.get('username')
-    const isCurrentUser = searchParams.get('userId') === 'current'
-
-    if (!userId && !username && !isCurrentUser) {
-      return NextResponse.json(
-        { error: 'User ID or username is required' },
-        { status: 400 }
-      )
+    const session = await auth()
+    if (!session?.user) {
+      return new NextResponse('Unauthorized', { status: 401 })
     }
 
-    let finalUserId = userId
-    if (isCurrentUser) {
-      const session = await auth()
-      if (!session?.user?.id) {
-        return NextResponse.json(
-          { error: 'Not authenticated' },
-          { status: 401 }
-        )
-      }
-      finalUserId = session.user.id
-    }
-
-    const storefront = await prisma.storefront.findFirst({
-      where: finalUserId ? { userId: finalUserId } : { user: { name: username } },
-      include: {
-        products: {
-          orderBy: { createdAt: 'desc' },
-        },
-      },
+    const storefront = await prisma.storefront.findUnique({
+      where: { userId: session.user.id },
     })
 
     if (!storefront) {
-      return NextResponse.json(
-        { error: 'Storefront not found' },
-        { status: 404 }
-      )
+      return new NextResponse('Storefront not found', { status: 404 })
     }
 
     return NextResponse.json(storefront)
   } catch (error) {
-    console.error('Get storefront error:', error)
-    return NextResponse.json(
-      { error: 'Something went wrong' },
-      { status: 500 }
-    )
+    console.error('Error fetching storefront:', error)
+    return new NextResponse('Internal Server Error', { status: 500 })
   }
 }
 
 export async function PUT(request: Request) {
   try {
     const session = await auth()
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Not authenticated' },
-        { status: 401 }
-      )
+    if (!session?.user) {
+      return new NextResponse('Unauthorized', { status: 401 })
     }
 
+    const body = await request.json()
     const {
       id,
       title,
       description,
-      domain,
       logoUrl,
       bannerUrl,
       primaryColor,
@@ -76,14 +43,10 @@ export async function PUT(request: Request) {
       backgroundColor,
       textColor,
       fontFamily,
-      themeId,
-    } = await request.json()
+    } = body
 
-    if (!id || !title) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      )
+    if (!id) {
+      return new NextResponse('Storefront ID is required', { status: 400 })
     }
 
     const storefront = await prisma.storefront.update({
@@ -91,7 +54,6 @@ export async function PUT(request: Request) {
       data: {
         title,
         description,
-        domain,
         logoUrl,
         bannerUrl,
         primaryColor,
@@ -99,16 +61,12 @@ export async function PUT(request: Request) {
         backgroundColor,
         textColor,
         fontFamily,
-        themeId,
       },
     })
 
     return NextResponse.json(storefront)
   } catch (error) {
-    console.error('Update storefront error:', error)
-    return NextResponse.json(
-      { error: 'Something went wrong' },
-      { status: 500 }
-    )
+    console.error('Error updating storefront:', error)
+    return new NextResponse('Internal Server Error', { status: 500 })
   }
 } 
