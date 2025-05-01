@@ -6,11 +6,11 @@ import { toast } from '@/components/ui/use-toast'
 import { Button } from '@/components/ui/button'
 import { useStorefront } from '@/hooks/useStorefront'
 import { StorefrontForm } from '@/components/forms/StorefrontForm'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Settings2, Plus, X, Edit2, Save, Trash, Search } from 'lucide-react'
 import { Input } from '@/components/ui/input'
-import { Card } from '@/components/ui/card'
-import { Plus, X, Edit2, Save, Trash } from 'lucide-react'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { useToast } from '@/components/ui/use-toast'
+import { motion, AnimatePresence } from 'framer-motion'
 
 interface Storefront {
   id: string
@@ -182,142 +182,162 @@ const SettingsPage: React.FC = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"
+        />
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] p-4">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col items-center justify-center min-h-[60vh] p-4"
+      >
         <div className="text-red-500 mb-4">{error}</div>
         <Button onClick={() => window.location.reload()}>Try Again</Button>
-      </div>
+      </motion.div>
     )
   }
 
   if (!storefront) {
     return (
-      <div className="min-h-[60vh] bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl mx-auto">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">Welcome to Briklyst</h1>
-            <p className="text-lg text-gray-600 mb-8">
-              Let&apos;s get your storefront set up. This will only take a moment.
-            </p>
-            <Button
-              onClick={handleCreateStorefront}
-              disabled={isCreating}
-              className="inline-flex items-center px-6 py-3"
-            >
-              {isCreating ? (
-                <>
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Creating your storefront...
-                </>
-              ) : (
-                'Create My Storefront'
-              )}
-            </Button>
-          </div>
-        </div>
-      </div>
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col items-center justify-center min-h-[60vh] p-4"
+      >
+        <h2 className="text-2xl font-bold mb-4">Create Your Storefront</h2>
+        <p className="text-gray-600 mb-6 text-center max-w-md">
+          Get started by creating your storefront. You can customize it later.
+        </p>
+        <Button 
+          onClick={handleCreateStorefront}
+          disabled={isCreating}
+          className="flex items-center gap-2"
+        >
+          {isCreating ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Plus className="w-4 h-4" />
+          )}
+          Create Storefront
+        </Button>
+      </motion.div>
     )
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold">Collections</h2>
-        <p className="text-muted-foreground">
-          Organize your products into collections
-        </p>
-      </div>
-
-      <div className="space-y-4">
-        <div className="flex gap-4">
-          <Input
-            placeholder="Collection name"
-            value={newCollection.name}
-            onChange={(e) => setNewCollection({ ...newCollection, name: e.target.value })}
-          />
-          <Input
-            placeholder="Description (optional)"
-            value={newCollection.description}
-            onChange={(e) => setNewCollection({ ...newCollection, description: e.target.value })}
-          />
-          <Input
-            placeholder="Tags (comma-separated)"
-            value={newCollection.tags.join(', ')}
-            onChange={(e) => setNewCollection({ 
-              ...newCollection, 
-              tags: e.target.value.split(',').map(tag => tag.trim()).filter(tag => tag !== '') 
-            })}
-          />
-          <Button onClick={handleAddCollection}>Add Collection</Button>
-        </div>
-
+    <div className="space-y-8">
+      <motion.div 
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.3 }}
+        className="flex items-center justify-between bg-white/50 backdrop-blur-sm p-6 rounded-xl shadow-sm"
+      >
         <div className="space-y-2">
-          {collections.map((collection) => (
-            <div key={collection.id} className="flex items-center gap-4 p-4 border rounded-lg">
-              {editingCollection === collection ? (
-                <>
-                  <Input
-                    value={collection.name}
-                    onChange={(e) => setCollections(collections.map(c => 
-                      c.id === collection.id ? { ...c, name: e.target.value } : c
-                    ))}
-                  />
-                  <Input
-                    value={collection.description || ''}
-                    onChange={(e) => setCollections(collections.map(c => 
-                      c.id === collection.id ? { ...c, description: e.target.value } : c
-                    ))}
-                  />
-                  <Input
-                    value={collection.tags.join(', ')}
-                    onChange={(e) => setCollections(collections.map(c => 
-                      c.id === collection.id ? { 
-                        ...c, 
-                        tags: e.target.value.split(',').map(tag => tag.trim()).filter(tag => tag !== '') 
-                      } : c
-                    ))}
-                    placeholder="Tags (comma-separated)"
-                  />
-                  <Button onClick={handleUpdateCollection}>Save</Button>
-                  <Button variant="outline" onClick={() => setEditingCollection(null)}>Cancel</Button>
-                </>
-              ) : (
-                <>
-                  <div className="flex-1">
-                    <h3 className="font-medium">{collection.name}</h3>
-                    {collection.description && (
-                      <p className="text-sm text-muted-foreground">{collection.description}</p>
-                    )}
-                    {collection.tags.length > 0 && (
-                      <div className="flex gap-2 mt-2">
-                        {collection.tags.map((tag, index) => (
-                          <span key={index} className="px-2 py-1 text-xs bg-secondary text-secondary-foreground rounded-full">
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  <Button variant="outline" onClick={() => setEditingCollection(collection)}>
-                    Edit
-                  </Button>
-                  <Button variant="destructive" onClick={() => handleDeleteCollection(collection.id)}>
-                    Delete
-                  </Button>
-                </>
-              )}
-            </div>
-          ))}
+          <h1 className="text-3xl font-bold text-[#1C1C2E]">Settings</h1>
+          <p className="text-[#5F5F73]">Customize your storefront appearance and collections</p>
         </div>
+        <Button className="flex items-center gap-2">
+          <Settings2 className="w-4 h-4" />
+          Save Changes
+        </Button>
+      </motion.div>
+
+      <div className="grid gap-8 md:grid-cols-2">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+        >
+          <Card className="bg-white/50 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle>Storefront Details</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <StorefrontForm defaultValues={storefront} />
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3, delay: 0.2 }}
+        >
+          <Card className="bg-white/50 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle>Collections</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex gap-4">
+                <Input
+                  placeholder="Collection name"
+                  value={newCollection.name}
+                  onChange={(e) => setNewCollection({ ...newCollection, name: e.target.value })}
+                  className="flex-1"
+                />
+                <Button 
+                  onClick={handleAddCollection}
+                  className="flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add
+                </Button>
+              </div>
+
+              <div className="space-y-4">
+                <AnimatePresence>
+                  {collections.map((collection, index) => (
+                    <motion.div
+                      key={collection.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.2, delay: index * 0.1 }}
+                    >
+                      <Card className="group bg-white/50 backdrop-blur-sm hover:shadow-lg transition-all duration-200">
+                        <CardContent className="flex items-center justify-between p-4">
+                          <div>
+                            <h3 className="font-medium text-[#1C1C2E] group-hover:text-[#2D2D44] transition-colors">
+                              {collection.name}
+                            </h3>
+                            {collection.description && (
+                              <p className="text-sm text-[#5F5F73]">{collection.description}</p>
+                            )}
+                          </div>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="hover:bg-[#1C1C2E]/5 rounded-lg transition-colors"
+                              onClick={() => setEditingCollection(collection)}
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="hover:bg-red-500/5 text-red-500 rounded-lg transition-colors"
+                              onClick={() => handleDeleteCollection(collection.id)}
+                            >
+                              <Trash className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
     </div>
   )

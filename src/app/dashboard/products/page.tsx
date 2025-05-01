@@ -184,8 +184,8 @@ export default function ProductsPage() {
         </div>
         <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-[#1C1C2E] hover:bg-[#2D2D44] text-white transition-all duration-200">
-              <Plus className="w-4 h-4 mr-2" />
+            <Button className="flex items-center gap-2">
+              <Plus className="w-4 h-4" />
               Add Product
             </Button>
           </DialogTrigger>
@@ -206,7 +206,7 @@ export default function ProductsPage() {
             className="pl-10 bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0"
           />
         </div>
-        <Button variant="outline" className="gap-2">
+        <Button variant="outline" className="flex items-center gap-2">
           <Filter className="h-4 w-4" />
           Filter
         </Button>
@@ -381,8 +381,18 @@ function ProductForm({
         />
       </div>
 
-      <Button type="submit" className="w-full">
-        {defaultValues ? 'Update Product' : 'Add Product'}
+      <Button type="submit" className="w-full flex items-center justify-center gap-2">
+        {defaultValues ? (
+          <>
+            <Pencil className="w-4 h-4" />
+            Update Product
+          </>
+        ) : (
+          <>
+            <Plus className="w-4 h-4" />
+            Add Product
+          </>
+        )}
       </Button>
     </form>
   )
