@@ -87,7 +87,7 @@ export function ProductForm({ initialData, onSuccess, onSubmit }: ProductFormPro
 
   useEffect(() => {
     fetchCollections()
-  }, [toast])
+  }, [fetchCollections])
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]

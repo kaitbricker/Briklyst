@@ -39,7 +39,29 @@ const SettingsPage: React.FC = () => {
   const [newCollection, setNewCollection] = useState({ name: '', description: '' })
   const [editingCollection, setEditingCollection] = useState<Collection | null>(null)
   const [loading, setLoading] = useState(false)
-  const { toast: useToastToast } = useToast()
+  const { toast } = useToast()
+
+  const fetchCollections = async () => {
+    try {
+      const response = await fetch('/api/collections')
+      if (!response.ok) {
+        throw new Error('Failed to fetch collections')
+      }
+      const data = await response.json()
+      setCollections(data)
+    } catch (error) {
+      console.error('Error fetching collections:', error)
+      toast({
+        title: 'Error',
+        description: 'Failed to load collections. Please try again.',
+        variant: 'destructive',
+      })
+    }
+  }
+
+  useEffect(() => {
+    fetchCollections()
+  }, [fetchCollections])
 
   const handleCreateStorefront = async () => {
     try {
@@ -77,28 +99,6 @@ const SettingsPage: React.FC = () => {
     }
   }
 
-  useEffect(() => {
-    fetchCollections()
-  }, [])
-
-  const fetchCollections = async () => {
-    try {
-      const response = await fetch('/api/collections')
-      if (!response.ok) {
-        throw new Error('Failed to fetch collections')
-      }
-      const data = await response.json()
-      setCollections(data)
-    } catch (error) {
-      console.error('Error fetching collections:', error)
-      useToastToast({
-        title: 'Error',
-        description: 'Failed to load collections. Please try again.',
-        variant: 'destructive',
-      })
-    }
-  }
-
   const handleAddCollection = async () => {
     try {
       const response = await fetch('/api/collections', {
@@ -109,7 +109,7 @@ const SettingsPage: React.FC = () => {
 
       if (!response.ok) throw new Error('Failed to add collection')
 
-      useToastToast({
+      toast({
         title: 'Success',
         description: 'Collection added successfully',
       })
@@ -117,7 +117,7 @@ const SettingsPage: React.FC = () => {
       fetchCollections()
     } catch (error) {
       console.error('Error adding collection:', error)
-      useToastToast({
+      toast({
         title: 'Error',
         description: 'Failed to add collection',
         variant: 'destructive',
@@ -137,7 +137,7 @@ const SettingsPage: React.FC = () => {
 
       if (!response.ok) throw new Error('Failed to update collection')
 
-      useToastToast({
+      toast({
         title: 'Success',
         description: 'Collection updated successfully',
       })
@@ -145,7 +145,7 @@ const SettingsPage: React.FC = () => {
       fetchCollections()
     } catch (error) {
       console.error('Error updating collection:', error)
-      useToastToast({
+      toast({
         title: 'Error',
         description: 'Failed to update collection',
         variant: 'destructive',
@@ -163,14 +163,14 @@ const SettingsPage: React.FC = () => {
 
       if (!response.ok) throw new Error('Failed to delete collection')
 
-      useToastToast({
+      toast({
         title: 'Success',
         description: 'Collection deleted successfully',
       })
       fetchCollections()
     } catch (error) {
       console.error('Error deleting collection:', error)
-      useToastToast({
+      toast({
         title: 'Error',
         description: 'Failed to delete collection',
         variant: 'destructive',

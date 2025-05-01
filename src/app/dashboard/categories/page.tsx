@@ -46,7 +46,7 @@ export default function CategoriesPage() {
 
   useEffect(() => {
     fetchCategories()
-  }, [])
+  }, [fetchCategories])
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this category?')) return
