@@ -15,8 +15,68 @@ import {
 import { Bell, Plus, Search, Store, User, Settings, Mail, CreditCard, HelpCircle, Eye } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { gradients, colors } from '@/lib/colors'
+import { useState } from 'react'
+import { useToast } from '@/components/ui/use-toast'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { ProductForm } from '@/components/forms/ProductForm'
 
 export function TopNav() {
+  const [isAddProductOpen, setIsAddProductOpen] = useState(false)
+  const { toast } = useToast()
+
+  const handleAddProduct = async (data: {
+    title: string
+    description: string
+    price: number
+    imageUrl: string
+    affiliateUrl: string
+    collectionId?: string
+  }) => {
+    try {
+      // First, fetch the user's storefront
+      const storefrontResponse = await fetch('/api/storefronts?userId=current')
+      if (!storefrontResponse.ok) {
+        throw new Error('Failed to fetch storefront')
+      }
+      const storefront = await storefrontResponse.json()
+      
+      if (!storefront?.id) {
+        throw new Error('No storefront found')
+      }
+
+      // Then create the product
+      const response = await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...data,
+          storefrontId: storefront.id
+        }),
+      })
+
+      if (!response.ok) throw new Error('Failed to add product')
+
+      toast({
+        title: 'Success',
+        description: 'Product added successfully',
+      })
+      setIsAddProductOpen(false)
+    } catch (error) {
+      console.error('Error adding product:', error)
+      toast({
+        title: 'Error',
+        description: 'Failed to add product',
+        variant: 'destructive',
+      })
+    }
+  }
+
   return (
     <motion.nav 
       initial={{ y: -20 }}
@@ -79,10 +139,20 @@ export function TopNav() {
             </Button>
 
             {/* Add Product Button */}
-            <Button className="bg-[#1C1C2E] hover:bg-[#2D2D44] text-white transition-all duration-200">
-              <Plus className="w-4 h-4 mr-2" />
-              Add Product
-            </Button>
+            <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-[#1C1C2E] hover:bg-[#2D2D44] text-white transition-all duration-200">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Product
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Add New Product</DialogTitle>
+                </DialogHeader>
+                <ProductForm onSubmit={handleAddProduct} />
+              </DialogContent>
+            </Dialog>
 
             {/* User Menu */}
             <DropdownMenu>

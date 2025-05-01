@@ -81,10 +81,10 @@ export default function ProductsPage() {
       })
       setIsAddProductOpen(false)
       // Refresh products
-      const res = await fetch('/api/storefronts?userId=current')
+      const res = await fetch('/api/products')
       if (res.ok) {
         const data = await res.json()
-        setProducts(data.products)
+        setProducts(data)
       }
     } catch {
       toast({
@@ -115,10 +115,10 @@ export default function ProductsPage() {
       })
       setIsEditProductOpen(false)
       // Refresh products
-      const res = await fetch('/api/storefronts?userId=current')
+      const res = await fetch('/api/products')
       if (res.ok) {
         const data = await res.json()
-        setProducts(data.products)
+        setProducts(data)
       }
     } catch {
       toast({
@@ -144,10 +144,10 @@ export default function ProductsPage() {
         description: 'Product deleted successfully',
       })
       // Refresh products
-      const res = await fetch('/api/storefronts?userId=current')
+      const res = await fetch('/api/products')
       if (res.ok) {
         const data = await res.json()
-        setProducts(data.products)
+        setProducts(data)
       }
     } catch {
       toast({
