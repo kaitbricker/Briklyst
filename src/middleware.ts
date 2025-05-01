@@ -11,9 +11,12 @@ export async function middleware(request: NextRequest) {
   })
 
   // Check if the path is a protected route
-  const isProtectedRoute = pathname.startsWith('/dashboard')
-  const isAuthRoute = pathname.startsWith('/auth/sign-in') || 
-                     pathname.startsWith('/auth/sign-up') ||
+  const isProtectedRoute = pathname.startsWith('/dashboard') || 
+                          pathname === '/settings' ||
+                          pathname === '/storefront'
+
+  // Check if it's an auth route
+  const isAuthRoute = pathname.startsWith('/auth/') || 
                      pathname === '/login' ||
                      pathname === '/signup'
 
@@ -31,6 +34,19 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl)
   }
 
+  // Redirect old routes to new ones
+  if (pathname === '/signup') {
+    return NextResponse.redirect(new URL('/auth/sign-up', request.url))
+  }
+
+  if (pathname === '/login') {
+    return NextResponse.redirect(new URL('/auth/sign-in', request.url))
+  }
+
+  if (pathname === '/settings') {
+    return NextResponse.redirect(new URL('/dashboard/settings', request.url))
+  }
+
   // If it's the root path and there's a token, redirect to dashboard
   if (pathname === '/' && token) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
@@ -40,5 +56,13 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/', '/dashboard/:path*', '/auth/sign-in', '/auth/sign-up'],
+  matcher: [
+    '/',
+    '/dashboard/:path*',
+    '/auth/:path*',
+    '/login',
+    '/signup',
+    '/settings',
+    '/storefront'
+  ]
 } 

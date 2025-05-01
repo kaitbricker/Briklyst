@@ -1,4 +1,5 @@
-import NextAuth, { NextAuthOptions } from "next-auth"
+import { AuthOptions } from "next-auth"
+import NextAuth from "next-auth/next"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { compare } from "bcryptjs"
@@ -8,7 +9,7 @@ if (!process.env.NEXTAUTH_SECRET) {
   throw new Error('NEXTAUTH_SECRET is not set')
 }
 
-export const authOptions: NextAuthOptions = {
+export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma),
   secret: process.env.NEXTAUTH_SECRET,
   session: {
@@ -19,6 +20,8 @@ export const authOptions: NextAuthOptions = {
     signIn: "/auth/sign-in",
     signUp: "/auth/sign-up",
     error: "/auth/sign-in",
+    signOut: "/auth/sign-in",
+    verifyRequest: "/auth/verify-email",
   },
   providers: [
     CredentialsProvider({
