@@ -21,8 +21,10 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { useToast } from '@/components/ui/use-toast'
-import { Pencil, Trash2 } from 'lucide-react'
+import { Pencil, Trash2, Plus, Search, Filter, ArrowUpRight } from 'lucide-react'
 import { Card } from '@/components/ui/card'
+import Image from 'next/image'
+import { motion } from 'framer-motion'
 
 interface Product {
   id: string
@@ -169,12 +171,21 @@ export default function ProductsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Products</h1>
+    <div className="space-y-8">
+      <motion.div 
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.3 }}
+        className="flex items-center justify-between bg-white/50 backdrop-blur-sm p-6 rounded-xl shadow-sm"
+      >
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold text-[#1C1C2E]">Products</h1>
+          <p className="text-[#5F5F73]">Manage and track your product listings</p>
+        </div>
         <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800">
+            <Button className="bg-[#1C1C2E] hover:bg-[#2D2D44] text-white transition-all duration-200">
+              <Plus className="w-4 h-4 mr-2" />
               Add Product
             </Button>
           </DialogTrigger>
@@ -185,7 +196,96 @@ export default function ProductsPage() {
             <ProductForm onSubmit={handleAddProduct} />
           </DialogContent>
         </Dialog>
+      </motion.div>
+
+      <div className="flex items-center gap-4 bg-white/50 backdrop-blur-sm p-4 rounded-xl shadow-sm">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <Input 
+            placeholder="Search products..." 
+            className="pl-10 bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0"
+          />
+        </div>
+        <Button variant="outline" className="gap-2">
+          <Filter className="h-4 w-4" />
+          Filter
+        </Button>
       </div>
+
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4 }}
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+      >
+        {products.map((product, index) => (
+          <motion.div
+            key={product.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: index * 0.1 }}
+          >
+            <Card className="group overflow-hidden bg-white/50 backdrop-blur-sm hover:shadow-lg transition-all duration-200">
+              {product.imageUrl && (
+                <div className="relative w-full h-48 overflow-hidden">
+                  <Image
+                    src={product.imageUrl}
+                    alt={product.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-200"
+                  />
+                </div>
+              )}
+              <div className="p-6 space-y-4">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="font-bold text-lg text-[#1C1C2E] group-hover:text-[#2D2D44] transition-colors">
+                      {product.title}
+                    </h3>
+                    <p className="text-[#5F5F73] text-sm line-clamp-2 mt-1">
+                      {product.description}
+                    </p>
+                  </div>
+                  <p className="font-bold text-lg text-[#1C1C2E]">
+                    ${product.price}
+                  </p>
+                </div>
+                
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                  <div className="flex items-center gap-2">
+                    <ArrowUpRight className="w-4 h-4 text-[#5F5F73]" />
+                    <p className="text-sm text-[#5F5F73]">
+                      {product.clicks} clicks
+                    </p>
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="hover:bg-[#1C1C2E]/5 rounded-lg transition-colors"
+                      onClick={() => {
+                        setSelectedProduct(product)
+                        setIsEditProductOpen(true)
+                      }}
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="hover:bg-red-500/5 text-red-500 rounded-lg transition-colors"
+                      onClick={() => handleDeleteProduct(product.id)}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+        ))}
+      </motion.div>
 
       <Dialog open={isEditProductOpen} onOpenChange={setIsEditProductOpen}>
         <DialogContent>
@@ -200,58 +300,6 @@ export default function ProductsPage() {
           )}
         </DialogContent>
       </Dialog>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {products.map((product) => (
-          <Card
-            key={product.id}
-            className="p-6 rounded-xl shadow-md hover:shadow-lg hover:scale-[1.01] transition-all duration-200"
-          >
-            <div className="space-y-4">
-              <div className="flex items-start justify-between">
-                <h3 className="font-bold text-lg">{product.title}</h3>
-                <p className="font-bold">${product.price}</p>
-              </div>
-              
-              <p className="text-gray-500 text-sm">{product.description}</p>
-              
-              <div className="flex items-center justify-between">
-                <p className="text-xs text-gray-400">
-                  {product.clicks === 0 ? (
-                    <span className="italic">No clicks yet</span>
-                  ) : (
-                    `${product.clicks} clicks`
-                  )}
-                </p>
-                
-                <div className="flex gap-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="bg-gray-100 hover:bg-gray-200 rounded-md text-sm"
-                    onClick={() => {
-                      setSelectedProduct(product)
-                      setIsEditProductOpen(true)
-                    }}
-                  >
-                    <Pencil className="w-4 h-4 mr-1" />
-                    Edit
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="bg-red-50 text-red-600 hover:bg-red-100 rounded-md text-sm"
-                    onClick={() => handleDeleteProduct(product.id)}
-                  >
-                    <Trash2 className="w-4 h-4 mr-1" />
-                    Delete
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </Card>
-        ))}
-      </div>
     </div>
   )
 }
