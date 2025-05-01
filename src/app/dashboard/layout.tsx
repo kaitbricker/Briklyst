@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 import { cn } from '@/lib/utils'
+import { useSession, signOut } from 'next-auth/react'
 
 const navItems = [
   {
@@ -33,43 +34,18 @@ export default function DashboardLayout({
 }) {
   const router = useRouter()
   const { toast } = useToast()
-  const [user, setUser] = useState<{ name: string; email: string } | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { data: session, status } = useSession()
   const pathname = usePathname()
 
   useEffect(() => {
-    async function checkAuth() {
-      try {
-        const response = await fetch('/api/auth/me')
-        const data = await response.json()
-
-        if (!response.ok) {
-          router.push('/login')
-          return
-        }
-
-        setUser(data.user)
-      } catch (error) {
-        console.error('Auth check failed:', error)
-        router.push('/login')
-      } finally {
-        setLoading(false)
-      }
+    if (status === 'unauthenticated') {
+      router.push('/auth/sign-in')
     }
-
-    checkAuth()
-  }, [router])
+  }, [status, router])
 
   async function handleSignOut() {
     try {
-      const response = await fetch('/api/auth/signout', {
-        method: 'POST',
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to sign out')
-      }
-
+      await signOut({ redirect: false })
       router.push('/auth/sign-in')
     } catch (error) {
       console.error('Sign out error:', error)
@@ -81,7 +57,7 @@ export default function DashboardLayout({
     }
   }
 
-  if (loading) {
+  if (status === 'loading') {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">Loading...</div>
@@ -89,7 +65,7 @@ export default function DashboardLayout({
     )
   }
 
-  if (!user) {
+  if (!session?.user) {
     return null
   }
 
@@ -129,7 +105,7 @@ export default function DashboardLayout({
                   </Link>
                 </div>
                 <div className="flex items-center space-x-4">
-                  <span className="text-sm text-gray-600">{user.email}</span>
+                  <span className="text-sm text-gray-600">{session.user.email}</span>
                   <Button
                     variant="ghost"
                     onClick={handleSignOut}

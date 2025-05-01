@@ -32,46 +32,46 @@ const mockEmailStats = {
 }
 
 export default function DashboardPage() {
-  const { data: session } = useSession()
-  const user = session?.user
-  const username = user?.name ? user.name.replace(/\s+/g, '').toLowerCase() : ""
+  const { data: session, status } = useSession()
   const [timeFilter, setTimeFilter] = useState<'week' | 'month'>('week')
 
   // Helper for avatar initials
-  const initials = user?.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : (user?.email?.[0]?.toUpperCase() || "U")
+  const initials = session?.user?.name 
+    ? session.user.name.split(' ').map(n => n[0]).join('').toUpperCase() 
+    : (session?.user?.email?.[0]?.toUpperCase() || "U")
+
+  const username = session?.user?.name 
+    ? session.user.name.replace(/\s+/g, '').toLowerCase() 
+    : ""
+
+  if (status === 'loading') {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">Loading...</div>
+      </div>
+    )
+  }
+
+  if (!session?.user) {
+    return null
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      {/* Top Navigation Bar */}
-      <nav className="flex items-center justify-between px-8 py-4 bg-white shadow-sm sticky top-0 z-10">
-        <div className="flex items-center gap-8">
-          <span className="font-bold text-xl tracking-tight">Briklyst</span>
-          <Link href="/dashboard" className="text-gray-700 hover:text-blue-600 transition">Dashboard</Link>
-          <Link href={`/${username}`} className="text-gray-700 hover:text-blue-600 transition">Storefront</Link>
-          <Link href="/dashboard/manage-products" className="text-gray-700 hover:text-blue-600 transition">Manage Products</Link>
-          <Link href="/dashboard/emails" className="text-gray-700 hover:text-blue-600 transition">Email Tools</Link>
-          <Link href="/dashboard/settings" className="text-gray-700 hover:text-blue-600 transition">Settings</Link>
-        </div>
-        <div className="flex items-center gap-4">
-          <span className="text-gray-600 text-sm hidden sm:block">{user?.email}</span>
-          <Link href="/api/auth/signout" className="text-red-600 hover:underline">Sign out</Link>
-        </div>
-      </nav>
-
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white p-8">
       {/* User Info Panel */}
-      <div className="max-w-4xl mx-auto mt-8 bg-white rounded-xl shadow p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-6 border border-gray-100">
+      <div className="max-w-4xl mx-auto bg-white rounded-xl shadow p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-6 border border-gray-100">
         <div className="flex items-center gap-4">
-          {user?.image ? (
-            <Image src={user.image} alt="avatar" width={64} height={64} className="w-16 h-16 rounded-full object-cover border" />
+          {session.user.image ? (
+            <Image src={session.user.image} alt="avatar" width={64} height={64} className="w-16 h-16 rounded-full object-cover border" />
           ) : (
             <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-2xl text-gray-500 border">
               {initials}
             </div>
           )}
           <div>
-            <div className="text-lg font-semibold">{user?.name}</div>
+            <div className="text-lg font-semibold">{session.user.name}</div>
             <div className="text-gray-500 text-sm">@{username}</div>
-            <div className="text-gray-500 text-sm">{user?.email}</div>
+            <div className="text-gray-500 text-sm">{session.user.email}</div>
             <div className="text-gray-500 text-sm mt-1">Plan: <span className="font-medium text-green-600">Free</span></div>
             <Link href={`/${username}`} className="text-blue-600 underline mt-2 inline-block">View Public Storefront</Link>
           </div>
@@ -130,45 +130,23 @@ export default function DashboardPage() {
       {/* Quick Access Actions */}
       <div className="max-w-4xl mx-auto mt-10 flex flex-wrap gap-4 justify-center">
         <Button asChild className="flex items-center gap-2">
-          <Link href="/dashboard/manage-products" className="flex items-center gap-2">
+          <Link href="/dashboard/products" className="flex items-center gap-2">
             <PlusCircle size={18}/>
             Add New Product
           </Link>
         </Button>
         <Button asChild variant="secondary" className="flex items-center gap-2">
-          <Link href="/dashboard/emails" className="flex items-center gap-2">
-            <Mail size={18}/>
-            Create Email Campaign
+          <Link href="/dashboard/storefront" className="flex items-center gap-2">
+            <Palette size={18}/>
+            Customize Storefront
           </Link>
         </Button>
         <Button asChild variant="secondary" className="flex items-center gap-2">
           <Link href="/dashboard/settings" className="flex items-center gap-2">
-            <Palette size={18}/>
-            Customize Storefront Theme
+            <Settings size={18}/>
+            Account Settings
           </Link>
         </Button>
-        <Button asChild variant="secondary" className="flex items-center gap-2">
-          <Link href="/dashboard/collaborators" className="flex items-center gap-2">
-            <Users size={18}/>
-            Invite a Collaborator
-          </Link>
-        </Button>
-      </div>
-
-      {/* Collaborator Activity Panel (Optional) */}
-      <div className="max-w-4xl mx-auto mt-10">
-        <div className="bg-white rounded-xl shadow p-6 border border-gray-100">
-          <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-blue-700"><Users size={20}/> Collaborator Activity</h2>
-          <div className="text-gray-500">[Collaborator info and shared stats will go here]</div>
-        </div>
-      </div>
-
-      {/* Settings Access */}
-      <div className="max-w-4xl mx-auto mt-10 mb-12">
-        <div className="bg-white rounded-xl shadow p-6 border border-gray-100">
-          <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-blue-700"><Settings size={20}/> Settings</h2>
-          <Link href="/dashboard/settings" className="text-blue-600 underline">Go to Account Settings</Link>
-        </div>
       </div>
     </div>
   )
