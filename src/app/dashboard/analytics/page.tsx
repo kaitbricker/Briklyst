@@ -22,12 +22,13 @@ import {
   AreaChart,
   Area,
 } from 'recharts'
-import { ArrowUp, ArrowDown, Users, MousePointerClick, Package, DollarSign, Calendar, ChevronDown } from 'lucide-react'
+import { ArrowUp, ArrowDown, Users, MousePointerClick, Package, DollarSign, Calendar, ChevronDown, Sun, Moon, Download, TrendingUp, TrendingDown } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useSpring, animated } from '@react-spring/web'
 import { Inter } from 'next/font/google'
 import { cn } from '@/lib/utils'
+import { useTheme } from 'next-themes'
 
 interface AnalyticsData {
   clicksByProduct: Record<string, number>
@@ -77,7 +78,36 @@ function useCounterAnimation(end: number, duration: number = 2000) {
   return value
 }
 
+// Shimmer loading effect component
+const ShimmerEffect = () => (
+  <div className="animate-pulse space-y-4">
+    <div className="h-8 w-1/3 bg-gray-200 rounded"></div>
+    <div className="h-32 w-full bg-gray-200 rounded-xl"></div>
+  </div>
+)
+
+// Enhanced tooltip component
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white/95 backdrop-blur-sm p-4 rounded-xl shadow-lg border border-gray-100">
+        <p className="text-sm font-medium text-gray-900 mb-2">{label}</p>
+        {payload.map((entry: any, index: number) => (
+          <div key={index} className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }}></div>
+            <p className="text-sm text-gray-600">
+              {entry.name}: <span className="font-medium">{entry.value}</span>
+            </p>
+          </div>
+        ))}
+      </div>
+    )
+  }
+  return null
+}
+
 export default function AnalyticsDashboard() {
+  const { theme, setTheme } = useTheme()
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -178,52 +208,43 @@ export default function AnalyticsDashboard() {
 
   const StatCard = ({ stat }: { stat: StatCard }) => {
     const animatedValue = useCounterAnimation(Number(stat.value.toString().replace(/[^0-9]/g, '')))
+    const isPositive = stat.change >= 0
     
     return (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
+        whileHover={{ scale: 1.01, transition: { duration: 0.2 } }}
       >
         <div className={cn(
-          "p-6 rounded-xl backdrop-blur-sm transition-all duration-300",
-          "bg-gradient-to-br shadow-lg hover:shadow-xl",
-          "border border-white/10",
-          stat.change >= 0 
-            ? "from-green-50/80 to-white/90 hover:from-green-50/90 hover:to-white" 
-            : "from-red-50/80 to-white/90 hover:from-red-50/90 hover:to-white",
+          "p-6 rounded-2xl backdrop-blur-sm transition-all duration-300",
+          "bg-gradient-to-br shadow-md hover:shadow-lg",
+          "border border-gray-100",
+          stat.title.includes('Revenue')
+            ? "from-red-50/90 to-white hover:from-red-50"
+            : "from-green-50/90 to-white hover:from-green-50",
           inter.className
         )}>
           <div className="flex items-center justify-between">
-            <div className="space-y-1">
+            <div className="space-y-2">
               <p className="text-sm font-medium text-gray-600">{stat.title}</p>
               <p className="text-2xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600">
                 {typeof stat.value === 'number' ? animatedValue : stat.value}
               </p>
+              <p className="text-xs text-gray-500 flex items-center gap-1">
+                {isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                {stat.title.includes('Revenue') ? 'Revenue' : 'Engagement'} {isPositive ? '↑' : '↓'} {Math.abs(stat.change)}% vs {stat.timeframe}
+              </p>
             </div>
             <div className={cn(
-              "rounded-full p-3 transition-colors duration-200",
-              stat.change >= 0 
-                ? "bg-green-50 text-green-600 hover:bg-green-100" 
-                : "bg-red-50 text-red-600 hover:bg-red-100"
+              "rounded-xl p-3 transition-colors duration-200",
+              stat.title.includes('Revenue')
+                ? "bg-red-50 text-red-600 hover:bg-red-100"
+                : "bg-green-50 text-green-600 hover:bg-green-100"
             )}>
               {stat.icon}
             </div>
-          </div>
-          <div className="mt-4 flex items-center gap-2">
-            <div className={cn(
-              "flex items-center gap-1 text-sm font-medium",
-              stat.change >= 0 ? "text-green-600" : "text-red-600"
-            )}>
-              {stat.change >= 0 ? (
-                <ArrowUp className="h-4 w-4" />
-              ) : (
-                <ArrowDown className="h-4 w-4" />
-              )}
-              {Math.abs(stat.change)}%
-            </div>
-            <p className="text-sm text-gray-500">{stat.timeframe}</p>
           </div>
         </div>
       </motion.div>
@@ -232,7 +253,7 @@ export default function AnalyticsDashboard() {
 
   if (loading) {
     return (
-      <div className="flex h-[50vh] items-center justify-center">
+      <div className="absolute inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center">
         <div className="text-center space-y-4">
           <div className="relative w-16 h-16 mx-auto">
             <div className="absolute inset-0 rounded-full border-4 border-gray-200"></div>
@@ -262,38 +283,42 @@ export default function AnalyticsDashboard() {
   }))
 
   return (
-    <div className={cn("space-y-8", inter.className)}>
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex items-center justify-between"
-      >
-        <div>
+    <div className={cn(
+      "min-h-screen bg-gradient-to-b from-[#f9fafb] to-[#f1f5f9] space-y-8 p-8",
+      inter.className
+    )}>
+      {/* Header with Theme Toggle */}
+      <div className="flex items-center justify-between">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
           <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600">
             Analytics Overview
           </h1>
           <p className="mt-1 text-sm text-gray-500">Track your storefront performance and user engagement</p>
-        </div>
+        </motion.div>
         <div className="flex items-center gap-4">
           <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[180px] bg-white border border-gray-200 rounded-lg shadow-sm hover:border-gray-300 transition-colors">
               <SelectValue placeholder="Select time range" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="day">Last 24 hours</SelectItem>
-              <SelectItem value="week">Last 7 days</SelectItem>
-              <SelectItem value="month">Last 30 days</SelectItem>
-              <SelectItem value="year">Last 12 months</SelectItem>
+            <SelectContent className="bg-white border border-gray-200 shadow-lg rounded-lg">
+              <SelectItem value="day" className="hover:bg-gray-100 cursor-pointer">Last 24 hours</SelectItem>
+              <SelectItem value="week" className="hover:bg-gray-100 cursor-pointer">Last 7 days</SelectItem>
+              <SelectItem value="month" className="hover:bg-gray-100 cursor-pointer">Last 30 days</SelectItem>
+              <SelectItem value="year" className="hover:bg-gray-100 cursor-pointer">Last 12 months</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline" className="gap-2">
-            <Calendar className="h-4 w-4" />
-            Custom Range
-            <ChevronDown className="h-4 w-4" />
+          <Button
+            variant="outline"
+            className="gap-2 bg-white hover:bg-gray-50 transition-colors border border-gray-200"
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          >
+            {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </Button>
         </div>
-      </motion.div>
+      </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -318,10 +343,10 @@ export default function AnalyticsDashboard() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
         >
-          <Card className="p-6 backdrop-blur-sm bg-white/80 hover:bg-white/90 transition-all duration-300 border border-gray-100 shadow-lg hover:shadow-xl rounded-xl">
+          <Card className="p-6 rounded-2xl bg-white border border-gray-100 shadow-md hover:shadow-lg transition-all duration-300">
             <h3 className="text-lg font-medium text-gray-900">Engagement Overview</h3>
             <p className="mt-1 text-sm text-gray-500">User engagement over time</p>
-            <div className="mt-4 h-[300px]">
+            <div className="mt-6 h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={engagementData}>
                   <defs>
@@ -329,14 +354,32 @@ export default function AnalyticsDashboard() {
                       <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8}/>
                       <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
                     </linearGradient>
+                    <linearGradient id="colorClicks" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10B981" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
+                    </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis />
-                  <Tooltip />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                  <XAxis dataKey="date" stroke="#6B7280" />
+                  <YAxis stroke="#6B7280" />
+                  <Tooltip content={<CustomTooltip />} />
                   <Legend />
-                  <Area type="monotone" dataKey="users" stroke="#3B82F6" fillOpacity={1} fill="url(#colorUsers)" />
-                  <Area type="monotone" dataKey="clicks" stroke="#10B981" fillOpacity={1} fill="url(#colorClicks)" />
+                  <Area 
+                    type="monotone" 
+                    dataKey="users" 
+                    stroke="#3B82F6" 
+                    fillOpacity={1} 
+                    fill="url(#colorUsers)"
+                    strokeWidth={2}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="clicks" 
+                    stroke="#10B981" 
+                    fillOpacity={1} 
+                    fill="url(#colorClicks)"
+                    strokeWidth={2}
+                  />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -348,20 +391,27 @@ export default function AnalyticsDashboard() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.3 }}
         >
-          <Card className="p-6 backdrop-blur-sm bg-white/80 hover:bg-white/90 transition-all duration-300 border border-gray-100 shadow-lg hover:shadow-xl rounded-xl">
+          <Card className="p-6 rounded-2xl bg-white border border-gray-100 shadow-md hover:shadow-lg transition-all duration-300">
             <h3 className="text-lg font-medium text-gray-900">Product Performance</h3>
             <p className="mt-1 text-sm text-gray-500">Top performing products</p>
-            <div className="mt-4 h-[300px]">
+            <div className="mt-6 h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={analytics?.mostPopular.slice(0, 5).map(item => ({
-                  name: item.title,
-                  clicks: item.count
-                }))}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="clicks" fill="#3B82F6" />
+                <BarChart 
+                  data={analytics?.mostPopular.slice(0, 5).map(item => ({
+                    name: item.title,
+                    clicks: item.count
+                  }))}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                  <XAxis dataKey="name" stroke="#6B7280" />
+                  <YAxis stroke="#6B7280" />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar 
+                    dataKey="clicks" 
+                    fill="#3B82F6"
+                    radius={[6, 6, 0, 0]}
+                    className="transition-all duration-300 hover:opacity-80"
+                  />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -370,29 +420,33 @@ export default function AnalyticsDashboard() {
       </div>
 
       {/* Filters and Controls */}
-      <Card className="p-6">
+      <Card className="p-6 rounded-2xl bg-white border border-gray-100 shadow-md">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <Select value={interval} onValueChange={setInterval}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[180px] bg-white border border-gray-200 rounded-lg shadow-sm hover:border-gray-300 transition-colors">
                 <SelectValue placeholder="Select interval" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="hourly">Hourly</SelectItem>
-                <SelectItem value="daily">Daily</SelectItem>
-                <SelectItem value="weekly">Weekly</SelectItem>
-                <SelectItem value="monthly">Monthly</SelectItem>
+              <SelectContent className="bg-white border border-gray-200 shadow-lg rounded-lg">
+                <SelectItem value="hourly" className="hover:bg-gray-100 cursor-pointer">Hourly</SelectItem>
+                <SelectItem value="daily" className="hover:bg-gray-100 cursor-pointer">Daily</SelectItem>
+                <SelectItem value="weekly" className="hover:bg-gray-100 cursor-pointer">Weekly</SelectItem>
+                <SelectItem value="monthly" className="hover:bg-gray-100 cursor-pointer">Monthly</SelectItem>
               </SelectContent>
             </Select>
 
             <Select value={selectedProduct} onValueChange={setSelectedProduct}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[180px] bg-white border border-gray-200 rounded-lg shadow-sm hover:border-gray-300 transition-colors">
                 <SelectValue placeholder="All Products" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Products</SelectItem>
+              <SelectContent className="bg-white border border-gray-200 shadow-lg rounded-lg">
+                <SelectItem value="all" className="hover:bg-gray-100 cursor-pointer">All Products</SelectItem>
                 {products.map((product) => (
-                  <SelectItem key={product.id} value={product.id}>
+                  <SelectItem 
+                    key={product.id} 
+                    value={product.id}
+                    className="hover:bg-gray-100 cursor-pointer"
+                  >
                     {product.title}
                   </SelectItem>
                 ))}
@@ -404,11 +458,21 @@ export default function AnalyticsDashboard() {
             <Button
               variant={compareMode ? "default" : "outline"}
               onClick={() => setCompareMode(!compareMode)}
+              className={cn(
+                "gap-2 transition-all duration-200",
+                compareMode 
+                  ? "bg-blue-500 hover:bg-blue-600 text-white"
+                  : "bg-white hover:bg-gray-50 border border-gray-200"
+              )}
             >
+              <TrendingUp className="h-4 w-4" />
               Compare Periods
             </Button>
-            <Button variant="outline">
-              <Calendar className="mr-2 h-4 w-4" />
+            <Button 
+              variant="outline"
+              className="gap-2 bg-white hover:bg-gray-50 transition-colors border border-gray-200"
+            >
+              <Download className="h-4 w-4" />
               Export Data
             </Button>
           </div>
