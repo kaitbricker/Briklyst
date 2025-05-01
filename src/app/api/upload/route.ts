@@ -3,8 +3,13 @@ import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { Session } from 'next-auth'
-import { writeFile } from 'fs/promises'
-import { join } from 'path'
+import { v2 as cloudinary } from 'cloudinary'
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+})
 
 export async function POST(request: Request) {
   try {
@@ -30,20 +35,16 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    // Create a unique filename
-    const timestamp = Date.now()
-    const filename = `${timestamp}-${file.name}`
-    
-    // Save the file to the public directory
-    const publicDir = join(process.cwd(), 'public', 'uploads')
-    const filepath = join(publicDir, filename)
-    
-    // Ensure the uploads directory exists
-    await writeFile(filepath, buffer)
+    // Upload to Cloudinary
+    const uploadResult = await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
+        if (error) return reject(error)
+        resolve(result)
+      }).end(buffer)
+    })
 
-    // Return the URL for the uploaded file
-    const url = `/uploads/${filename}`
-
+    // @ts-ignore
+    const url = uploadResult.secure_url
     return NextResponse.json({ url })
   } catch (error) {
     console.error('Upload error:', error)
