@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ProductCard } from "./ProductCard";
+import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { motion } from "framer-motion";
@@ -15,6 +15,7 @@ interface Product {
   price: number;
   imageUrl: string;
   affiliateUrl: string;
+  clicks: number;
   tags?: string[];
   featured?: boolean;
 }
@@ -59,6 +60,18 @@ export function StorefrontContent({ username }: StorefrontContentProps) {
 
     fetchStorefront();
   }, [username]);
+
+  const handleProductClick = async (productId: string) => {
+    try {
+      await fetch('/api/analytics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId }),
+      });
+    } catch (error) {
+      console.error('Failed to track click:', error);
+    }
+  };
 
   if (loading) {
     return <div className="p-8 text-center">Loading...</div>;
@@ -164,6 +177,10 @@ export function StorefrontContent({ username }: StorefrontContentProps) {
                   product={product}
                   primaryColor={storefront?.primaryColor || '#000'}
                   accentColor={storefront?.accentColor || '#fff'}
+                  onClick={() => {
+                    handleProductClick(product.id);
+                    window.open(product.affiliateUrl, '_blank');
+                  }}
                 />
               ))}
             </div>
@@ -184,6 +201,10 @@ export function StorefrontContent({ username }: StorefrontContentProps) {
                 product={product}
                 primaryColor={storefront?.primaryColor || '#000'}
                 accentColor={storefront?.accentColor || '#fff'}
+                onClick={() => {
+                  handleProductClick(product.id);
+                  window.open(product.affiliateUrl, '_blank');
+                }}
               />
             ))}
           </div>
