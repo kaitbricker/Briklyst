@@ -30,19 +30,23 @@ export default function SignInPage() {
         email,
         password,
         redirect: false,
+        callbackUrl,
       })
 
       if (!result?.ok) {
         throw new Error(result?.error || 'Failed to sign in')
       }
 
+      // Wait for the session to be properly set
+      await new Promise(resolve => setTimeout(resolve, 100))
+
       toast({
         title: 'Welcome back!',
         description: 'You have successfully signed in.',
       })
 
-      router.push(callbackUrl)
-      router.refresh()
+      // Use replace instead of push to prevent back navigation to sign-in
+      router.replace(callbackUrl)
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Something went wrong'
       setError(errorMessage)
