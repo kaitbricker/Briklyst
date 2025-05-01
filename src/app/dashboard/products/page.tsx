@@ -27,7 +27,6 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { ImageUpload } from '@/components/ui/image-upload'
 import BulkImportProducts from '@/components/BulkImportProducts'
-import placeholderImg from '/public/placeholder-product.jpg'
 
 interface Product {
   id: string
@@ -263,7 +262,7 @@ export default function ProductsPage() {
                     className="object-cover group-hover:scale-105 transition-transform duration-200"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
-                      target.src = placeholderImg.src;
+                      target.src = '/placeholder-product.jpg';
                     }}
                   />
                 </div>
