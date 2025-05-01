@@ -1,3 +1,5 @@
+'use client';
+
 import { useRouter, usePathname } from 'next/navigation';
 import { HomeIcon, ChartBarIcon, CogIcon, ShoppingBagIcon } from '@heroicons/react/24/outline';
 import { useStorefront } from '@/hooks/useStorefront';
