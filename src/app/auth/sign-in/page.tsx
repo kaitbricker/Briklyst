@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { signIn } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -11,6 +11,7 @@ import { toast } from '@/components/ui/use-toast'
 
 export default function SignInPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -24,10 +25,12 @@ export default function SignInPage() {
     const password = formData.get('password') as string
 
     try {
+      const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
       const result = await signIn('credentials', {
         email,
         password,
         redirect: false,
+        callbackUrl,
       })
 
       if (result?.error) {
@@ -38,7 +41,12 @@ export default function SignInPage() {
         title: 'Welcome back!',
         description: 'You have successfully signed in.',
       })
-      router.push('/dashboard')
+
+      // Add a small delay to ensure the session is properly set
+      setTimeout(() => {
+        router.push(callbackUrl)
+        router.refresh()
+      }, 100)
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Something went wrong'
       setError(errorMessage)
