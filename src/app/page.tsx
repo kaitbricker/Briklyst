@@ -325,7 +325,7 @@ function Footer() {
     <footer className="bg-[#1D1E33] py-12 w-full">
       <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-8">
         <div className="flex items-center gap-4">
-          <Image src="/logo.png" alt="Briklyst Logo" width={120} height={40} className="object-contain invert" />
+          <Image src="/briklyst-logo.png" alt="Briklyst Logo" width={120} height={40} className="object-contain invert" />
           <span className="text-white font-bold text-lg">Briklyst</span>
         </div>
         <div className="flex gap-8 text-gray-300">
@@ -650,7 +650,7 @@ export default function Home() {
       <footer className="bg-[#1D1E33] py-12 w-full">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="flex items-center gap-4">
-            <Image src="/logo.png" alt="Briklyst Logo" width={120} height={40} className="object-contain invert" />
+            <Image src="/briklyst-logo.png" alt="Briklyst Logo" width={120} height={40} className="object-contain invert" />
             <span className="text-white font-bold text-lg">Briklyst</span>
           </div>
           <div className="flex gap-8 text-gray-300">

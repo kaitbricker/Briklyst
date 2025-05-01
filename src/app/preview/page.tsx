@@ -135,15 +135,13 @@ export default function PreviewStorefront() {
         )}
         <div className="container mx-auto px-4 py-6 relative z-10">
           <div className="flex items-center gap-4">
-            {storefront.logo && (
-              <Image
-                src={storefront.logo}
-                alt="Store logo"
-                width={64}
-                height={64}
-                className="rounded-full"
-              />
-            )}
+            <Image
+              src={storefront.logo || '/briklyst-logo.png'}
+              alt="Store logo"
+              width={64}
+              height={64}
+              className="rounded-full"
+            />
             <div>
               <h1 className="text-2xl font-bold" style={{ color: storefront.theme.textColor }}>
                 {storefront.name}

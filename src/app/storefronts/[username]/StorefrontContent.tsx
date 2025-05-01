@@ -102,7 +102,7 @@ export function StorefrontContent({ username }: StorefrontContentProps) {
           {storefront?.logoUrl && (
             <div className="relative mx-auto mb-6 h-24 w-24">
               <Image
-                src={storefront.logoUrl}
+                src={storefront.logoUrl || '/briklyst-logo.png'}
                 alt={storefront.title}
                 fill
                 className="object-contain"

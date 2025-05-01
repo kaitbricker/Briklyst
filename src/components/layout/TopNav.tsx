@@ -87,8 +87,8 @@ export function TopNav() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center">
-              <span className="text-2xl font-bold text-[#1C1C2E]">Briklyst</span>
+            <Link href="/dashboard" className="flex items-center">
+              <Image src="/briklyst-logo.png" alt="Briklyst Logo" width={110} height={44} className="h-11 w-auto" priority />
             </Link>
           </div>
 

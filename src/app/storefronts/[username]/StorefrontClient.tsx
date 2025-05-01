@@ -94,7 +94,7 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
           {storefront.logoUrl && (
             <div className="mb-6 h-24 w-24 overflow-hidden rounded-full border-4 border-white">
               <Image
-                src={storefront.logoUrl}
+                src={storefront.logoUrl || '/briklyst-logo.png'}
                 alt={storefront.title}
                 width={96}
                 height={96}
