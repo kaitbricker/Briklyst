@@ -68,6 +68,7 @@ const DialogContent = React.forwardRef<
     </DialogPrimitive.Content>
   </DialogPortal>
 ))
+DialogContent.displayName = "DialogContent"
 
 function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
