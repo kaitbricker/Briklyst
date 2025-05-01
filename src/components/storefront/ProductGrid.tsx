@@ -18,6 +18,7 @@ interface Product {
   affiliateUrl: string;
   clicks: number;
   tags: string[];
+  collection?: string;
 }
 
 interface ProductGridProps {
@@ -27,19 +28,23 @@ interface ProductGridProps {
 export default function ProductGrid({ products }: ProductGridProps) {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-  // Get all unique tags from products
-  const allTags = Array.from(
-    new Set(products.flatMap((product) => product.tags))
+  // Get all unique collections from products
+  const allCollections = Array.from(
+    new Set(products.map((product) => product.collection || 'Uncategorized'))
   ).sort();
 
-  // Filter products based on selected tags
+  // Filter products based on selected collections
   const filteredProducts = selectedTags.length
     ? products.filter((product) =>
-        selectedTags.some((tag) => product.tags.includes(tag))
+        selectedTags.includes(product.collection || 'Uncategorized')
       )
     : products;
 
   const handleTagSelect = (tag: string) => {
+    if (!tag) {
+      setSelectedTags([]);
+      return;
+    }
     setSelectedTags((prev) =>
       prev.includes(tag)
         ? prev.filter((t) => t !== tag)
@@ -62,10 +67,10 @@ export default function ProductGrid({ products }: ProductGridProps) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      {allTags.length > 0 && (
+      {allCollections.length > 0 && (
         <div className="mb-12">
           <ProductFilters
-            tags={allTags}
+            tags={allCollections}
             selectedTags={selectedTags}
             onTagSelect={handleTagSelect}
           />
@@ -89,24 +94,21 @@ export default function ProductGrid({ products }: ProductGridProps) {
                     alt={filteredProducts[0].title}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = '/placeholder-product.jpg';
+                    }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
                 
                 {/* Featured Content */}
                 <div className="p-8 md:p-12 flex flex-col justify-center">
                   <div className="space-y-6">
-                    {filteredProducts[0].tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        {filteredProducts[0].tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="px-4 py-1.5 text-sm font-medium rounded-full bg-orange-50 text-orange-600"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
+                    {filteredProducts[0].collection && (
+                      <span className="inline-block px-4 py-1.5 text-sm font-medium rounded-full bg-orange-50 text-orange-600">
+                        {filteredProducts[0].collection}
+                      </span>
                     )}
                     <h2 className="font-bold text-3xl text-gray-900">
                       {filteredProducts[0].title}
@@ -136,7 +138,7 @@ export default function ProductGrid({ products }: ProductGridProps) {
       )}
 
       {/* Product Grid */}
-      <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <AnimatePresence>
           {filteredProducts.slice(1).map((product, index) => (
             <motion.div
@@ -145,32 +147,37 @@ export default function ProductGrid({ products }: ProductGridProps) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3, delay: index * 0.1 }}
-              whileHover={{ y: -5 }}
+              whileHover={{ y: -4, scale: 1.02 }}
+              className="group"
             >
-              <Card className="group overflow-hidden bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
+              <Card className="overflow-hidden bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100">
                 {/* Product Image */}
-                <div className="relative aspect-[4/3] w-full overflow-hidden">
+                <div className="relative aspect-[3/4] w-full overflow-hidden">
                   <Image
                     src={product.imageUrl || '/placeholder-product.jpg'}
                     alt={product.title}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = '/placeholder-product.jpg';
+                    }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   
                   {/* Action Buttons */}
-                  <div className="absolute top-4 right-4 flex gap-2 opacity-0 transform translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                  <div className="absolute top-3 right-3 flex gap-2 opacity-0 transform translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                     <Button
                       size="icon"
                       variant="secondary"
-                      className="rounded-full bg-white/95 text-gray-900 hover:bg-white shadow-md hover:shadow-lg"
+                      className="rounded-full bg-white/95 text-gray-900 hover:bg-white shadow-sm hover:shadow-md backdrop-blur-sm"
                     >
                       <Heart className="h-4 w-4" />
                     </Button>
                     <Button
                       size="icon"
                       variant="secondary"
-                      className="rounded-full bg-white/95 text-gray-900 hover:bg-white shadow-md hover:shadow-lg"
+                      className="rounded-full bg-white/95 text-gray-900 hover:bg-white shadow-sm hover:shadow-md backdrop-blur-sm"
                     >
                       <Share2 className="h-4 w-4" />
                     </Button>
@@ -178,42 +185,30 @@ export default function ProductGrid({ products }: ProductGridProps) {
                 </div>
 
                 {/* Product Content */}
-                <div className="p-6 space-y-4">
-                  {/* Tags */}
-                  {product.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {product.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="px-3 py-1 text-xs font-medium rounded-full bg-orange-50 text-orange-600 transition-colors hover:bg-orange-100"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
+                <div className="p-4 space-y-3">
+                  {/* Collection */}
+                  {product.collection && (
+                    <span className="inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-orange-50 text-orange-600">
+                      {product.collection}
+                    </span>
                   )}
 
                   {/* Title */}
-                  <h3 className="font-bold text-xl text-gray-900 line-clamp-1 tracking-tight">
+                  <h3 className="font-semibold text-base text-gray-900 line-clamp-1 tracking-tight">
                     {product.title}
                   </h3>
 
                   {/* Description */}
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     <p className="text-gray-600 text-sm leading-relaxed line-clamp-2">
                       {product.description}
                     </p>
-                    {product.description && product.description.length > 100 && (
-                      <button className="text-sm text-orange-600 hover:text-orange-700 font-medium transition-colors">
-                        Read more →
-                      </button>
-                    )}
                   </div>
 
                   {/* Price and CTA */}
-                  <div className="flex items-center justify-between pt-4">
-                    <div className="space-y-1">
-                      <span className="text-lg font-semibold text-gray-900">
+                  <div className="flex items-center justify-between pt-2">
+                    <div className="space-y-0.5">
+                      <span className="text-base font-semibold text-gray-900">
                         ${product.price.toFixed(2)}
                       </span>
                       {product.clicks > 0 && (
@@ -225,11 +220,11 @@ export default function ProductGrid({ products }: ProductGridProps) {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="group/button flex items-center gap-2 rounded-full px-5 py-2 border-2 font-medium transition-all hover:bg-gray-900 hover:text-white hover:border-gray-900"
+                      className="group/button flex items-center gap-1.5 rounded-full px-4 py-1.5 border-2 font-medium transition-all hover:bg-gray-900 hover:text-white hover:border-gray-900"
                       onClick={() => handleProductClick(product.id, product.affiliateUrl)}
                     >
                       Shop Now
-                      <ArrowRight className="w-4 h-4 transition-transform group-hover/button:translate-x-1" />
+                      <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover/button:translate-x-1" />
                     </Button>
                   </div>
                 </div>

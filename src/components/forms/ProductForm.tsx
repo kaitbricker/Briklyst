@@ -269,16 +269,16 @@ export function ProductForm({ initialData, onSuccess, onSubmit }: ProductFormPro
       </div>
 
       <div>
-        <Label htmlFor="collectionId">Collection (Optional)</Label>
+        <Label htmlFor="collectionId">Collection</Label>
         <Select
           onValueChange={(value) => setValue('collectionId', value)}
-          defaultValue={initialData?.collectionId}
+          defaultValue={initialData?.collectionId || 'no-collection'}
         >
-          <SelectTrigger>
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="Select a collection" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="no-collection">None</SelectItem>
+            <SelectItem value="no-collection">Uncategorized</SelectItem>
             {collections.map((collection) => (
               <SelectItem key={collection.id} value={collection.id}>
                 {collection.name}
@@ -286,6 +286,9 @@ export function ProductForm({ initialData, onSuccess, onSubmit }: ProductFormPro
             ))}
           </SelectContent>
         </Select>
+        <p className="text-sm text-gray-500 mt-1">
+          Organize your products into collections for better browsing
+        </p>
       </div>
 
       <div>
@@ -298,6 +301,9 @@ export function ProductForm({ initialData, onSuccess, onSubmit }: ProductFormPro
             setValue('tags', tags)
           }}
         />
+        <p className="text-sm text-gray-500 mt-1">
+          Add tags to help customers find your products
+        </p>
       </div>
 
       <Button type="submit" disabled={isLoading}>
