@@ -1,48 +1,39 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
-import { v4 as uuidv4 } from 'uuid'
-
-const s3Client = new S3Client({
-  region: process.env.AWS_REGION!,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-  },
-})
+import { prisma } from '@/lib/prisma'
+import { Session } from 'next-auth'
 
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user) {
-      return new NextResponse('Unauthorized', { status: 401 })
+    const session = await getServerSession(authOptions) as Session | null
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
     }
 
     const formData = await request.formData()
-    const files = formData.getAll('files') as File[]
-    const urls: string[] = []
+    const file = formData.get('file') as File
 
-    for (const file of files) {
-      const buffer = Buffer.from(await file.arrayBuffer())
-      const key = `${uuidv4()}-${file.name}`
-
-      await s3Client.send(
-        new PutObjectCommand({
-          Bucket: process.env.AWS_BUCKET_NAME!,
-          Key: key,
-          Body: buffer,
-          ContentType: file.type,
-        })
+    if (!file) {
+      return NextResponse.json(
+        { error: 'No file provided' },
+        { status: 400 }
       )
-
-      const url = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`
-      urls.push(url)
     }
 
-    return NextResponse.json({ urls })
+    // In a real application, you would upload the file to a storage service
+    // like AWS S3, Cloudinary, etc. For now, we'll just return a mock URL
+    const mockUrl = `https://picsum.photos/seed/${Date.now()}/400/400`
+
+    return NextResponse.json({ url: mockUrl })
   } catch (error) {
     console.error('Upload error:', error)
-    return new NextResponse('Internal Server Error', { status: 500 })
+    return NextResponse.json(
+      { error: 'Something went wrong' },
+      { status: 500 }
+    )
   }
 } 

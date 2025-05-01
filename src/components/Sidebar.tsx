@@ -5,9 +5,8 @@ import { HomeIcon, ChartBarIcon, CogIcon, ShoppingBagIcon } from '@heroicons/rea
 import { useStorefront } from '@/hooks/useStorefront';
 
 const navigationItems = [
-  { name: 'Dashboard', path: '/dashboard', icon: HomeIcon },
-  { name: 'Storefront Customization', path: '/dashboard/storefront', icon: ShoppingBagIcon },
   { name: 'Analytics', path: '/dashboard/analytics', icon: ChartBarIcon },
+  { name: 'Storefront Customization', path: '/dashboard/storefront', icon: ShoppingBagIcon },
   { name: 'Settings', path: '/dashboard/settings', icon: CogIcon },
 ];
 
