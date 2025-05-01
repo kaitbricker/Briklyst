@@ -221,9 +221,9 @@ export default function AnalyticsDashboard() {
           "p-6 rounded-2xl backdrop-blur-sm transition-all duration-300",
           "bg-gradient-to-br shadow-md hover:shadow-lg",
           "border border-gray-100",
-          stat.title.includes('Revenue')
-            ? "from-red-50/90 to-white hover:from-red-50"
-            : "from-green-50/90 to-white hover:from-green-50",
+          isPositive
+            ? "from-green-50/90 to-white hover:from-green-50"
+            : "from-red-50/90 to-white hover:from-red-50",
           inter.className
         )}>
           <div className="flex items-center justify-between">
@@ -234,14 +234,14 @@ export default function AnalyticsDashboard() {
               </p>
               <p className="text-xs text-gray-500 flex items-center gap-1">
                 {isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-                {stat.title.includes('Revenue') ? 'Revenue' : 'Engagement'} {isPositive ? '↑' : '↓'} {Math.abs(stat.change)}% vs {stat.timeframe}
+                {stat.title} {isPositive ? '↑' : '↓'} {Math.abs(stat.change)}% vs {stat.timeframe}
               </p>
             </div>
             <div className={cn(
               "rounded-xl p-3 transition-colors duration-200",
-              stat.title.includes('Revenue')
-                ? "bg-red-50 text-red-600 hover:bg-red-100"
-                : "bg-green-50 text-green-600 hover:bg-green-100"
+              isPositive
+                ? "bg-green-50 text-green-600 hover:bg-green-100"
+                : "bg-red-50 text-red-600 hover:bg-red-100"
             )}>
               {stat.icon}
             </div>
