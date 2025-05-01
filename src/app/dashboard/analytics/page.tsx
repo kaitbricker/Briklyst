@@ -481,40 +481,97 @@ export default function AnalyticsDashboard() {
 
       {/* Comparison Section */}
       {compareMode && (
-        <Card className="p-6">
+        <Card className="p-6 rounded-2xl bg-white border border-gray-100 shadow-md hover:shadow-lg transition-all duration-300">
           <h3 className="text-lg font-medium text-gray-900">Period Comparison</h3>
           <p className="mt-1 text-sm text-gray-500">Compare performance between two time periods</p>
-          <div className="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
             <div>
               <h4 className="text-sm font-medium text-gray-700">Current Period</h4>
-              <div className="mt-2 h-[200px]">
+              <div className="mt-4 h-[200px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={engagementData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" />
-                    <YAxis />
-                    <Tooltip />
-                    <Line type="monotone" dataKey="clicks" stroke="#3B82F6" />
-                  </LineChart>
+                  <AreaChart data={engagementData}>
+                    <defs>
+                      <linearGradient id="colorCurrentPeriod" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                    <XAxis dataKey="date" stroke="#6B7280" />
+                    <YAxis stroke="#6B7280" />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Area 
+                      type="monotone" 
+                      dataKey="clicks" 
+                      stroke="#3B82F6" 
+                      fillOpacity={1} 
+                      fill="url(#colorCurrentPeriod)"
+                      strokeWidth={2}
+                      className="transition-all duration-300"
+                    />
+                  </AreaChart>
                 </ResponsiveContainer>
               </div>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-700">Comparison Period</h4>
-              <div className="mt-2 h-[200px]">
+              <div className="mt-4 h-[200px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={compareAnalytics ? Object.entries(compareAnalytics.clicksByInterval).map(([date, count]) => ({
-                    date,
-                    clicks: count
-                  })) : []}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" />
-                    <YAxis />
-                    <Tooltip />
-                    <Line type="monotone" dataKey="clicks" stroke="#10B981" />
-                  </LineChart>
+                  <AreaChart 
+                    data={compareAnalytics ? Object.entries(compareAnalytics.clicksByInterval).map(([date, count]) => ({
+                      date,
+                      clicks: count
+                    })) : []}
+                  >
+                    <defs>
+                      <linearGradient id="colorComparePeriod" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#10B981" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                    <XAxis dataKey="date" stroke="#6B7280" />
+                    <YAxis stroke="#6B7280" />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Area 
+                      type="monotone" 
+                      dataKey="clicks" 
+                      stroke="#10B981" 
+                      fillOpacity={1} 
+                      fill="url(#colorComparePeriod)"
+                      strokeWidth={2}
+                      className="transition-all duration-300"
+                    />
+                  </AreaChart>
                 </ResponsiveContainer>
               </div>
+            </div>
+          </div>
+          <div className="mt-6 flex items-center justify-between border-t border-gray-100 pt-4">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <div className="h-3 w-3 rounded-full bg-blue-500"></div>
+                <span className="text-sm text-gray-600">Current Period</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="h-3 w-3 rounded-full bg-green-500"></div>
+                <span className="text-sm text-gray-600">Comparison Period</span>
+              </div>
+            </div>
+            <div className="text-sm text-gray-500">
+              {compareAnalytics && (
+                <div className="flex items-center gap-2">
+                  <span>Difference:</span>
+                  <span className={cn(
+                    "font-medium",
+                    (analytics?.totalClicks || 0) > (compareAnalytics?.totalClicks || 0)
+                      ? "text-green-600"
+                      : "text-red-600"
+                  )}>
+                    {((analytics?.totalClicks || 0) - (compareAnalytics?.totalClicks || 0)).toLocaleString()} clicks
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </Card>
