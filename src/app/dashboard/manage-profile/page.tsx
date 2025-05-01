@@ -7,19 +7,45 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/components/ui/use-toast"
+import { ImageUpload } from '@/components/ui/image-upload'
+
+interface ExtendedUser {
+  name?: string
+  email?: string
+  image?: string
+  profileImage?: string
+  bio?: string
+  twitter?: string
+  instagram?: string
+  linkedin?: string
+  emailAlerts?: boolean
+  weeklyReport?: boolean
+  monthlyReport?: boolean
+}
+
+interface ProfileFormData {
+  profileImage: string
+  bio: string
+  twitter: string
+  instagram: string
+  linkedin: string
+  emailAlerts: boolean
+  weeklyReport: boolean
+  monthlyReport: boolean
+}
 
 export default function ManageProfilePage() {
   const { data: session } = useSession()
-  const user = session?.user
-  const [form, setForm] = useState({
+  const user = session?.user as ExtendedUser
+  const [form, setForm] = useState<ProfileFormData>({
     profileImage: "",
     bio: "",
     twitter: "",
     instagram: "",
     linkedin: "",
-    emailAlerts: true,
-    weeklyReport: true,
-    monthlyReport: true,
+    emailAlerts: false,
+    weeklyReport: false,
+    monthlyReport: false,
   })
   const [loading, setLoading] = useState(false)
 
@@ -31,9 +57,9 @@ export default function ManageProfilePage() {
         twitter: user.twitter || "",
         instagram: user.instagram || "",
         linkedin: user.linkedin || "",
-        emailAlerts: user.emailAlerts ?? true,
-        weeklyReport: user.weeklyReport ?? true,
-        monthlyReport: user.monthlyReport ?? true,
+        emailAlerts: user.emailAlerts ?? false,
+        weeklyReport: user.weeklyReport ?? false,
+        monthlyReport: user.monthlyReport ?? false,
       })
     }
   }, [user])
@@ -56,12 +82,12 @@ export default function ManageProfilePage() {
     }
   }
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    const { name, type, value, checked } = e.target
-    setForm({
-      ...form,
-      [name]: type === 'checkbox' ? checked : value,
-    })
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value, type } = e.target
+    setForm(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
+    }))
   }
 
   if (!user) return <div>Loading...</div>
@@ -71,8 +97,27 @@ export default function ManageProfilePage() {
       <h1 className="text-2xl font-bold mb-6">Edit Your Profile</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <Label htmlFor="profileImage">Profile Image URL</Label>
-          <Input id="profileImage" name="profileImage" value={form.profileImage} onChange={handleChange} placeholder="https://..." />
+          <Label htmlFor="profileImage">Profile Image</Label>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <Label htmlFor="profileImage" className="text-sm text-muted-foreground">Image URL</Label>
+              <Input 
+                id="profileImage" 
+                name="profileImage" 
+                value={form.profileImage} 
+                onChange={handleChange} 
+                placeholder="https://..." 
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label className="text-sm text-muted-foreground">Or Upload Image</Label>
+              <ImageUpload
+                value={form.profileImage}
+                onChange={(url) => setForm(prev => ({ ...prev, profileImage: url }))}
+              />
+            </div>
+          </div>
         </div>
         <div>
           <Label htmlFor="bio">Bio</Label>

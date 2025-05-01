@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useToast } from '@/components/ui/use-toast'
 import Image from 'next/image'
+import { ImageUpload } from '@/components/ui/image-upload'
 
 interface Collection {
   id: string
@@ -212,28 +213,47 @@ export function ProductForm({ initialData, onSuccess, onSubmit }: ProductFormPro
 
       <div>
         <Label htmlFor="image">Product Image</Label>
-        <div className="mt-2">
-          {imagePreview && (
-            <div className="relative w-full h-48">
-              <Image
-                src={imagePreview}
-                alt="Product preview"
-                fill
-                className="object-cover rounded-lg"
+        <div className="space-y-4">
+          <div className="mt-2">
+            {imagePreview && (
+              <div className="relative w-full h-48">
+                <Image
+                  src={imagePreview}
+                  alt="Product preview"
+                  fill
+                  className="object-cover rounded-lg"
+                />
+              </div>
+            )}
+          </div>
+          
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <Label htmlFor="imageUrl" className="text-sm text-muted-foreground">Image URL</Label>
+              <Input
+                id="imageUrl"
+                {...register('imageUrl')}
+                placeholder="https://..."
+                className={errors.imageUrl ? 'border-red-500' : ''}
               />
             </div>
+            
+            <div className="space-y-2">
+              <Label className="text-sm text-muted-foreground">Or Upload Image</Label>
+              <ImageUpload
+                value={imagePreview || ''}
+                onChange={(url) => {
+                  setValue('imageUrl', url);
+                  setImagePreview(url);
+                }}
+              />
+            </div>
+          </div>
+          
+          {errors.imageUrl && (
+            <p className="text-red-500 text-sm mt-1">{errors.imageUrl.message}</p>
           )}
-          <Input
-            id="image"
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="cursor-pointer"
-          />
         </div>
-        {errors.imageUrl && (
-          <p className="text-red-500 text-sm mt-1">{errors.imageUrl.message}</p>
-        )}
       </div>
 
       <div>
