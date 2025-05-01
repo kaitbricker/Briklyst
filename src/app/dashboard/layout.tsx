@@ -71,10 +71,10 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-gradient-to-br from-blue-50 via-white to-orange-50">
       <TopNav />
       <div className="flex flex-1 pt-16">
-        <div className="hidden w-64 border-r bg-white/80 backdrop-blur-sm lg:block">
+        <div className="hidden w-64 border-r bg-white/70 backdrop-blur-md shadow-lg lg:block">
           <div className="flex h-full flex-col gap-2 p-4">
             <nav className="grid gap-1">
               {navItems.map((item) => (
@@ -82,8 +82,8 @@ export default function DashboardLayout({
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    'flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 hover:bg-gray-50',
-                    pathname === item.href && 'bg-gray-100 text-gray-900'
+                    'flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-white hover:bg-gradient-to-r hover:from-orange-400 hover:to-pink-500 hover:shadow-md',
+                    pathname === item.href && 'bg-gradient-to-r from-orange-400 to-pink-500 text-white shadow-lg'
                   )}
                 >
                   {item.title}
@@ -93,7 +93,7 @@ export default function DashboardLayout({
           </div>
         </div>
         <div className="flex-1">
-          <div className="min-h-screen bg-gray-50">
+          <div className="min-h-screen bg-white/60 backdrop-blur-lg rounded-tl-3xl shadow-xl">
             <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
               {children}
             </div>

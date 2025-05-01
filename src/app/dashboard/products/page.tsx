@@ -194,21 +194,21 @@ export default function ProductsPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="min-h-screen bg-gradient-to-b from-[#f9fafb] to-[#f1f5f9] space-y-8 p-8">
       <motion.div 
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.3 }}
-        className="flex items-center justify-between bg-white/50 backdrop-blur-sm p-6 rounded-xl shadow-sm"
+        className="flex items-center justify-between bg-white/70 backdrop-blur-lg p-8 rounded-2xl shadow-lg"
       >
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold text-[#1C1C2E]">Products</h1>
-          <p className="text-[#5F5F73]">Manage and track your product listings</p>
+          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-pink-500">Products</h1>
+          <p className="text-gray-500">Manage and track your product listings</p>
         </div>
         <div className="flex gap-2">
           <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
             <DialogTrigger asChild>
-              <Button className="flex items-center gap-2">
+              <Button className="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-md hover:from-orange-600 hover:to-pink-600">
                 <Plus className="w-4 h-4" />
                 Add Product
               </Button>
@@ -224,7 +224,7 @@ export default function ProductsPage() {
         </div>
       </motion.div>
 
-      <div className="flex items-center gap-4 bg-white/50 backdrop-blur-sm p-4 rounded-xl shadow-sm">
+      <div className="flex items-center gap-4 bg-white/60 backdrop-blur-md p-4 rounded-xl shadow-md">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input 
@@ -242,7 +242,7 @@ export default function ProductsPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.4 }}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
       >
         {products.map((product, index) => (
           <motion.div
@@ -251,7 +251,7 @@ export default function ProductsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: index * 0.1 }}
           >
-            <Card className="group overflow-hidden bg-white/50 backdrop-blur-sm hover:shadow-lg transition-all duration-200">
+            <Card className="group overflow-hidden bg-white/80 backdrop-blur-lg rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100">
               {product.imageUrl && (
                 <div className="relative w-full h-48 overflow-hidden">
                   <img
@@ -259,37 +259,36 @@ export default function ProductsPage() {
                     alt={product.title}
                     style={{ objectFit: 'cover', width: '100%', height: '100%' }}
                     onError={e => { e.currentTarget.src = '/placeholder-product.jpg'; }}
+                    className="transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
               )}
               <div className="p-6 space-y-4">
                 <div className="flex items-start justify-between">
                   <div>
-                    <h3 className="font-bold text-lg text-[#1C1C2E] group-hover:text-[#2D2D44] transition-colors">
+                    <h3 className="font-bold text-lg text-gray-900 group-hover:text-orange-600 transition-colors">
                       {product.title}
                     </h3>
-                    <p className="text-[#5F5F73] text-sm line-clamp-2 mt-1">
+                    <p className="text-gray-500 text-sm line-clamp-2 mt-1">
                       {product.description}
                     </p>
                   </div>
-                  <p className="font-bold text-lg text-[#1C1C2E]">
+                  <p className="font-bold text-lg text-orange-600">
                     ${product.price}
                   </p>
                 </div>
-                
                 <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                   <div className="flex items-center gap-2">
-                    <ArrowUpRight className="w-4 h-4 text-[#5F5F73]" />
-                    <p className="text-sm text-[#5F5F73]">
+                    <ArrowUpRight className="w-4 h-4 text-gray-400" />
+                    <p className="text-sm text-gray-500">
                       {product.clicks} clicks
                     </p>
                   </div>
-                  
                   <div className="flex gap-2">
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="hover:bg-[#1C1C2E]/5 rounded-lg transition-colors"
+                      className="hover:bg-orange-100 rounded-lg transition-colors"
                       onClick={() => {
                         setSelectedProduct(product)
                         setIsEditProductOpen(true)
@@ -300,7 +299,7 @@ export default function ProductsPage() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="hover:bg-red-500/5 text-red-500 rounded-lg transition-colors"
+                      className="hover:bg-red-100 text-red-500 rounded-lg transition-colors"
                       onClick={() => handleDeleteProduct(product.id)}
                     >
                       <Trash2 className="w-4 h-4" />

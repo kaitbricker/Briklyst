@@ -232,18 +232,18 @@ const SettingsPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="min-h-screen bg-gradient-to-b from-[#f9fafb] to-[#f1f5f9] space-y-8 p-8">
       <motion.div 
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.3 }}
-        className="flex items-center justify-between bg-white/50 backdrop-blur-sm p-6 rounded-xl shadow-sm"
+        className="flex items-center justify-between bg-white/70 backdrop-blur-lg p-8 rounded-2xl shadow-lg"
       >
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold text-[#1C1C2E]">Settings</h1>
-          <p className="text-[#5F5F73]">Customize your storefront appearance and collections</p>
+          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-pink-500">Settings</h1>
+          <p className="text-gray-500">Customize your storefront appearance and collections</p>
         </div>
-        <Button className="flex items-center gap-2">
+        <Button className="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-md hover:from-orange-600 hover:to-pink-600">
           <Settings2 className="w-4 h-4" />
           Save Changes
         </Button>
@@ -255,7 +255,7 @@ const SettingsPage: React.FC = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
         >
-          <Card className="bg-white/50 backdrop-blur-sm">
+          <Card className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-md">
             <CardHeader>
               <CardTitle>Storefront Details</CardTitle>
             </CardHeader>
@@ -270,7 +270,7 @@ const SettingsPage: React.FC = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3, delay: 0.2 }}
         >
-          <Card className="bg-white/50 backdrop-blur-sm">
+          <Card className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-md">
             <CardHeader>
               <CardTitle>Collections</CardTitle>
             </CardHeader>
@@ -284,7 +284,7 @@ const SettingsPage: React.FC = () => {
                 />
                 <Button 
                   onClick={handleAddCollection}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-md hover:from-orange-600 hover:to-pink-600"
                 >
                   <Plus className="w-4 h-4" />
                   Add
@@ -301,21 +301,21 @@ const SettingsPage: React.FC = () => {
                       exit={{ opacity: 0, y: -20 }}
                       transition={{ duration: 0.2, delay: index * 0.1 }}
                     >
-                      <Card className="group bg-white/50 backdrop-blur-sm hover:shadow-lg transition-all duration-200">
+                      <Card className="group bg-white/90 backdrop-blur-lg rounded-xl hover:shadow-lg transition-all duration-200">
                         <CardContent className="flex items-center justify-between p-4">
                           <div>
-                            <h3 className="font-medium text-[#1C1C2E] group-hover:text-[#2D2D44] transition-colors">
+                            <h3 className="font-medium text-gray-900 group-hover:text-orange-600 transition-colors">
                               {collection.name}
                             </h3>
                             {collection.description && (
-                              <p className="text-sm text-[#5F5F73]">{collection.description}</p>
+                              <p className="text-sm text-gray-500">{collection.description}</p>
                             )}
                           </div>
                           <div className="flex gap-2">
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="hover:bg-[#1C1C2E]/5 rounded-lg transition-colors"
+                              className="hover:bg-orange-100 rounded-lg transition-colors"
                               onClick={() => setEditingCollection(collection)}
                             >
                               <Edit2 className="w-4 h-4" />
@@ -323,7 +323,7 @@ const SettingsPage: React.FC = () => {
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="hover:bg-red-500/5 text-red-500 rounded-lg transition-colors"
+                              className="hover:bg-red-100 text-red-500 rounded-lg transition-colors"
                               onClick={() => handleDeleteCollection(collection.id)}
                             >
                               <Trash className="w-4 h-4" />
