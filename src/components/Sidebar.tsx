@@ -6,9 +6,9 @@ import { useStorefront } from '@/hooks/useStorefront';
 
 const navigationItems = [
   { name: 'Dashboard', path: '/dashboard', icon: HomeIcon },
-  { name: 'Storefront', path: '/storefront', icon: ShoppingBagIcon },
-  { name: 'Analytics', path: '/analytics', icon: ChartBarIcon },
-  { name: 'Settings', path: '/settings', icon: CogIcon },
+  { name: 'Storefront', path: '/dashboard/storefront', icon: ShoppingBagIcon },
+  { name: 'Analytics', path: '/dashboard/analytics', icon: ChartBarIcon },
+  { name: 'Settings', path: '/dashboard/settings', icon: CogIcon },
 ];
 
 const Sidebar = () => {
@@ -17,8 +17,8 @@ const Sidebar = () => {
   const { storefront } = useStorefront();
 
   const handleNavigation = (path: string) => {
-    if (path === '/storefront' && !storefront) {
-      router.push('/settings');
+    if (path === '/dashboard/storefront' && !storefront) {
+      router.push('/dashboard/settings');
       return;
     }
     router.push(path);
