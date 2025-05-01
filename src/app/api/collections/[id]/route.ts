@@ -18,7 +18,7 @@ export async function PUT(
       )
     }
 
-    const { name, description } = await request.json()
+    const { name, description, tags } = await request.json()
 
     const existingCollection = await prisma.collection.findUnique({
       where: {
@@ -38,6 +38,7 @@ export async function PUT(
       data: {
         name,
         description,
+        tags: tags || [],
         slug: name.toLowerCase().replace(/\s+/g, '-')
       }
     })

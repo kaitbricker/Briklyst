@@ -29,6 +29,7 @@ interface Collection {
   id: string
   name: string
   description?: string
+  tags: string[]
 }
 
 const SettingsPage: React.FC = () => {
@@ -36,7 +37,7 @@ const SettingsPage: React.FC = () => {
   const { storefront, isLoading, error } = useStorefront()
   const [isCreating, setIsCreating] = useState(false)
   const [collections, setCollections] = useState<Collection[]>([])
-  const [newCollection, setNewCollection] = useState({ name: '', description: '' })
+  const [newCollection, setNewCollection] = useState({ name: '', description: '', tags: [] as string[] })
   const [editingCollection, setEditingCollection] = useState<Collection | null>(null)
   const [loading, setLoading] = useState(false)
   const { toast } = useToast()
@@ -113,7 +114,7 @@ const SettingsPage: React.FC = () => {
         title: 'Success',
         description: 'Collection added successfully',
       })
-      setNewCollection({ name: '', description: '' })
+      setNewCollection({ name: '', description: '', tags: [] })
       fetchCollections()
     } catch (error) {
       console.error('Error adding collection:', error)
@@ -248,6 +249,14 @@ const SettingsPage: React.FC = () => {
             value={newCollection.description}
             onChange={(e) => setNewCollection({ ...newCollection, description: e.target.value })}
           />
+          <Input
+            placeholder="Tags (comma-separated)"
+            value={newCollection.tags.join(', ')}
+            onChange={(e) => setNewCollection({ 
+              ...newCollection, 
+              tags: e.target.value.split(',').map(tag => tag.trim()).filter(tag => tag !== '') 
+            })}
+          />
           <Button onClick={handleAddCollection}>Add Collection</Button>
         </div>
 
@@ -268,6 +277,16 @@ const SettingsPage: React.FC = () => {
                       c.id === collection.id ? { ...c, description: e.target.value } : c
                     ))}
                   />
+                  <Input
+                    value={collection.tags.join(', ')}
+                    onChange={(e) => setCollections(collections.map(c => 
+                      c.id === collection.id ? { 
+                        ...c, 
+                        tags: e.target.value.split(',').map(tag => tag.trim()).filter(tag => tag !== '') 
+                      } : c
+                    ))}
+                    placeholder="Tags (comma-separated)"
+                  />
                   <Button onClick={handleUpdateCollection}>Save</Button>
                   <Button variant="outline" onClick={() => setEditingCollection(null)}>Cancel</Button>
                 </>
@@ -277,6 +296,15 @@ const SettingsPage: React.FC = () => {
                     <h3 className="font-medium">{collection.name}</h3>
                     {collection.description && (
                       <p className="text-sm text-muted-foreground">{collection.description}</p>
+                    )}
+                    {collection.tags.length > 0 && (
+                      <div className="flex gap-2 mt-2">
+                        {collection.tags.map((tag, index) => (
+                          <span key={index} className="px-2 py-1 text-xs bg-secondary text-secondary-foreground rounded-full">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
                     )}
                   </div>
                   <Button variant="outline" onClick={() => setEditingCollection(collection)}>

@@ -45,7 +45,7 @@ export async function POST(request: Request) {
       )
     }
 
-    const { name, description } = await request.json()
+    const { name, description, tags } = await request.json()
 
     // Check if collection with same name exists
     const existing = await prisma.collection.findFirst({
@@ -66,6 +66,7 @@ export async function POST(request: Request) {
       data: {
         name,
         description,
+        tags: tags || [],
         slug: name.toLowerCase().replace(/\s+/g, '-'),
         userId: session.user.id
       }
@@ -92,7 +93,7 @@ export async function PUT(request: Request) {
       )
     }
 
-    const { id, name, description } = await request.json()
+    const { id, name, description, tags } = await request.json()
 
     if (!id) {
       return new NextResponse('Collection ID is required', { status: 400 })
@@ -115,6 +116,7 @@ export async function PUT(request: Request) {
       data: {
         name,
         description,
+        tags: tags || [],
         slug: name.toLowerCase().replace(/\s+/g, '-')
       }
     })
