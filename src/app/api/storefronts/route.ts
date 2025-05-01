@@ -9,17 +9,29 @@ export async function GET() {
       return new NextResponse('Unauthorized', { status: 401 })
     }
 
-    const storefront = await prisma.storefront.findUnique({
+    let storefront = await prisma.storefront.findUnique({
       where: { userId: session.user.id },
     })
 
     if (!storefront) {
-      return new NextResponse('Storefront not found', { status: 404 })
+      // Create a new storefront for the user
+      storefront = await prisma.storefront.create({
+        data: {
+          userId: session.user.id,
+          title: `${session.user.name}'s Storefront`,
+          description: 'Welcome to my storefront!',
+          primaryColor: '#ffffff',
+          accentColor: '#000000',
+          backgroundColor: '#f9fafb',
+          textColor: '#111827',
+          fontFamily: 'sans-serif',
+        },
+      })
     }
 
     return NextResponse.json(storefront)
   } catch (error) {
-    console.error('Error fetching storefront:', error)
+    console.error('Error fetching/creating storefront:', error)
     return new NextResponse('Internal Server Error', { status: 500 })
   }
 }

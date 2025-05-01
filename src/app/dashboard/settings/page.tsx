@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { StorefrontForm } from '@/components/forms/StorefrontForm'
 import { useToast } from '@/components/ui/use-toast'
+import { Loader2 } from 'lucide-react'
 
 interface Storefront {
   id: string
@@ -47,11 +48,20 @@ export default function SettingsPage() {
   }, [toast])
 
   if (isLoading) {
-    return <div>Loading...</div>
+    return (
+      <div className="flex h-[50vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+      </div>
+    )
   }
 
   if (!storefront) {
-    return <div>No storefront found</div>
+    return (
+      <div className="flex h-[50vh] flex-col items-center justify-center space-y-4">
+        <p className="text-lg text-gray-600">Creating your storefront...</p>
+        <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+      </div>
+    )
   }
 
   return (
