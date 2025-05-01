@@ -11,7 +11,12 @@ const transporter = nodemailer.createTransport({
   },
 })
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY as string)
+const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY as string
+if (!SENDGRID_API_KEY?.startsWith('SG.')) {
+  console.warn('SendGrid API key does not start with "SG."')
+}
+
+sgMail.setApiKey(SENDGRID_API_KEY)
 
 interface SendEmailOptions {
   to: string

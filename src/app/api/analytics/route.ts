@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 
+export const dynamic = 'force-dynamic'
+
 // GET /api/analytics?range=YYYY-MM-DD_to_YYYY-MM-DD&interval=daily|weekly|monthly
 export async function GET(request: Request) {
   try {

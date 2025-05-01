@@ -218,7 +218,7 @@ function StorefrontPreviews() {
       setCurrentStore((prev) => (prev + 1) % storefronts.length)
     }, 3500)
     return () => clearInterval(interval)
-  }, [])
+  }, [storefronts.length])
 
   return (
     <section id="examples" className="bg-white py-20 w-full">
