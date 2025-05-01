@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { auth } from '@/lib/auth'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/lib/auth'
 
 // GET /api/analytics?range=YYYY-MM-DD_to_YYYY-MM-DD&interval=daily|weekly|monthly
 export async function GET(request: Request) {
   try {
-    const session = await auth()
+    const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
     }

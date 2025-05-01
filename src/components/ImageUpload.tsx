@@ -3,6 +3,7 @@
 import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { toast } from 'react-hot-toast';
+import Image from 'next/image';
 
 interface ImageUploadProps {
   onUpload: (url: string) => void;
@@ -114,11 +115,14 @@ export default function ImageUpload({
         <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {(Array.isArray(value) ? value : [value]).map((url, index) => (
             <div key={index} className="relative group">
-              <img
-                src={url}
-                alt={`Uploaded image ${index + 1}`}
-                className="w-full h-32 object-cover rounded-lg"
-              />
+              <div className="relative w-full h-32">
+                <Image
+                  src={url}
+                  alt={`Uploaded image ${index + 1}`}
+                  fill
+                  className="object-cover rounded-lg"
+                />
+              </div>
               <button
                 type="button"
                 onClick={() => onUpload('')}

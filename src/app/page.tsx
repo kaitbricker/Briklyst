@@ -437,6 +437,8 @@ export default function Home() {
     { image: '/storefront4.png', title: 'Home Finds', username: '@homefinds', bg: 'bg-yellow-100', text: 'text-yellow-800' },
   ];
   const [currentStore, setCurrentStore] = useState(0);
+  const [selectedStorefront, setSelectedStorefront] = useState(null);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentStore((prev) => (prev + 1) % storefronts.length);
