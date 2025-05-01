@@ -25,6 +25,7 @@ import { Pencil, Trash2, Plus, Search, Filter, ArrowUpRight } from 'lucide-react
 import { Card } from '@/components/ui/card'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
+import { ImageUpload } from '@/components/ui/image-upload'
 
 interface Product {
   id: string
@@ -361,13 +362,17 @@ function ProductForm({
       </div>
 
       <div>
-        <Label htmlFor="imageUrl">Image URL</Label>
-        <Input
-          id="imageUrl"
-          type="url"
-          value={imageUrl}
-          onChange={(e) => setImageUrl(e.target.value)}
-        />
+        <Label htmlFor="imageUrl">Product Image</Label>
+        <div className="space-y-2">
+          <ImageUpload value={imageUrl} onChange={setImageUrl} />
+          <Input
+            id="imageUrl"
+            type="url"
+            value={imageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
+            placeholder="Paste image URL or upload above"
+          />
+        </div>
       </div>
 
       <div>
