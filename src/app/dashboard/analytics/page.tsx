@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-// import { Select } from "@/components/ui/select"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 // import { DateRangePicker } from "@/components/ui/date-range-picker" // If you have one, otherwise use two Inputs
 import {
   LineChart,
@@ -22,7 +22,7 @@ import {
   AreaChart,
   Area,
 } from 'recharts'
-import { ArrowUp, ArrowDown, Users, MousePointerClick, Package, DollarSign } from 'lucide-react'
+import { ArrowUp, ArrowDown, Users, MousePointerClick, Package, DollarSign, Calendar } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 // import { LineChart, BarChart, PieChart } from 'recharts' // Will use when rendering charts
 
@@ -52,6 +52,7 @@ export default function AnalyticsDashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [interval, setInterval] = useState("daily")
+  const [timeRange, setTimeRange] = useState("year")
   const [dateRange, setDateRange] = useState<{ start: string; end: string } | null>(null)
   const [products, setProducts] = useState<ProductOption[]>([])
   const [selectedProduct, setSelectedProduct] = useState<string>("")
@@ -114,7 +115,6 @@ export default function AnalyticsDashboard() {
     fetchAnalytics()
   }, [interval, dateRange, selectedProduct, compareMode, compareDateRange])
 
-  // Mock data for demonstration - replace with real data later
   const stats: StatCard[] = [
     {
       title: 'Total Users',
@@ -197,110 +197,117 @@ export default function AnalyticsDashboard() {
   }))
 
   return (
-    <div className="space-y-8 p-8">
+    <div className="p-8 space-y-8 bg-gray-50/50 min-h-screen">
+      {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Analytics Dashboard</h1>
-        <div className="flex gap-2">
-          <Button
-            variant={interval === 'daily' ? 'default' : 'outline'}
-            onClick={() => setInterval('daily')}
-          >
-            Daily
-          </Button>
-          <Button
-            variant={interval === 'weekly' ? 'default' : 'outline'}
-            onClick={() => setInterval('weekly')}
-          >
-            Weekly
-          </Button>
-          <Button
-            variant={interval === 'monthly' ? 'default' : 'outline'}
-            onClick={() => setInterval('monthly')}
-          >
-            Monthly
-          </Button>
-        </div>
+        <h1 className="text-2xl font-semibold text-gray-900">Storefront Analytics</h1>
+        <Select value={timeRange} onValueChange={setTimeRange}>
+          <SelectTrigger className="w-32">
+            <SelectValue placeholder="Select range" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="year">Year</SelectItem>
+            <SelectItem value="month">Month</SelectItem>
+            <SelectItem value="week">Week</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat, i) => (
-          <StatCard key={i} stat={stat} />
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {stats.map((stat) => (
+          <Card key={stat.title} className="p-6 bg-white">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-sm text-gray-500">{stat.title}</p>
+                <p className="text-2xl font-semibold">{stat.value}</p>
+              </div>
+              <div className={`rounded-full p-2 ${stat.change >= 0 ? 'bg-green-50' : 'bg-red-50'}`}>
+                {stat.icon}
+              </div>
+            </div>
+            <div className="mt-4 flex items-center gap-2">
+              <div className={`flex items-center gap-1 text-sm ${stat.change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                {stat.change >= 0 ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
+                {Math.abs(stat.change)}%
+              </div>
+              <p className="text-sm text-gray-500">{stat.timeframe}</p>
+            </div>
+          </Card>
         ))}
       </div>
 
-      <Card className="p-6">
-        <h2 className="text-lg font-semibold mb-4">User Engagement Analytics</h2>
-        <div className="h-[400px]">
+      {/* Engagement Chart */}
+      <Card className="p-6 bg-white">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-lg font-semibold text-gray-900">User Engagement Analytics</h2>
+        </div>
+        <div className="h-[400px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={engagementData}>
+            <AreaChart data={engagementData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#f97316" stopOpacity={0.1}/>
-                  <stop offset="95%" stopColor="#f97316" stopOpacity={0}/>
-                </linearGradient>
-                <linearGradient id="colorClicks" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.1}/>
-                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#F97066" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#F97066" stopOpacity={0}/>
                 </linearGradient>
               </defs>
-              <XAxis dataKey="date" />
-              <YAxis />
-              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
+              <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value/1000}k`} />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
               <Tooltip />
               <Area
                 type="monotone"
                 dataKey="users"
-                stroke="#f97316"
+                stroke="#F97066"
                 fillOpacity={1}
                 fill="url(#colorUsers)"
-              />
-              <Area
-                type="monotone"
-                dataKey="clicks"
-                stroke="#3b82f6"
-                fillOpacity={1}
-                fill="url(#colorClicks)"
               />
             </AreaChart>
           </ResponsiveContainer>
         </div>
       </Card>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card className="p-6">
-          <h2 className="text-lg font-semibold mb-4">Most Popular Products</h2>
-          <div className="space-y-4">
-            {analytics?.mostPopular.slice(0, 5).map((product, i) => (
-              <div key={i} className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="text-sm font-medium">{product.title}</div>
-                </div>
-                <div className="text-sm text-gray-500">{product.count} clicks</div>
+      {/* User Clicks Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card className="p-6 bg-white">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-50 rounded-full">
+                <MousePointerClick className="h-5 w-5 text-blue-600" />
               </div>
-            ))}
+              <h3 className="font-semibold text-gray-900">User Clicks</h3>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <div className="text-3xl font-bold">{analytics?.totalClicks || '20,586'}</div>
+            <div className="flex items-center gap-2 text-sm">
+              <span className="flex items-center text-green-600">
+                <ArrowUp className="h-4 w-4" />
+                {Math.abs(8.5)}%
+              </span>
+              <span className="text-gray-500">Up from yesterday</span>
+            </div>
           </div>
         </Card>
 
-        <Card className="p-6">
-          <h2 className="text-lg font-semibold mb-4">Click-Through Rates</h2>
-          <div className="space-y-4">
-            {analytics?.mostPopular.slice(0, 5).map((product, i) => {
-              const ctr = ((product.count / (analytics?.totalClicks || 1)) * 100).toFixed(1)
-              return (
-                <div key={i} className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium">{product.title}</span>
-                    <span>{ctr}%</span>
-                  </div>
-                  <div className="h-2 rounded-full bg-gray-100">
-                    <div
-                      className="h-full rounded-full bg-blue-500"
-                      style={{ width: `${ctr}%` }}
-                    />
-                  </div>
-                </div>
-              )
-            })}
+        <Card className="p-6 bg-white">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-purple-50 rounded-full">
+                <Users className="h-5 w-5 text-purple-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900">Active Users</h3>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <div className="text-3xl font-bold">15,892</div>
+            <div className="flex items-center gap-2 text-sm">
+              <span className="flex items-center text-green-600">
+                <ArrowUp className="h-4 w-4" />
+                12.3%
+              </span>
+              <span className="text-gray-500">Up from last week</span>
+            </div>
           </div>
         </Card>
       </div>
