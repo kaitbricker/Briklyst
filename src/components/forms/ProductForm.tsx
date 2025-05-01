@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
@@ -8,103 +8,273 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { ImageUpload } from '@/components/ui/image-upload'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useToast } from '@/components/ui/use-toast'
+
+interface Collection {
+  id: string
+  name: string
+}
 
 const productSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   description: z.string().optional(),
-  link: z.string().url('Must be a valid URL'),
-  image: z.string().url('Must be a valid URL').optional(),
-  price: z.number().min(0, 'Price must be positive').optional(),
+  price: z.number().min(0, 'Price must be positive'),
+  imageUrl: z.string().url('Must be a valid URL').optional(),
+  affiliateUrl: z.string().url('Must be a valid URL'),
+  collectionId: z.string().optional(),
+  tags: z.array(z.string()).optional(),
 })
 
 type ProductFormData = z.infer<typeof productSchema>
 
 interface ProductFormProps {
-  onSubmit: (data: ProductFormData) => void
-  defaultValues?: Partial<ProductFormData>
+  initialData?: {
+    id?: string
+    title: string
+    description?: string
+    price: number
+    imageUrl?: string
+    affiliateUrl: string
+    collectionId?: string
+    tags?: string[]
+  }
+  onSuccess?: () => void
+  onSubmit?: (data: ProductFormData) => void
 }
 
-export function ProductForm({ onSubmit, defaultValues }: ProductFormProps) {
+export function ProductForm({ initialData, onSuccess, onSubmit }: ProductFormProps) {
+  const { toast } = useToast()
+  const [isLoading, setIsLoading] = useState(false)
+  const [collections, setCollections] = useState<Collection[]>([])
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+
   const {
     register,
     handleSubmit,
     setValue,
-    watch,
     formState: { errors },
   } = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
-    defaultValues,
+    defaultValues: {
+      title: initialData?.title || '',
+      description: initialData?.description || '',
+      price: initialData?.price || 0,
+      imageUrl: initialData?.imageUrl || '',
+      affiliateUrl: initialData?.affiliateUrl || '',
+      collectionId: initialData?.collectionId || '',
+      tags: initialData?.tags || [],
+    },
   })
 
-  const image = watch('image')
+  useEffect(() => {
+    const fetchCollections = async () => {
+      try {
+        const response = await fetch('/api/collections')
+        if (!response.ok) throw new Error('Failed to fetch collections')
+        const data = await response.json()
+        setCollections(data)
+      } catch (error) {
+        console.error('Error fetching collections:', error)
+        toast({
+          title: 'Error',
+          description: 'Failed to load collections',
+          variant: 'destructive',
+        })
+      }
+    }
+    fetchCollections()
+  }, [])
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setImageFile(file)
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string)
+    }
+    reader.readAsDataURL(file)
+
+    // Upload image to your storage service
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!response.ok) throw new Error('Failed to upload image')
+      
+      const { url } = await response.json()
+      setValue('imageUrl', url)
+    } catch (error) {
+      console.error('Error uploading image:', error)
+      toast({
+        title: 'Error',
+        description: 'Failed to upload image',
+        variant: 'destructive',
+      })
+    }
+  }
+
+  const onSubmitForm = async (data: ProductFormData) => {
+    if (onSubmit) {
+      onSubmit(data)
+      return
+    }
+
+    setIsLoading(true)
+    try {
+      const response = await fetch('/api/products', {
+        method: initialData?.id ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...data,
+          id: initialData?.id,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to save product')
+      }
+
+      toast({
+        title: 'Success',
+        description: `Product ${initialData?.id ? 'updated' : 'created'} successfully`,
+      })
+
+      if (onSuccess) {
+        onSuccess()
+      }
+    } catch (error) {
+      console.error('Error saving product:', error)
+      toast({
+        title: 'Error',
+        description: 'Failed to save product',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div className="space-y-2">
+    <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-6">
+      <div>
         <Label htmlFor="title">Title</Label>
         <Input
           id="title"
           {...register('title')}
-          className="w-full"
+          className={errors.title ? 'border-red-500' : ''}
         />
         {errors.title && (
-          <p className="text-sm text-red-500">{errors.title.message}</p>
+          <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>
         )}
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="description">Description</Label>
+      <div>
+        <Label htmlFor="description">Description (Optional)</Label>
         <Textarea
           id="description"
           {...register('description')}
-          className="w-full min-h-[100px]"
+          className={errors.description ? 'border-red-500' : ''}
+          rows={4}
         />
         {errors.description && (
-          <p className="text-sm text-red-500">{errors.description.message}</p>
+          <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
         )}
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="price">Price (optional)</Label>
+      <div>
+        <Label htmlFor="price">Price</Label>
         <Input
           id="price"
           type="number"
           step="0.01"
           {...register('price', { valueAsNumber: true })}
-          className="w-full"
+          className={errors.price ? 'border-red-500' : ''}
         />
         {errors.price && (
-          <p className="text-sm text-red-500">{errors.price.message}</p>
+          <p className="text-red-500 text-sm mt-1">{errors.price.message}</p>
         )}
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="link">Product Link</Label>
+      <div>
+        <Label htmlFor="image">Product Image</Label>
+        <div className="mt-2">
+          {imagePreview && (
+            <div className="mb-4">
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="h-32 w-32 object-cover rounded-lg"
+              />
+            </div>
+          )}
+          <Input
+            id="image"
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="cursor-pointer"
+          />
+        </div>
+        {errors.imageUrl && (
+          <p className="text-red-500 text-sm mt-1">{errors.imageUrl.message}</p>
+        )}
+      </div>
+
+      <div>
+        <Label htmlFor="affiliateUrl">Affiliate URL</Label>
         <Input
-          id="link"
-          type="url"
-          {...register('link')}
-          className="w-full"
+          id="affiliateUrl"
+          {...register('affiliateUrl')}
+          className={errors.affiliateUrl ? 'border-red-500' : ''}
         />
-        {errors.link && (
-          <p className="text-sm text-red-500">{errors.link.message}</p>
+        {errors.affiliateUrl && (
+          <p className="text-red-500 text-sm mt-1">{errors.affiliateUrl.message}</p>
         )}
       </div>
 
-      <div className="space-y-2">
-        <Label>Product Image</Label>
-        <ImageUpload
-          value={image}
-          onChange={(url) => setValue('image', url)}
-        />
-        {errors.image && (
-          <p className="text-sm text-red-500">{errors.image.message}</p>
-        )}
+      <div>
+        <Label htmlFor="collectionId">Collection (Optional)</Label>
+        <Select
+          onValueChange={(value) => setValue('collectionId', value)}
+          defaultValue={initialData?.collectionId}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select a collection" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">None</SelectItem>
+            {collections.map((collection) => (
+              <SelectItem key={collection.id} value={collection.id}>
+                {collection.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
-      <Button type="submit" className="w-full">
-        {defaultValues ? 'Update Product' : 'Add Product'}
+      <div>
+        <Label htmlFor="tags">Tags (Optional)</Label>
+        <Input
+          id="tags"
+          placeholder="Enter tags separated by commas"
+          onChange={(e) => {
+            const tags = e.target.value.split(',').map(tag => tag.trim())
+            setValue('tags', tags)
+          }}
+        />
+      </div>
+
+      <Button type="submit" disabled={isLoading}>
+        {isLoading ? 'Saving...' : initialData?.id ? 'Update Product' : 'Create Product'}
       </Button>
     </form>
   )

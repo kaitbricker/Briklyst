@@ -1,77 +1,171 @@
 import { NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
+import { Session } from 'next-auth'
 
-const prisma = new PrismaClient()
-
-export async function GET(request: Request) {
+// GET /api/products - Get all products for the current user
+export async function GET() {
   try {
-    const { searchParams } = new URL(request.url)
-    const storefrontId = searchParams.get('storefrontId')
-
-    if (!storefrontId) {
+    const session = await getServerSession(authOptions) as Session | null
+    if (!session?.user?.id) {
       return NextResponse.json(
-        { error: 'Storefront ID is required' },
-        { status: 400 }
+        { error: 'Unauthorized' },
+        { status: 401 }
       )
     }
 
     const products = await prisma.product.findMany({
-      where: { storefrontId },
-      orderBy: { createdAt: 'desc' },
+      where: {
+        storefront: {
+          userId: session.user.id
+        }
+      },
+      include: {
+        collection: {
+          select: {
+            id: true,
+            name: true,
+            description: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
     })
 
     return NextResponse.json(products)
   } catch (error) {
-    console.error('Get products error:', error)
+    console.error('Failed to fetch products:', error)
     return NextResponse.json(
-      { error: 'Something went wrong' },
+      { error: 'Failed to fetch products' },
       { status: 500 }
     )
   }
 }
 
+// POST /api/products - Create a new product
 export async function POST(request: Request) {
   try {
-    const { storefrontId, userId, title, description, price, imageUrl, affiliateUrl } = await request.json()
-
-    if (!storefrontId || !userId || !title || !price || !affiliateUrl) {
+    const session = await getServerSession(authOptions) as Session | null
+    if (!session?.user?.id) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
+        { error: 'Unauthorized' },
+        { status: 401 }
       )
+    }
+
+    const { storefrontId, title, description, price, imageUrl, affiliateUrl, collectionId } = await request.json()
+
+    // Verify storefront ownership
+    const storefront = await prisma.storefront.findFirst({
+      where: {
+        id: storefrontId,
+        userId: session.user.id
+      }
+    })
+
+    if (!storefront) {
+      return NextResponse.json(
+        { error: 'Storefront not found or unauthorized' },
+        { status: 404 }
+      )
+    }
+
+    // If collectionId is provided, verify collection ownership
+    if (collectionId) {
+      const collection = await prisma.collection.findFirst({
+        where: {
+          id: collectionId,
+          userId: session.user.id
+        }
+      })
+
+      if (!collection) {
+        return NextResponse.json(
+          { error: 'Collection not found or unauthorized' },
+          { status: 404 }
+        )
+      }
     }
 
     const product = await prisma.product.create({
       data: {
-        storefrontId,
-        userId,
         title,
         description,
         price,
         imageUrl,
         affiliateUrl,
+        collectionId,
+        storefrontId
       },
+      include: {
+        collection: {
+          select: {
+            id: true,
+            name: true,
+            description: true
+          }
+        }
+      }
     })
 
     return NextResponse.json(product)
   } catch (error) {
-    console.error('Create product error:', error)
+    console.error('Failed to create product:', error)
     return NextResponse.json(
-      { error: 'Something went wrong' },
+      { error: 'Failed to create product' },
       { status: 500 }
     )
   }
 }
 
+// PUT /api/products - Update a product
 export async function PUT(request: Request) {
   try {
-    const { id, title, description, price, imageUrl, affiliateUrl } = await request.json()
-
-    if (!id || !title || !price || !affiliateUrl) {
+    const session = await getServerSession(authOptions) as Session | null
+    if (!session?.user?.id) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
+        { error: 'Unauthorized' },
+        { status: 401 }
       )
+    }
+
+    const { id, title, description, price, imageUrl, affiliateUrl, collectionId } = await request.json()
+
+    // Verify product ownership
+    const existingProduct = await prisma.product.findFirst({
+      where: {
+        id,
+        storefront: {
+          userId: session.user.id
+        }
+      }
+    })
+
+    if (!existingProduct) {
+      return NextResponse.json(
+        { error: 'Product not found or unauthorized' },
+        { status: 404 }
+      )
+    }
+
+    // If collectionId is provided, verify collection ownership
+    if (collectionId) {
+      const collection = await prisma.collection.findFirst({
+        where: {
+          id: collectionId,
+          userId: session.user.id
+        }
+      })
+
+      if (!collection) {
+        return NextResponse.json(
+          { error: 'Collection not found or unauthorized' },
+          { status: 404 }
+        )
+      }
     }
 
     const product = await prisma.product.update({
@@ -82,14 +176,24 @@ export async function PUT(request: Request) {
         price,
         imageUrl,
         affiliateUrl,
+        collectionId
       },
+      include: {
+        collection: {
+          select: {
+            id: true,
+            name: true,
+            description: true
+          }
+        }
+      }
     })
 
     return NextResponse.json(product)
   } catch (error) {
-    console.error('Update product error:', error)
+    console.error('Failed to update product:', error)
     return NextResponse.json(
-      { error: 'Something went wrong' },
+      { error: 'Failed to update product' },
       { status: 500 }
     )
   }
@@ -97,6 +201,14 @@ export async function PUT(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
+    const session = await getServerSession(authOptions) as Session | null
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
+
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
 
@@ -107,11 +219,28 @@ export async function DELETE(request: Request) {
       )
     }
 
-    await prisma.product.delete({
-      where: { id },
+    // Verify product ownership through storefront
+    const product = await prisma.product.findFirst({
+      where: {
+        id,
+        storefront: {
+          userId: session.user.id
+        }
+      }
     })
 
-    return NextResponse.json({ success: true })
+    if (!product) {
+      return NextResponse.json(
+        { error: 'Product not found or unauthorized' },
+        { status: 404 }
+      )
+    }
+
+    await prisma.product.delete({
+      where: { id }
+    })
+
+    return new NextResponse(null, { status: 204 })
   } catch (error) {
     console.error('Delete product error:', error)
     return NextResponse.json(

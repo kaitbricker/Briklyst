@@ -18,7 +18,8 @@ model User {
   updatedAt     DateTime  @updatedAt
   accounts      Account[]
   sessions      Session[]
-  storefront    Storefront?
+  storefronts   Storefront[]
+  collections   Collection[]
   bio           String?
   profileImage  String?
   twitter       String?
@@ -88,22 +89,41 @@ model Storefront {
   subscribers   Subscriber[]
 }
 
+model Collection {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  slug        String    @unique
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId])
+}
+
 model Product {
-  id           String    @id @default(cuid())
-  storefrontId String
-  title        String
-  description  String?
-  price        Float
-  imageUrl     String?
-  affiliateUrl String
-  clicks       Int       @default(0)
-  order        Int       @default(0)
-  featured     Boolean   @default(false)
-  tags         String[]  @default([])
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  storefront   Storefront @relation(fields: [storefrontId], references: [id], onDelete: Cascade)
-  clickEvents  ClickEvent[]
+  id            String     @id @default(cuid())
+  title         String
+  description   String?
+  price         Float
+  imageUrl      String?
+  affiliateUrl  String
+  collectionId  String?
+  collection    Collection? @relation(fields: [collectionId], references: [id])
+  storefrontId  String
+  storefront    Storefront @relation(fields: [storefrontId], references: [id])
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  clickEvents   ClickEvent[]
+  clicks        Int        @default(0)
+  order         Int        @default(0)
+  featured      Boolean    @default(false)
+  tags          String[]   @default([])
+
+  @@index([storefrontId])
+  @@index([collectionId])
 }
 
 model ClickEvent {
