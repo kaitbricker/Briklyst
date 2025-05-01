@@ -37,7 +37,7 @@ const SettingsPage: React.FC = () => {
   const [isCreating, setIsCreating] = useState(false)
   const [collections, setCollections] = useState<Collection[]>([])
   const [newCollection, setNewCollection] = useState({ name: '', description: '' })
-  const [editingCollection, setEditingCollection] = useState<string | null>(null)
+  const [editingCollection, setEditingCollection] = useState<Collection | null>(null)
   const [loading, setLoading] = useState(false)
   const { toast: useToastToast } = useToast()
 
@@ -78,43 +78,43 @@ const SettingsPage: React.FC = () => {
   }
 
   useEffect(() => {
-    const fetchCollections = async () => {
-      try {
-        const response = await fetch('/api/collections')
-        if (!response.ok) throw new Error('Failed to fetch collections')
-        const data = await response.json()
-        setCollections(data)
-      } catch (error) {
-        console.error('Error fetching collections:', error)
-        useToastToast({
-          title: 'Error',
-          description: 'Failed to load collections',
-          variant: 'destructive',
-        })
-      }
-    }
     fetchCollections()
   }, [])
 
-  const handleAddCollection = async () => {
-    if (!newCollection.name.trim()) return
+  const fetchCollections = async () => {
     try {
-      const res = await fetch('/api/collections', {
+      const response = await fetch('/api/collections')
+      if (!response.ok) {
+        throw new Error('Failed to fetch collections')
+      }
+      const data = await response.json()
+      setCollections(data)
+    } catch (error) {
+      console.error('Error fetching collections:', error)
+      useToastToast({
+        title: 'Error',
+        description: 'Failed to load collections. Please try again.',
+        variant: 'destructive',
+      })
+    }
+  }
+
+  const handleAddCollection = async () => {
+    try {
+      const response = await fetch('/api/collections', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: newCollection.name,
-          description: newCollection.description,
-        }),
+        body: JSON.stringify(newCollection),
       })
-      if (!res.ok) throw new Error('Failed to add collection')
-      setNewCollection({ name: '', description: '' })
+
+      if (!response.ok) throw new Error('Failed to add collection')
+
       useToastToast({
         title: 'Success',
         description: 'Collection added successfully',
       })
-      const data = await res.json()
-      setCollections([...collections, data])
+      setNewCollection({ name: '', description: '' })
+      fetchCollections()
     } catch (error) {
       console.error('Error adding collection:', error)
       useToastToast({
@@ -125,21 +125,24 @@ const SettingsPage: React.FC = () => {
     }
   }
 
-  const handleUpdateCollection = async (collection: Collection) => {
+  const handleUpdateCollection = async () => {
+    if (!editingCollection) return
+
     try {
-      const res = await fetch(`/api/collections/${collection.id}`, {
+      const response = await fetch('/api/collections', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(collection)
+        body: JSON.stringify(editingCollection),
       })
-      if (!res.ok) throw new Error('Failed to update collection')
-      setEditingCollection(null)
+
+      if (!response.ok) throw new Error('Failed to update collection')
+
       useToastToast({
         title: 'Success',
         description: 'Collection updated successfully',
       })
-      const data = await res.json()
-      setCollections(collections.map(c => c.id === data.id ? data : c))
+      setEditingCollection(null)
+      fetchCollections()
     } catch (error) {
       console.error('Error updating collection:', error)
       useToastToast({
@@ -151,16 +154,20 @@ const SettingsPage: React.FC = () => {
   }
 
   const handleDeleteCollection = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this collection?')) return
+
     try {
-      const res = await fetch(`/api/collections/${id}`, {
+      const response = await fetch(`/api/collections?id=${id}`, {
         method: 'DELETE',
       })
-      if (!res.ok) throw new Error('Failed to delete collection')
+
+      if (!response.ok) throw new Error('Failed to delete collection')
+
       useToastToast({
         title: 'Success',
         description: 'Collection deleted successfully',
       })
-      setCollections(collections.filter(c => c.id !== id))
+      fetchCollections()
     } catch (error) {
       console.error('Error deleting collection:', error)
       useToastToast({
@@ -247,7 +254,7 @@ const SettingsPage: React.FC = () => {
         <div className="space-y-2">
           {collections.map((collection) => (
             <div key={collection.id} className="flex items-center gap-4 p-4 border rounded-lg">
-              {editingCollection === collection.id ? (
+              {editingCollection === collection ? (
                 <>
                   <Input
                     value={collection.name}
@@ -261,7 +268,7 @@ const SettingsPage: React.FC = () => {
                       c.id === collection.id ? { ...c, description: e.target.value } : c
                     ))}
                   />
-                  <Button onClick={() => handleUpdateCollection(collection)}>Save</Button>
+                  <Button onClick={handleUpdateCollection}>Save</Button>
                   <Button variant="outline" onClick={() => setEditingCollection(null)}>Cancel</Button>
                 </>
               ) : (
@@ -272,7 +279,7 @@ const SettingsPage: React.FC = () => {
                       <p className="text-sm text-muted-foreground">{collection.description}</p>
                     )}
                   </div>
-                  <Button variant="outline" onClick={() => setEditingCollection(collection.id)}>
+                  <Button variant="outline" onClick={() => setEditingCollection(collection)}>
                     Edit
                   </Button>
                   <Button variant="destructive" onClick={() => handleDeleteCollection(collection.id)}>

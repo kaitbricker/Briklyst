@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useToast } from '@/components/ui/use-toast'
+import Image from 'next/image'
 
 interface Collection {
   id: string
@@ -68,24 +69,25 @@ export function ProductForm({ initialData, onSuccess, onSubmit }: ProductFormPro
     },
   })
 
-  useEffect(() => {
-    const fetchCollections = async () => {
-      try {
-        const response = await fetch('/api/collections')
-        if (!response.ok) throw new Error('Failed to fetch collections')
-        const data = await response.json()
-        setCollections(data)
-      } catch (error) {
-        console.error('Error fetching collections:', error)
-        toast({
-          title: 'Error',
-          description: 'Failed to load collections',
-          variant: 'destructive',
-        })
-      }
+  const fetchCollections = async () => {
+    try {
+      const response = await fetch('/api/collections')
+      if (!response.ok) throw new Error('Failed to fetch collections')
+      const data = await response.json()
+      setCollections(data)
+    } catch (error) {
+      console.error('Error fetching collections:', error)
+      toast({
+        title: 'Error',
+        description: 'Failed to load collections',
+        variant: 'destructive',
+      })
     }
+  }
+
+  useEffect(() => {
     fetchCollections()
-  }, [])
+  }, [toast])
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -208,11 +210,12 @@ export function ProductForm({ initialData, onSuccess, onSubmit }: ProductFormPro
         <Label htmlFor="image">Product Image</Label>
         <div className="mt-2">
           {imagePreview && (
-            <div className="mb-4">
-              <img
+            <div className="relative w-full h-48">
+              <Image
                 src={imagePreview}
-                alt="Preview"
-                className="h-32 w-32 object-cover rounded-lg"
+                alt="Product preview"
+                fill
+                className="object-cover rounded-lg"
               />
             </div>
           )}
