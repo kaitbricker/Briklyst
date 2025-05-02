@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { ArrowRight, Plus, Mail, Sparkles, CheckCircle, Store, Flame, BarChart2, ShoppingCart, ListTodo } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSession } from "next-auth/react";
 
 const summaryStats = [
   {
@@ -68,9 +69,10 @@ const todos = [
 ];
 
 export default function DashboardPage() {
+  const { data: session } = useSession();
   const [currentNews, setCurrentNews] = useState(0);
   const [hoveredStat, setHoveredStat] = useState<number | null>(null);
-  const creatorName = "Kaitlyn";
+  const creatorName = session?.user?.name || "Creator";
 
   // Marquee/rotating news
   useEffect(() => {
@@ -90,7 +92,7 @@ export default function DashboardPage() {
         </h1>
         <div className="flex flex-col md:flex-row gap-4 w-full">
           <Button asChild size="lg" className="w-full md:w-auto bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-lg hover:from-orange-600 hover:to-pink-600 text-lg font-semibold rounded-xl">
-            <Link href="/storefronts/kaitlynbricker">
+            <Link href={`/storefronts/${session?.user?.name}`}>
               <Store className="w-5 h-5 mr-2" /> View My Storefront
             </Link>
           </Button>
