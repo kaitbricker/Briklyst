@@ -90,12 +90,12 @@ export default function StorefrontPage() {
 
     const fetchCategories = async () => {
       try {
-        const response = await fetch('/api/categories')
-        if (!response.ok) throw new Error('Failed to fetch categories')
+        const response = await fetch('/api/collections')
+        if (!response.ok) throw new Error('Failed to fetch collections')
         const data = await response.json()
         setCategories(data)
       } catch (error) {
-        console.error('Failed to fetch categories:', error)
+        console.error('Failed to fetch collections:', error)
       }
     }
 

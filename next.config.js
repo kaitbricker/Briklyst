@@ -7,7 +7,15 @@ const nextConfig = {
     domains: [
       'res.cloudinary.com', // Cloudinary
       'cdn.pixabay.com',    // Pixabay
-      // Add more domains as needed
+      'images.unsplash.com',
+      'localhost',
+      'briklyst.vercel.app'
+    ],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
     ],
   },
   /* other config options can stay here */
