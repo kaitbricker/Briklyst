@@ -11,15 +11,14 @@ export async function GET(request: Request) {
       return new NextResponse('Unauthorized', { status: 401 })
     }
 
-    // Get the user's storefront with all related data
-    const storefront = await prisma.storefront.findFirst({
+    // Get or create the user's storefront with all related data
+    let storefront = await prisma.storefront.findFirst({
       where: {
         userId: session.user.id,
       },
       include: {
         products: {
           include: {
-            collection: true,
             clickEvents: true
           },
           orderBy: {
@@ -30,7 +29,29 @@ export async function GET(request: Request) {
     })
 
     if (!storefront) {
-      return new NextResponse('Storefront not found', { status: 404 })
+      // Create a new storefront for the user
+      storefront = await prisma.storefront.create({
+        data: {
+          userId: session.user.id,
+          title: `${session.user.name}'s Storefront`,
+          description: 'Welcome to my storefront!',
+          primaryColor: '#ffffff',
+          accentColor: '#000000',
+          backgroundColor: '#f9fafb',
+          textColor: '#111827',
+          fontFamily: 'sans-serif',
+        },
+        include: {
+          products: {
+            include: {
+              clickEvents: true
+            },
+            orderBy: {
+              createdAt: 'desc'
+            }
+          }
+        }
+      })
     }
 
     // Transform the data for the frontend
@@ -54,7 +75,7 @@ export async function GET(request: Request) {
         price: product.price,
         imageUrl: product.imageUrl,
         affiliateUrl: product.affiliateUrl,
-        collection: product.collection?.name || 'Uncategorized',
+        collection: 'Uncategorized',
         clicks: product.clicks
       }))
     }
