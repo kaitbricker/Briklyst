@@ -4,6 +4,8 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { Session } from 'next-auth'
 
+export const dynamic = 'force-dynamic' // This ensures the route is not statically optimized
+
 export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions) as Session | null
