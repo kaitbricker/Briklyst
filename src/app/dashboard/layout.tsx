@@ -94,6 +94,18 @@ export default function DashboardLayout({
                 </Link>
               ))}
             </nav>
+            {session?.user?.name && (
+              <Link
+                href={`/storefronts/${encodeURIComponent(session.user.name)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-6"
+              >
+                <Button className="w-full bg-gradient-to-r from-orange-500 to-pink-500 text-white font-bold shadow-md hover:from-orange-600 hover:to-pink-600 transition-all">
+                  View My Storefront
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
         <div className="flex-1">
