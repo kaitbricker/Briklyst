@@ -21,7 +21,7 @@ export async function GET(request: Request) {
           }
         },
         include: {
-          storefront: {
+          storefronts: {
             include: {
               products: {
                 include: {
@@ -36,25 +36,32 @@ export async function GET(request: Request) {
         }
       })
 
-      if (!user || !user.storefront) {
+      console.log('USER LOOKUP:', user);
+      const storefront = user?.storefronts?.[0];
+      if (!user || !storefront) {
+        console.error('User or storefront not found:', { user });
         return new NextResponse('Storefront not found', { status: 404 })
+      }
+      if (!storefront.products) {
+        console.error('Storefront products is undefined:', { user });
+        storefront.products = [];
       }
 
       // Transform the data for the frontend
       const transformedData = {
-        id: user.storefront.id,
-        name: user.storefront.title,
-        description: user.storefront.description,
-        logo: user.storefront.logoUrl || '/briklyst-logo.png',
-        banner: user.storefront.bannerUrl || '/placeholder-banner.jpg',
+        id: storefront.id,
+        name: storefront.title,
+        description: storefront.description,
+        logo: storefront.logoUrl || '/briklyst-logo.png',
+        banner: storefront.bannerUrl || '/placeholder-banner.jpg',
         theme: {
-          primaryColor: user.storefront.primaryColor,
-          accentColor: user.storefront.accentColor,
-          backgroundColor: user.storefront.backgroundColor,
-          textColor: user.storefront.textColor,
-          fontFamily: user.storefront.fontFamily
+          primaryColor: storefront.primaryColor,
+          accentColor: storefront.accentColor,
+          backgroundColor: storefront.backgroundColor,
+          textColor: storefront.textColor,
+          fontFamily: storefront.fontFamily
         },
-        products: user.storefront.products.map(product => ({
+        products: (storefront.products || []).map(product => ({
           id: product.id,
           title: product.title,
           description: product.description,
