@@ -61,8 +61,8 @@ export async function GET(request: Request) {
       id: storefront.id,
       name: storefront.title,
       description: storefront.description,
-      logo: storefront.logoUrl,
-      banner: storefront.bannerUrl,
+      logo: storefront.logoUrl || '/briklyst-logo.png',
+      banner: storefront.bannerUrl || '/placeholder-banner.jpg',
       theme: {
         primaryColor: storefront.primaryColor,
         accentColor: storefront.accentColor,

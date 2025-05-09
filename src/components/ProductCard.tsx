@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -13,6 +13,7 @@ interface Product {
   description: string
   price: number
   imageUrl: string
+  imageUrls?: string[]
   affiliateUrl: string
   clicks: number
   tags?: string[]
@@ -27,6 +28,18 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, onClick, primaryColor = '#FF6D00', accentColor = '#FF3CAC', showBanner = false, bannerText = '', bannerColor = 'bg-gradient-to-r from-pink-400 to-orange-400' }: ProductCardProps & { showBanner?: boolean; bannerText?: string; bannerColor?: string }) {
+  const [selectedImage, setSelectedImage] = useState(0);
+  const images = product.imageUrls && product.imageUrls.length > 0 ? product.imageUrls : [product.imageUrl || '/placeholder-product.jpg'];
+  const hasBestSeller = product.tags?.some(tag => tag.toLowerCase().includes('best seller'));
+  const hasTrending = product.tags?.some(tag => tag.toLowerCase().includes('trending'));
+  const [isWishlisted, setIsWishlisted] = useState(false);
+
+  const handleWishlist = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsWishlisted((prev) => !prev);
+    // TODO: Add API call to update wishlist
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -42,24 +55,39 @@ export function ProductCard({ product, onClick, primaryColor = '#FF6D00', accent
         </div>
       )}
       <Card className="group overflow-hidden bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100">
-        {/* Product Image */}
+        {/* Product Image Gallery */}
         <div className="relative aspect-[4/3] w-full overflow-hidden">
           <Image
-            src={product.imageUrl || '/placeholder-product.jpg'}
+            src={images[selectedImage]}
             alt={product.title}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-110"
           />
+          {/* Thumbnails */}
+          {images.length > 1 && (
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+              {images.map((img, idx) => (
+                <button
+                  key={img}
+                  className={`w-4 h-4 rounded-full border-2 ${selectedImage === idx ? 'border-orange-500' : 'border-white'} bg-white/80 hover:border-orange-400 transition-all`}
+                  style={{ backgroundImage: `url(${img})`, backgroundSize: 'cover' }}
+                  onClick={(e) => { e.stopPropagation(); setSelectedImage(idx); }}
+                  aria-label={`Show image ${idx + 1}`}
+                />
+              ))}
+            </div>
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          
           {/* Action Buttons */}
-          <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
             <Button
               size="icon"
-              variant="secondary"
-              className="rounded-full bg-white/90 text-gray-900 hover:bg-white"
+              variant={isWishlisted ? 'default' : 'secondary'}
+              className={`rounded-full ${isWishlisted ? 'bg-orange-500 text-white' : 'bg-white/90 text-gray-900 hover:bg-white'}`}
+              onClick={handleWishlist}
+              aria-label="Add to wishlist"
             >
-              <Heart className="h-4 w-4" />
+              <Heart className={`h-4 w-4 ${isWishlisted ? 'fill-current' : ''}`} />
             </Button>
             <Button
               size="icon"
@@ -69,8 +97,14 @@ export function ProductCard({ product, onClick, primaryColor = '#FF6D00', accent
               <Share2 className="h-4 w-4" />
             </Button>
           </div>
+          {/* Best Seller/Trending Tag */}
+          {hasBestSeller && (
+            <span className="absolute top-2 left-2 z-20 bg-yellow-400 text-white text-xs font-bold px-3 py-1 rounded-full shadow">Best Seller</span>
+          )}
+          {hasTrending && (
+            <span className="absolute top-2 left-2 z-20 bg-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow">Trending</span>
+          )}
         </div>
-
         {/* Product Content */}
         <div className="p-6 space-y-4">
           {/* Category Tags */}
@@ -89,10 +123,8 @@ export function ProductCard({ product, onClick, primaryColor = '#FF6D00', accent
               </span>
             ))}
           </div>
-
           {/* Title */}
           <h3 className="font-bold text-xl text-gray-900 line-clamp-1">{product.title}</h3>
-
           {/* Description */}
           <div className="space-y-2">
             <p className="text-gray-600 text-sm line-clamp-2">{product.description}</p>
@@ -102,7 +134,6 @@ export function ProductCard({ product, onClick, primaryColor = '#FF6D00', accent
               </button>
             )}
           </div>
-
           {/* Price and CTA */}
           <div className="flex items-center justify-between pt-4">
             <div className="space-y-1">

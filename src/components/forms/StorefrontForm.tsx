@@ -17,6 +17,12 @@ const storefrontSchema = z.object({
   description: z.string().optional(),
   logoUrl: z.string().url('Must be a valid URL').optional(),
   bannerUrl: z.string().url('Must be a valid URL').optional(),
+  headerImageUrl: z.string().url('Must be a valid URL').optional(),
+  tagline: z.string().optional(),
+  instagram: z.string().optional(),
+  twitter: z.string().optional(),
+  tiktok: z.string().optional(),
+  youtube: z.string().optional(),
   primaryColor: z.string().optional(),
   accentColor: z.string().optional(),
   backgroundColor: z.string().optional(),
@@ -45,6 +51,7 @@ export function StorefrontForm({ defaultValues }: StorefrontFormProps) {
 
   const logoUrl = watch('logoUrl')
   const bannerUrl = watch('bannerUrl')
+  const headerImageUrl = watch('headerImageUrl')
 
   const onSubmit = async (data: StorefrontFormData) => {
     try {
@@ -114,11 +121,71 @@ export function StorefrontForm({ defaultValues }: StorefrontFormProps) {
       <div className="space-y-2">
         <Label>Header Image</Label>
         <ImageUpload
-          value={bannerUrl}
-          onChange={(url) => setValue('bannerUrl', url)}
+          value={headerImageUrl}
+          onChange={(url) => setValue('headerImageUrl', url)}
         />
-        {errors.bannerUrl && (
-          <p className="text-sm text-red-500">{errors.bannerUrl.message}</p>
+        {errors.headerImageUrl && (
+          <p className="text-sm text-red-500">{errors.headerImageUrl.message}</p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="tagline">Tagline</Label>
+        <Input
+          id="tagline"
+          {...register('tagline')}
+          className="w-full"
+        />
+        {errors.tagline && (
+          <p className="text-sm text-red-500">{errors.tagline.message}</p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="instagram">Instagram</Label>
+        <Input
+          id="instagram"
+          {...register('instagram')}
+          className="w-full"
+        />
+        {errors.instagram && (
+          <p className="text-sm text-red-500">{errors.instagram.message}</p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="twitter">Twitter</Label>
+        <Input
+          id="twitter"
+          {...register('twitter')}
+          className="w-full"
+        />
+        {errors.twitter && (
+          <p className="text-sm text-red-500">{errors.twitter.message}</p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="tiktok">TikTok</Label>
+        <Input
+          id="tiktok"
+          {...register('tiktok')}
+          className="w-full"
+        />
+        {errors.tiktok && (
+          <p className="text-sm text-red-500">{errors.tiktok.message}</p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="youtube">YouTube</Label>
+        <Input
+          id="youtube"
+          {...register('youtube')}
+          className="w-full"
+        />
+        {errors.youtube && (
+          <p className="text-sm text-red-500">{errors.youtube.message}</p>
         )}
       </div>
 

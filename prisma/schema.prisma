@@ -29,6 +29,7 @@ model User {
   emailAlerts   Boolean   @default(true)
   weeklyReport  Boolean   @default(true)
   monthlyReport Boolean   @default(true)
+  favorites     Product[] @relation("Favorites")
 }
 
 model Account {
@@ -87,6 +88,12 @@ model Storefront {
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   products      Product[]
   subscribers   Subscriber[]
+  headerImageUrl String?
+  tagline        String?
+  instagram      String?
+  twitter        String?
+  tiktok         String?
+  youtube        String?
 }
 
 model Collection {
@@ -122,6 +129,8 @@ model Product {
   order         Int        @default(0)
   featured      Boolean    @default(false)
   tags          String[]   @default([])
+  imageUrls     String[]
+  favoritedBy    User[]   @relation("Favorites")
 
   @@index([storefrontId])
   @@index([collectionId])
