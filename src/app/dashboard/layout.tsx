@@ -8,28 +8,20 @@ import { useToast } from '@/components/ui/use-toast'
 import { cn } from '@/lib/utils'
 import { useSession, signOut } from 'next-auth/react'
 import { TopNav } from '@/components/layout/TopNav'
+import { HomeIcon, BarChart2, ShoppingBag, LayoutGrid, Settings, Store, Mail, User, LogOut, HelpCircle, Palette, Bookmark } from 'lucide-react'
 
 const navItems = [
-  {
-    title: 'Dashboard',
-    href: '/dashboard',
-  },
-  {
-    title: 'Analytics',
-    href: '/dashboard/analytics',
-  },
-  {
-    title: 'Products',
-    href: '/dashboard/products',
-  },
-  {
-    title: 'Storefront',
-    href: '/dashboard/storefront',
-  },
-  {
-    title: 'Settings',
-    href: '/dashboard/settings',
-  },
+  { title: 'Dashboard', href: '/dashboard', icon: HomeIcon },
+  { title: 'Analytics', href: '/dashboard/analytics', icon: BarChart2 },
+  { title: 'Products', href: '/dashboard/products', icon: ShoppingBag },
+  { title: 'Customize storefront', href: '/dashboard/storefront', icon: Palette },
+  { title: 'Email', href: '/dashboard/email', icon: Mail },
+]
+
+const accountItems = [
+  { title: 'My Profile', href: '/dashboard/profile', icon: User },
+  { title: 'Settings', href: '/dashboard/settings', icon: Settings },
+  { title: 'Sign Out', href: '/auth/sign-in', icon: LogOut },
 ]
 
 export default function DashboardLayout({
@@ -77,37 +69,62 @@ export default function DashboardLayout({
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-br from-blue-50 via-white to-orange-50">
       <TopNav />
-      <div className="flex flex-1 pt-16">
-        <div className="hidden w-64 border-r bg-white/70 backdrop-blur-md shadow-lg lg:block">
-          <div className="flex h-full flex-col gap-2 p-4">
-            <nav className="grid gap-1">
-              {navItems.map((item) => (
+      <div className="flex flex-1 pt-0">
+        <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-gray-200 min-h-screen px-0 py-0">
+          <div className="flex items-center gap-2 px-8 py-8">
+            <img src="/logo.png" alt="Briklyst Logo" className="w-12 h-12 rounded" />
+          </div>
+          <nav className="flex-1 flex flex-col gap-1 px-4">
+            {navItems.map((item) => {
+              const isActive = pathname === item.href;
+              return (
                 <Link
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    'flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-white hover:bg-gradient-to-r hover:from-orange-400 hover:to-pink-500 hover:shadow-md',
-                    pathname === item.href && 'bg-gradient-to-r from-orange-400 to-pink-500 text-white shadow-lg'
+                    'flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-base transition-all',
+                    isActive ? 'bg-gradient-to-r from-[#A259E6] to-[#4F8CFF] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100',
                   )}
                 >
+                  <item.icon className={`h-5 w-5 ${isActive ? 'text-white' : 'text-[#A259E6]'}`} />
                   {item.title}
                 </Link>
-              ))}
-            </nav>
-            {session?.user?.name && (
+              );
+            })}
+            <div className="my-4 border-t border-gray-200" />
+            {accountItems.map((item) => (
               <Link
-                href={`/storefronts/${encodeURIComponent(session.user.name)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-6"
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  'flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-base transition-all',
+                  pathname === item.href ? 'bg-gradient-to-r from-[#A259E6] to-[#4F8CFF] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100',
+                )}
               >
-                <Button className="w-full bg-gradient-to-r from-orange-500 to-pink-500 text-white font-bold shadow-md hover:from-orange-600 hover:to-pink-600 transition-all">
-                  View My Storefront
-                </Button>
+                <item.icon className={`h-5 w-5 ${pathname === item.href ? 'text-white' : 'text-[#A259E6]'}`} />
+                {item.title}
               </Link>
+            ))}
+            <div className="mt-auto mb-4" />
+            <Link
+              href="/help"
+              className={cn(
+                'flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-base transition-all',
+                pathname === '/help' ? 'bg-gradient-to-r from-[#A259E6] to-[#4F8CFF] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100',
+              )}
+            >
+              <HelpCircle className={`h-5 w-5 ${pathname === '/help' ? 'text-white' : 'text-[#A259E6]'}`} />
+              Help
+            </Link>
+          </nav>
+          <div className="px-8 py-6">
+            {session?.user?.name && (
+              <Button className="w-full bg-gradient-to-r from-[#4F8CFF] to-[#A259E6] text-white font-bold shadow-none hover:from-[#3a6fd8] hover:to-[#7d3fc7] transition-all">
+                View My Storefront
+              </Button>
             )}
           </div>
-        </div>
+        </aside>
         <div className="flex-1">
           <div className="min-h-screen bg-white/60 backdrop-blur-lg rounded-tl-3xl shadow-xl">
             <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">

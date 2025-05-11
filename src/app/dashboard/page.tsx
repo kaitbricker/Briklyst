@@ -15,48 +15,48 @@ const statCards = [
     label: 'Product Clicks',
     value: '12,345',
     info: '+12% from last week',
-    icon: <DollarSign className="h-7 w-7" />, 
-    gradient: 'from-orange-400 to-pink-500',
+    icon: <DollarSign className="h-7 w-7 text-white" />, 
+    bg: 'bg-[#4F8CFF]',
   },
   {
     label: 'Top Product',
     value: 'Glow Serum',
     info: 'Most clicked',
-    icon: <ShoppingBag className="h-7 w-7" />, 
-    gradient: 'from-orange-400 to-pink-500',
+    icon: <ShoppingBag className="h-7 w-7 text-white" />, 
+    bg: 'bg-[#A259E6]',
   },
   {
     label: 'Storefront Views',
     value: '12,345',
     info: '-5% from last week',
-    icon: <Eye className="h-7 w-7" />, 
-    gradient: 'from-orange-400 to-pink-500',
+    icon: <Eye className="h-7 w-7 text-white" />, 
+    bg: 'bg-[#FFD233]',
   },
 ];
 
 const quickLinks = [
   {
     label: 'Copy Link to Storefront',
-    icon: <Link2 className="h-5 w-5" />, 
-    gradient: 'from-orange-400 to-pink-500',
+    icon: <Link2 className="h-5 w-5 text-white" />, 
+    gradient: 'bg-gradient-to-r from-[#4F8CFF] to-[#A259E6]',
     action: 'copy',
   },
   {
     label: 'Add Product',
-    icon: <Plus className="h-5 w-5" />, 
-    gradient: 'from-orange-400 to-pink-500',
+    icon: <Plus className="h-5 w-5 text-white" />, 
+    gradient: 'bg-gradient-to-r from-[#4F8CFF] to-[#A259E6]',
     action: 'addProduct',
   },
   {
     label: 'Generate Email',
-    icon: <Mail className="h-5 w-5" />, 
-    gradient: 'from-orange-400 to-pink-500',
+    icon: <Mail className="h-5 w-5 text-white" />, 
+    gradient: 'bg-gradient-to-r from-[#4F8CFF] to-[#A259E6]',
     action: 'generateEmail',
   },
   {
     label: 'Create a Drop',
-    icon: <Zap className="h-5 w-5" />, 
-    gradient: 'from-orange-400 to-pink-500',
+    icon: <Zap className="h-5 w-5 text-white" />, 
+    gradient: 'bg-gradient-to-r from-[#4F8CFF] to-[#A259E6]',
     action: 'createDrop',
   },
 ];
@@ -128,7 +128,7 @@ export default function DashboardPage() {
             </motion.div>
             <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
               <Button
-                className="bg-gradient-to-r from-orange-400 to-pink-500 text-white font-semibold px-6 py-3 rounded-lg shadow hover:from-orange-500 hover:to-pink-600 transition-all"
+                className="bg-gradient-to-r from-[#4F8CFF] to-[#A259E6] text-white font-semibold px-6 py-3 rounded-lg shadow-none hover:from-[#3a6fd8] hover:to-[#7d3fc7] transition-all"
                 onClick={() => router.push('/storefronts/' + (session?.user?.name || ''))}
               >
                 View My Storefront
@@ -142,9 +142,9 @@ export default function DashboardPage() {
           {statCards.map(card => (
             <motion.div
               key={card.label}
-              whileHover={{ scale: 1.025, boxShadow: '0 8px 32px 0 rgba(249, 115, 22, 0.2)' }}
+              whileHover={{ scale: 1.025 }}
               whileTap={{ scale: 0.98 }}
-              className={`rounded-2xl shadow-lg p-8 flex flex-col justify-between bg-gradient-to-br ${card.gradient} text-white border border-orange-500/20 transition-all duration-200`}
+              className={`rounded-2xl shadow-none p-8 flex flex-col justify-between ${card.bg} text-white`}
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="text-lg font-semibold tracking-wide flex items-center gap-2">
@@ -202,17 +202,17 @@ export default function DashboardPage() {
 
           {/* Quick Links */}
           <div className="w-full lg:w-64 flex-shrink-0">
-            <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-200">
-              <div className="font-bold text-lg mb-4 text-orange-500 flex items-center gap-2">
+            <div className="bg-white rounded-2xl shadow-none p-6 mb-8 border border-0">
+              <div className="font-bold text-lg mb-4 text-[#A259E6] flex items-center gap-2">
                 <Link2 className="h-5 w-5" /> Quick Links
               </div>
               <div className="flex flex-col gap-4">
                 {quickLinks.map(link => (
                   <motion.button
                     key={link.label}
-                    className={`w-full flex items-center justify-between px-4 py-3 rounded-lg font-semibold shadow-md bg-gradient-to-r ${link.gradient} text-white border border-orange-500/20 transition-all duration-200`}
+                    className={`w-full flex items-center justify-between px-4 py-3 rounded-lg font-semibold shadow-none ${link.gradient} text-white transition-all duration-200`}
                     onClick={() => handleQuickLink(link.action)}
-                    whileHover={{ scale: 1.03, boxShadow: '0 8px 32px 0 rgba(249, 115, 22, 0.2)' }}
+                    whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
                   >
                     <span className="flex items-center gap-2">{link.icon} {link.label}</span>
