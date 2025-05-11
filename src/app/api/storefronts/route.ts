@@ -3,222 +3,186 @@ import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { Session } from 'next-auth'
+import { User, Storefront, Product } from '@prisma/client'
 
 export const dynamic = 'force-dynamic' // This ensures the route is not statically optimized
 
-export async function GET(request: Request) {
+export async function GET(
+  request: Request,
+  { params }: { params: { username: string } }
+) {
   try {
-    const { searchParams } = new URL(request.url)
-    const username = searchParams.get('username')
+    const username = params.username
 
-    if (username) {
-      // Fetch storefront by username
-      const user = await prisma.user.findFirst({
-        where: {
-          name: {
-            equals: username,
-            mode: 'insensitive'
-          }
-        },
-        include: {
-          storefronts: {
-            include: {
-              products: {
-                include: {
-                  clickEvents: true
-                },
-                orderBy: {
-                  createdAt: 'desc'
-                }
+    // Fetch storefront by username
+    const user = await prisma.user.findFirst({
+      where: {
+        name: {
+          equals: username,
+          mode: 'insensitive'
+        }
+      },
+      include: {
+        storefronts: {
+          include: {
+            products: {
+              include: {
+                clickEvents: true
+              },
+              orderBy: {
+                createdAt: 'desc'
               }
             }
-          }
-        }
-      })
-
-      if (!user?.storefronts?.[0]) {
-        return new NextResponse('Storefront not found', { status: 404 })
-      }
-
-      const storefront = user.storefronts[0]
-      const products = storefront.products || []
-
-      // Transform the data for the frontend
-      const transformedData = {
-        id: storefront.id,
-        name: storefront.title || '',
-        description: storefront.description || '',
-        logo: storefront.logoUrl || '/briklyst-logo.png',
-        banner: storefront.bannerUrl || '/placeholder-banner.jpg',
-        theme: {
-          primaryColor: storefront.primaryColor || '#ffffff',
-          accentColor: storefront.accentColor || '#000000',
-          backgroundColor: storefront.backgroundColor || '#f9fafb',
-          textColor: storefront.textColor || '#111827',
-          fontFamily: storefront.fontFamily || 'sans-serif'
-        },
-        socials: {
-          instagram: user.instagram || undefined,
-          twitter: user.twitter || undefined,
-          tiktok: user.tiktok || undefined,
-          youtube: user.youtube || undefined
-        },
-        products: products.map(product => ({
-          id: product.id,
-          title: product.title || '',
-          description: product.description || '',
-          price: product.price || 0,
-          imageUrl: product.imageUrl || '',
-          affiliateUrl: product.affiliateUrl || '',
-          collection: 'Uncategorized',
-          clicks: product.clicks || 0,
-          tags: product.tags || []
-        }))
-      }
-
-      return NextResponse.json(transformedData)
-    }
-
-    // If no username provided, get current user's storefront
-    const session = await getServerSession(authOptions) as Session | null
-    if (!session?.user?.id) {
-      return new NextResponse('Unauthorized', { status: 401 })
-    }
-
-    let storefront = await prisma.storefront.findUnique({
-      where: { userId: session.user.id },
-      include: {
-        products: {
-          include: {
-            clickEvents: true
-          },
-          orderBy: {
-            createdAt: 'desc'
           }
         }
       }
     })
 
-    if (!storefront) {
-      // Create a new storefront for the user
-      storefront = await prisma.storefront.create({
-        data: {
-          userId: session.user.id,
-          title: `${session.user.name || 'User'}'s Storefront`,
-          description: 'Welcome to my storefront!',
-          primaryColor: '#ffffff',
-          accentColor: '#000000',
-          backgroundColor: '#f9fafb',
-          textColor: '#111827',
-          fontFamily: 'sans-serif',
-        },
-        include: {
-          products: {
-            include: {
-              clickEvents: true
-            },
-            orderBy: {
-              createdAt: 'desc'
-            }
-          }
-        }
-      })
+    if (!user || !user.storefronts.length) {
+      return NextResponse.json(
+        { error: 'Storefront not found' },
+        { status: 404 }
+      )
     }
 
-    const products = storefront.products || []
+    const storefront = user.storefronts[0]
 
     // Transform the data for the frontend
     const transformedData = {
       id: storefront.id,
-      name: storefront.title || '',
-      description: storefront.description || '',
-      logo: storefront.logoUrl || '/briklyst-logo.png',
-      banner: storefront.bannerUrl || '/placeholder-banner.jpg',
+      name: storefront.title,
+      description: storefront.description,
+      logoUrl: storefront.logoUrl,
+      bannerUrl: storefront.bannerUrl,
+      headerImageUrl: storefront.headerImageUrl,
+      tagline: storefront.tagline,
       theme: {
-        primaryColor: storefront.primaryColor || '#ffffff',
-        accentColor: storefront.accentColor || '#000000',
-        backgroundColor: storefront.backgroundColor || '#f9fafb',
-        textColor: storefront.textColor || '#111827',
-        fontFamily: storefront.fontFamily || 'sans-serif'
+        id: storefront.themeId,
+        primaryColor: storefront.primaryColor,
+        accentColor: storefront.accentColor,
+        backgroundColor: storefront.backgroundColor,
+        textColor: storefront.textColor,
+        fontFamily: storefront.fontFamily,
+        layoutStyle: storefront.layoutStyle
       },
       socials: {
-        instagram: user.instagram || undefined,
-        twitter: user.twitter || undefined,
-        tiktok: user.tiktok || undefined,
-        youtube: user.youtube || undefined
+        instagram: user.instagram,
+        twitter: user.twitter,
+        tiktok: user.tiktok,
+        youtube: user.youtube
       },
-      products: products.map(product => ({
+      products: storefront.products.map(product => ({
         id: product.id,
-        title: product.title || '',
-        description: product.description || '',
-        price: product.price || 0,
-        imageUrl: product.imageUrl || '',
-        affiliateUrl: product.affiliateUrl || '',
-        collection: 'Uncategorized',
-        clicks: product.clicks || 0,
-        tags: product.tags || []
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl,
+        affiliateUrl: product.affiliateUrl,
+        clicks: product.clicks,
+        order: product.order,
+        featured: product.featured,
+        tags: product.tags,
+        imageUrls: product.imageUrls
       }))
     }
 
     return NextResponse.json(transformedData)
   } catch (error) {
-    console.error('Error in storefront route:', error)
-    return new NextResponse('Internal Server Error', { status: 500 })
+    console.error('Error fetching storefront:', error)
+    return NextResponse.json(
+      { error: 'Failed to fetch storefront' },
+      { status: 500 }
+    )
   }
 }
 
-export async function PUT(request: Request) {
+export async function PUT(
+  request: Request,
+  { params }: { params: { username: string } }
+) {
   try {
-    const session = await getServerSession(authOptions) as Session | null
-    if (!session?.user?.id) {
-      return new NextResponse('Unauthorized', { status: 401 })
+    const session = await getServerSession()
+    if (!session?.user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
     }
 
-    const body = await request.json()
-    const {
-      id,
-      title,
-      description,
-      logoUrl,
-      bannerUrl,
-      primaryColor,
-      accentColor,
-      backgroundColor,
-      textColor,
-      fontFamily,
-    } = body
+    const username = params.username
+    const data = await request.json()
 
-    if (!id) {
-      return new NextResponse('Storefront ID is required', { status: 400 })
-    }
-
-    // Verify the storefront belongs to the user
-    const existingStorefront = await prisma.storefront.findUnique({
-      where: { id }
-    })
-
-    if (!existingStorefront || existingStorefront.userId !== session.user.id) {
-      return new NextResponse('Unauthorized', { status: 401 })
-    }
-
-    const storefront = await prisma.storefront.update({
-      where: { id },
-      data: {
-        title: title || existingStorefront.title,
-        description: description || existingStorefront.description,
-        logoUrl: logoUrl || existingStorefront.logoUrl,
-        bannerUrl: bannerUrl || existingStorefront.bannerUrl,
-        primaryColor: primaryColor || existingStorefront.primaryColor,
-        accentColor: accentColor || existingStorefront.accentColor,
-        backgroundColor: backgroundColor || existingStorefront.backgroundColor,
-        textColor: textColor || existingStorefront.textColor,
-        fontFamily: fontFamily || existingStorefront.fontFamily,
+    // Fetch storefront by username
+    const user = await prisma.user.findFirst({
+      where: {
+        name: {
+          equals: username,
+          mode: 'insensitive'
+        }
       },
+      include: {
+        storefronts: true
+      }
     })
 
-    return NextResponse.json(storefront)
+    if (!user || !user.storefronts.length) {
+      return NextResponse.json(
+        { error: 'Storefront not found' },
+        { status: 404 }
+      )
+    }
+
+    const storefront = user.storefronts[0]
+
+    // Update storefront
+    const updatedStorefront = await prisma.storefront.update({
+      where: {
+        id: storefront.id
+      },
+      data: {
+        title: data.name,
+        description: data.description,
+        logoUrl: data.logoUrl,
+        bannerUrl: data.bannerUrl,
+        headerImageUrl: data.headerImageUrl,
+        tagline: data.tagline,
+        themeId: data.theme.id,
+        primaryColor: data.theme.primaryColor,
+        accentColor: data.theme.accentColor,
+        backgroundColor: data.theme.backgroundColor,
+        textColor: data.theme.textColor,
+        fontFamily: data.theme.fontFamily,
+        layoutStyle: data.theme.layoutStyle
+      }
+    })
+
+    // Update user social media fields
+    const updatedUser = await prisma.user.update({
+      where: {
+        id: user.id
+      },
+      data: {
+        instagram: data.socials.instagram,
+        twitter: data.socials.twitter,
+        tiktok: data.socials.tiktok,
+        youtube: data.socials.youtube
+      }
+    })
+
+    return NextResponse.json({
+      ...updatedStorefront,
+      socials: {
+        instagram: updatedUser.instagram,
+        twitter: updatedUser.twitter,
+        tiktok: updatedUser.tiktok,
+        youtube: updatedUser.youtube
+      }
+    })
   } catch (error) {
     console.error('Error updating storefront:', error)
-    return new NextResponse('Internal Server Error', { status: 500 })
+    return NextResponse.json(
+      { error: 'Failed to update storefront' },
+      { status: 500 }
+    )
   }
 } 
