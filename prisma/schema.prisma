@@ -25,6 +25,8 @@ model User {
   twitter       String?
   instagram     String?
   linkedin      String?
+  tiktok        String?
+  youtube       String?
   clickEvents   ClickEvent[]
   emailAlerts   Boolean   @default(true)
   weeklyReport  Boolean   @default(true)

@@ -57,6 +57,12 @@ export async function GET(request: Request) {
           textColor: storefront.textColor || '#111827',
           fontFamily: storefront.fontFamily || 'sans-serif'
         },
+        socials: {
+          instagram: user.instagram || undefined,
+          twitter: user.twitter || undefined,
+          tiktok: user.tiktok || undefined,
+          youtube: user.youtube || undefined
+        },
         products: products.map(product => ({
           id: product.id,
           title: product.title || '',
@@ -65,7 +71,8 @@ export async function GET(request: Request) {
           imageUrl: product.imageUrl || '',
           affiliateUrl: product.affiliateUrl || '',
           collection: 'Uncategorized',
-          clicks: product.clicks || 0
+          clicks: product.clicks || 0,
+          tags: product.tags || []
         }))
       }
 
@@ -134,6 +141,12 @@ export async function GET(request: Request) {
         textColor: storefront.textColor || '#111827',
         fontFamily: storefront.fontFamily || 'sans-serif'
       },
+      socials: {
+        instagram: user.instagram || undefined,
+        twitter: user.twitter || undefined,
+        tiktok: user.tiktok || undefined,
+        youtube: user.youtube || undefined
+      },
       products: products.map(product => ({
         id: product.id,
         title: product.title || '',
@@ -142,7 +155,8 @@ export async function GET(request: Request) {
         imageUrl: product.imageUrl || '',
         affiliateUrl: product.affiliateUrl || '',
         collection: 'Uncategorized',
-        clicks: product.clicks || 0
+        clicks: product.clicks || 0,
+        tags: product.tags || []
       }))
     }
 

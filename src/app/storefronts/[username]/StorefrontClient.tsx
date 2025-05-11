@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Search, X, Heart, Share2, Filter } from "lucide-react";
+import { ArrowRight, Search, X, Heart, Share2, Filter, Instagram, Youtube, Twitter, Music2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -35,6 +35,12 @@ interface Storefront {
     fontFamily: string;
   };
   products: Product[];
+  socials?: {
+    instagram?: string;
+    twitter?: string;
+    tiktok?: string;
+    youtube?: string;
+  };
 }
 
 interface StorefrontClientProps {
@@ -151,6 +157,57 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
           >
             {storefront.description}
           </motion.p>
+          
+          {/* Social Media Icons */}
+          {(storefront.socials?.instagram || storefront.socials?.twitter || storefront.socials?.tiktok || storefront.socials?.youtube) && (
+            <motion.div 
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 1, duration: 0.8 }}
+              className="flex gap-4 mt-6"
+            >
+              {storefront.socials?.instagram && (
+                <a 
+                  href={storefront.socials.instagram.startsWith('http') ? storefront.socials.instagram : `https://instagram.com/${storefront.socials.instagram.replace('@', '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white/90 hover:text-white transition-colors duration-200"
+                >
+                  <Instagram className="w-6 h-6" />
+                </a>
+              )}
+              {storefront.socials?.twitter && (
+                <a 
+                  href={storefront.socials.twitter.startsWith('http') ? storefront.socials.twitter : `https://twitter.com/${storefront.socials.twitter.replace('@', '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white/90 hover:text-white transition-colors duration-200"
+                >
+                  <Twitter className="w-6 h-6" />
+                </a>
+              )}
+              {storefront.socials?.tiktok && (
+                <a 
+                  href={storefront.socials.tiktok.startsWith('http') ? storefront.socials.tiktok : `https://tiktok.com/@${storefront.socials.tiktok.replace('@', '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white/90 hover:text-white transition-colors duration-200"
+                >
+                  <Music2 className="w-6 h-6" />
+                </a>
+              )}
+              {storefront.socials?.youtube && (
+                <a 
+                  href={storefront.socials.youtube.startsWith('http') ? storefront.socials.youtube : `https://youtube.com/${storefront.socials.youtube}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white/90 hover:text-white transition-colors duration-200"
+                >
+                  <Youtube className="w-6 h-6" />
+                </a>
+              )}
+            </motion.div>
+          )}
         </motion.div>
       </motion.div>
 
