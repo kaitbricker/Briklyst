@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { DollarSign, Percent, Eye, Gift } from 'lucide-react';
 import Image from 'next/image';
 import { useSession } from "next-auth/react";
@@ -12,26 +12,26 @@ const stats = [
   {
     label: 'Revenue This Week',
     value: '$1,250',
-    icon: <DollarSign className="w-5 h-5 text-purple-500" />, 
-    color: 'from-purple-400 to-pink-400',
+    icon: <DollarSign className="h-5 w-5 text-muted-foreground" />, 
+    info: '+12% from last week',
   },
   {
     label: 'Top Product',
     value: 'Glow Serum',
-    icon: <Gift className="w-5 h-5 text-pink-500" />, 
-    color: 'from-pink-400 to-orange-300',
+    icon: <Gift className="h-5 w-5 text-muted-foreground" />, 
+    info: 'Most clicked',
   },
   {
     label: 'Email Open Rate',
     value: '46%',
-    icon: <Percent className="w-5 h-5 text-yellow-500" />, 
-    color: 'from-yellow-300 to-orange-400',
+    icon: <Percent className="h-5 w-5 text-muted-foreground" />, 
+    info: '+4% from last campaign',
   },
   {
     label: 'Storefront Views',
     value: '2,580',
-    icon: <Eye className="w-5 h-5 text-indigo-500" />, 
-    color: 'from-indigo-400 to-purple-400',
+    icon: <Eye className="h-5 w-5 text-muted-foreground" />, 
+    info: '+8% from last week',
   },
 ];
 
@@ -98,17 +98,16 @@ export default function DashboardPage() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
         {stats.map((stat) => (
-          <motion.div
-            key={stat.label}
-            whileHover={{ scale: 1.04, boxShadow: "0 8px 32px 0 rgba(255, 140, 80, 0.10)" }}
-            whileTap={{ scale: 0.98 }}
-            className={`flex flex-col items-center p-6 rounded-xl shadow-md bg-white/90 transition-all duration-200 border-t-4 ${stat.color ? `bg-gradient-to-r ${stat.color} bg-clip-padding` : ''}`}
-            style={{ background: stat.color ? undefined : undefined }}
-          >
-            <div className="mb-2">{stat.icon}</div>
-            <div className="text-sm text-gray-600 mb-1 font-medium drop-shadow-sm">{stat.label}</div>
-            <div className="text-2xl font-bold drop-shadow-sm">{stat.value}</div>
-          </motion.div>
+          <Card key={stat.label} className="rounded-2xl bg-white shadow-md border border-gray-100 hover:shadow-lg transition-all duration-200">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">{stat.label}</CardTitle>
+              {stat.icon}
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stat.value}</div>
+              <p className="text-xs text-muted-foreground mt-1">{stat.info}</p>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
