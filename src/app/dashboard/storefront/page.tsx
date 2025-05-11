@@ -21,6 +21,7 @@ import StorefrontDescriptionCard from '@/components/storefront/StorefrontDescrip
 import ProductGrid from '@/components/storefront/ProductGrid'
 import Link from 'next/link'
 import { ImageUpload } from '@/components/ui/image-upload'
+import { useStorefrontUpdate } from '@/context/StorefrontUpdateContext'
 
 interface Product {
   id: string
@@ -78,6 +79,7 @@ export default function StorefrontPage() {
   const [saveError, setSaveError] = useState<{ [key: string]: string }>({})
   const [collections, setCollections] = useState<Collection[]>([])
   const [newCollection, setNewCollection] = useState<{ name: string; description: string; tags: string[] }>({ name: '', description: '', tags: [] })
+  const { triggerUpdate } = useStorefrontUpdate()
 
   useEffect(() => {
     const fetchStorefront = async () => {
@@ -156,6 +158,7 @@ export default function StorefrontPage() {
       title: 'Success',
       description: 'Product added successfully',
     })
+    triggerUpdate()
   }
 
   const handleProductClick = async (productId: string) => {
