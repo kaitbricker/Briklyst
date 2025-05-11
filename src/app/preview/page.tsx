@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input'
 import { Search, ShoppingCart, Heart, Share2, ExternalLink, Flame } from 'lucide-react'
 import Link from 'next/link'
 import { ProductCard } from '@/components/ProductCard'
+import { useStorefrontUpdate } from '@/context/StorefrontUpdateContext'
 
 interface Product {
   id: string
@@ -49,6 +50,7 @@ export default function PreviewStorefront() {
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCollection, setSelectedCollection] = useState('all')
+  const { lastUpdated } = useStorefrontUpdate()
 
   useEffect(() => {
     const fetchStorefront = async () => {
@@ -65,7 +67,7 @@ export default function PreviewStorefront() {
     }
 
     fetchStorefront()
-  }, [])
+  }, [lastUpdated])
 
   const handleProductClick = async (productId: string) => {
     try {

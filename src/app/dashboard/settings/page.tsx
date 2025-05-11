@@ -14,6 +14,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
+import { useStorefrontUpdate } from '@/context/StorefrontUpdateContext'
 
 interface Storefront {
   id: string
@@ -49,6 +50,7 @@ export default function SettingsPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const { toast } = useToast()
+  const { triggerUpdate } = useStorefrontUpdate()
 
   useEffect(() => {
     const fetchStorefront = async () => {
@@ -92,6 +94,7 @@ export default function SettingsPage() {
         title: 'Success',
         description: 'Profile updated successfully',
       });
+      triggerUpdate();
     } catch (error) {
       toast({
         title: 'Error',

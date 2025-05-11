@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Inter } from 'next/font/google'
 import { ScrollProgress } from '@/components/ScrollProgress'
 import { Providers } from './providers'
+import { StorefrontUpdateProvider } from '@/context/StorefrontUpdateContext';
 
 const geistSans = GeistSans;
 const geistMono = GeistMono;
@@ -28,11 +29,13 @@ export default function RootLayout({
   return (
     <html lang="en" className={GeistSans.className}>
       <body className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} font-sans`}>
-        <Providers>
-          <ScrollProgress />
-          {children}
-          <Toaster />
-        </Providers>
+        <StorefrontUpdateProvider>
+          <Providers>
+            <ScrollProgress />
+            {children}
+            <Toaster />
+          </Providers>
+        </StorefrontUpdateProvider>
       </body>
     </html>
   );
