@@ -36,40 +36,36 @@ export async function GET(request: Request) {
         }
       })
 
-      console.log('USER LOOKUP:', user);
-      const storefront = user?.storefronts?.[0];
-      if (!user || !storefront) {
-        console.error('User or storefront not found:', { user });
+      if (!user?.storefronts?.[0]) {
         return new NextResponse('Storefront not found', { status: 404 })
       }
-      if (!storefront.products) {
-        console.error('Storefront products is undefined:', { user });
-        storefront.products = [];
-      }
+
+      const storefront = user.storefronts[0]
+      const products = storefront.products || []
 
       // Transform the data for the frontend
       const transformedData = {
         id: storefront.id,
-        name: storefront.title,
-        description: storefront.description,
+        name: storefront.title || '',
+        description: storefront.description || '',
         logo: storefront.logoUrl || '/briklyst-logo.png',
         banner: storefront.bannerUrl || '/placeholder-banner.jpg',
         theme: {
-          primaryColor: storefront.primaryColor,
-          accentColor: storefront.accentColor,
-          backgroundColor: storefront.backgroundColor,
-          textColor: storefront.textColor,
-          fontFamily: storefront.fontFamily
+          primaryColor: storefront.primaryColor || '#ffffff',
+          accentColor: storefront.accentColor || '#000000',
+          backgroundColor: storefront.backgroundColor || '#f9fafb',
+          textColor: storefront.textColor || '#111827',
+          fontFamily: storefront.fontFamily || 'sans-serif'
         },
-        products: (storefront.products || []).map(product => ({
+        products: products.map(product => ({
           id: product.id,
-          title: product.title,
-          description: product.description,
-          price: product.price,
-          imageUrl: product.imageUrl,
-          affiliateUrl: product.affiliateUrl,
+          title: product.title || '',
+          description: product.description || '',
+          price: product.price || 0,
+          imageUrl: product.imageUrl || '',
+          affiliateUrl: product.affiliateUrl || '',
           collection: 'Uncategorized',
-          clicks: product.clicks
+          clicks: product.clicks || 0
         }))
       }
 
@@ -78,7 +74,7 @@ export async function GET(request: Request) {
 
     // If no username provided, get current user's storefront
     const session = await getServerSession(authOptions) as Session | null
-    if (!session?.user) {
+    if (!session?.user?.id) {
       return new NextResponse('Unauthorized', { status: 401 })
     }
 
@@ -101,7 +97,7 @@ export async function GET(request: Request) {
       storefront = await prisma.storefront.create({
         data: {
           userId: session.user.id,
-          title: `${session.user.name}'s Storefront`,
+          title: `${session.user.name || 'User'}'s Storefront`,
           description: 'Welcome to my storefront!',
           primaryColor: '#ffffff',
           accentColor: '#000000',
@@ -122,35 +118,37 @@ export async function GET(request: Request) {
       })
     }
 
+    const products = storefront.products || []
+
     // Transform the data for the frontend
     const transformedData = {
       id: storefront.id,
-      name: storefront.title,
-      description: storefront.description,
+      name: storefront.title || '',
+      description: storefront.description || '',
       logo: storefront.logoUrl || '/briklyst-logo.png',
       banner: storefront.bannerUrl || '/placeholder-banner.jpg',
       theme: {
-        primaryColor: storefront.primaryColor,
-        accentColor: storefront.accentColor,
-        backgroundColor: storefront.backgroundColor,
-        textColor: storefront.textColor,
-        fontFamily: storefront.fontFamily
+        primaryColor: storefront.primaryColor || '#ffffff',
+        accentColor: storefront.accentColor || '#000000',
+        backgroundColor: storefront.backgroundColor || '#f9fafb',
+        textColor: storefront.textColor || '#111827',
+        fontFamily: storefront.fontFamily || 'sans-serif'
       },
-      products: storefront.products.map(product => ({
+      products: products.map(product => ({
         id: product.id,
-        title: product.title,
-        description: product.description,
-        price: product.price,
-        imageUrl: product.imageUrl,
-        affiliateUrl: product.affiliateUrl,
+        title: product.title || '',
+        description: product.description || '',
+        price: product.price || 0,
+        imageUrl: product.imageUrl || '',
+        affiliateUrl: product.affiliateUrl || '',
         collection: 'Uncategorized',
-        clicks: product.clicks
+        clicks: product.clicks || 0
       }))
     }
 
     return NextResponse.json(transformedData)
   } catch (error) {
-    console.error('Error fetching/creating storefront:', error)
+    console.error('Error in storefront route:', error)
     return new NextResponse('Internal Server Error', { status: 500 })
   }
 }
@@ -158,7 +156,7 @@ export async function GET(request: Request) {
 export async function PUT(request: Request) {
   try {
     const session = await getServerSession(authOptions) as Session | null
-    if (!session?.user) {
+    if (!session?.user?.id) {
       return new NextResponse('Unauthorized', { status: 401 })
     }
 
@@ -180,18 +178,27 @@ export async function PUT(request: Request) {
       return new NextResponse('Storefront ID is required', { status: 400 })
     }
 
+    // Verify the storefront belongs to the user
+    const existingStorefront = await prisma.storefront.findUnique({
+      where: { id }
+    })
+
+    if (!existingStorefront || existingStorefront.userId !== session.user.id) {
+      return new NextResponse('Unauthorized', { status: 401 })
+    }
+
     const storefront = await prisma.storefront.update({
       where: { id },
       data: {
-        title,
-        description,
-        logoUrl,
-        bannerUrl,
-        primaryColor,
-        accentColor,
-        backgroundColor,
-        textColor,
-        fontFamily,
+        title: title || existingStorefront.title,
+        description: description || existingStorefront.description,
+        logoUrl: logoUrl || existingStorefront.logoUrl,
+        bannerUrl: bannerUrl || existingStorefront.bannerUrl,
+        primaryColor: primaryColor || existingStorefront.primaryColor,
+        accentColor: accentColor || existingStorefront.accentColor,
+        backgroundColor: backgroundColor || existingStorefront.backgroundColor,
+        textColor: textColor || existingStorefront.textColor,
+        fontFamily: fontFamily || existingStorefront.fontFamily,
       },
     })
 
