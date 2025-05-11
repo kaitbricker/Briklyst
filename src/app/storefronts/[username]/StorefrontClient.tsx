@@ -44,15 +44,15 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-  // Get all unique tags from products
-  const allTags = Array.from(new Set(storefront.products.flatMap(product => product.tags)));
+  // Get all unique tags from products with null check
+  const allTags = Array.from(new Set((storefront.products || []).flatMap(product => product.tags || [])));
 
-  // Filter products based on search query and selected tags
-  const filteredProducts = storefront.products.filter(product => {
+  // Filter products based on search query and selected tags with null check
+  const filteredProducts = (storefront.products || []).filter(product => {
     const matchesSearch = product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          product.description.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesTags = selectedTags.length === 0 || 
-                       selectedTags.some(tag => product.tags.includes(tag));
+                       selectedTags.some(tag => (product.tags || []).includes(tag));
     return matchesSearch && matchesTags;
   });
 
@@ -175,7 +175,7 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
                   {/* Featured Content */}
                   <div className="p-8 md:p-12 flex flex-col justify-center">
                     <div className="space-y-6">
-                      {filteredProducts[0].tags.length > 0 && (
+                      {filteredProducts[0]?.tags?.length > 0 && (
                         <div className="flex flex-wrap gap-2">
                           {filteredProducts[0].tags.map((tag) => (
                             <span
@@ -245,7 +245,7 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
                   <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
                 <div className="p-6">
-                  {product.tags.length > 0 && (
+                  {product?.tags?.length > 0 && (
                     <div className="flex flex-wrap gap-2 mb-4">
                       {product.tags.map((tag) => (
                         <span
