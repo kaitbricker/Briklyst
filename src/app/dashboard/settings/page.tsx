@@ -74,40 +74,32 @@ export default function SettingsPage() {
     fetchStorefront()
   }, [])
 
-  const handleFieldChange = async (field: keyof Storefront['user'], value: string | boolean) => {
-    if (!storefront) return
-
+  const handleFieldChange = async (field: string, value: string) => {
     try {
-      const response = await fetch('/api/storefronts', {
+      const response = await fetch('/api/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          user: {
-            ...storefront.user,
-            [field]: value,
-          },
-        }),
-      })
+        body: JSON.stringify({ [field]: value }),
+      });
 
-      if (!response.ok) throw new Error('Failed to update user')
+      if (!response.ok) {
+        throw new Error('Failed to update profile');
+      }
 
-      const data = await response.json()
-      setStorefront(data)
       toast({
         title: 'Success',
-        description: 'Settings updated successfully',
-      })
+        description: 'Profile updated successfully',
+      });
     } catch (error) {
-      console.error('Error updating settings:', error)
       toast({
         title: 'Error',
-        description: 'Failed to update settings',
+        description: 'Failed to update profile',
         variant: 'destructive',
-      })
+      });
     }
-  }
+  };
 
   if (isLoading) {
     return (
@@ -236,7 +228,7 @@ export default function SettingsPage() {
                   </div>
                   <Switch
                     checked={storefront?.user?.emailAlerts}
-                    onCheckedChange={(checked) => handleFieldChange('emailAlerts', checked)}
+                    onCheckedChange={(checked) => handleFieldChange('emailAlerts', checked.toString())}
                   />
                 </div>
                 <div className="flex items-center justify-between">
@@ -246,7 +238,7 @@ export default function SettingsPage() {
                   </div>
                   <Switch
                     checked={storefront?.user?.weeklyReport}
-                    onCheckedChange={(checked) => handleFieldChange('weeklyReport', checked)}
+                    onCheckedChange={(checked) => handleFieldChange('weeklyReport', checked.toString())}
                   />
                 </div>
                 <div className="flex items-center justify-between">
@@ -256,7 +248,7 @@ export default function SettingsPage() {
                   </div>
                   <Switch
                     checked={storefront?.user?.monthlyReport}
-                    onCheckedChange={(checked) => handleFieldChange('monthlyReport', checked)}
+                    onCheckedChange={(checked) => handleFieldChange('monthlyReport', checked.toString())}
                   />
                 </div>
               </div>
