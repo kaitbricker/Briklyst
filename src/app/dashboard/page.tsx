@@ -61,7 +61,7 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between bg-white/80 backdrop-blur-lg p-8 rounded-2xl shadow-lg">
         <div>
           <h1 className="text-4xl font-bold mb-2">Welcome back, {user.name}</h1>
-          <p className="text-lg text-gray-500">Let's make your storefront shine.</p>
+          <p className="text-lg text-gray-500">Let&apos;s make your storefront shine.</p>
         </div>
         <div className="w-16 h-16 rounded-full overflow-hidden border-4 border-gradient-to-r from-orange-400 to-pink-500">
           <Image src={user.avatar} alt="User avatar" width={64} height={64} />
