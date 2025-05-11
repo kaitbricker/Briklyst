@@ -81,7 +81,7 @@ export function TopNav() {
     <motion.nav 
       initial={{ y: -20 }}
       animate={{ y: 0 }}
-      className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm border-b border-[#E5E7EB]"
+      className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm border-b border-gray-200"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
@@ -95,11 +95,11 @@ export function TopNav() {
           {/* Search Bar */}
           <div className="flex-1 max-w-md mx-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#5F5F73]" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <Input
                 type="search"
                 placeholder="Search products..."
-                className="pl-10 w-full border-[#E5E7EB] focus:border-[#1C1C2E] focus:ring-[#1C1C2E] transition-all duration-200"
+                className="pl-10 w-full border-gray-200 focus:border-orange-400 focus:ring-orange-400 transition-all duration-200"
               />
             </div>
           </div>
@@ -109,7 +109,7 @@ export function TopNav() {
             {/* My Storefront Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="text-[#5F5F73] hover:text-[#1C1C2E]">
+                <Button variant="ghost" className="text-gray-500 hover:text-gray-900">
                   <Store className="w-4 h-4 mr-2" />
                   My Storefront
                 </Button>
@@ -133,7 +133,7 @@ export function TopNav() {
             </DropdownMenu>
 
             {/* Notifications */}
-            <Button variant="ghost" className="text-[#5F5F73] hover:text-[#1C1C2E] relative">
+            <Button variant="ghost" className="text-gray-500 hover:text-gray-900 relative">
               <Bell className="w-4 h-4" />
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
             </Button>
@@ -141,7 +141,7 @@ export function TopNav() {
             {/* Add Product Button */}
             <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-[#1C1C2E] hover:bg-[#2D2D44] text-white transition-all duration-200">
+                <Button className="bg-gradient-to-r from-orange-400 to-pink-500 text-white hover:from-orange-500 hover:to-pink-600 transition-all duration-200">
                   <Plus className="w-4 h-4 mr-2" />
                   Add Product
                 </Button>
