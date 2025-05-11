@@ -18,6 +18,7 @@ interface Product {
   affiliateUrl: string;
   clicks: number;
   tags: string[];
+  images?: string[]; // Add support for multiple images
 }
 
 interface Storefront {
@@ -43,6 +44,7 @@ interface StorefrontClientProps {
 export default function StorefrontClient({ storefront }: StorefrontClientProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [hoveredProduct, setHoveredProduct] = useState<string | null>(null);
 
   // Get all unique tags from products with null check
   const allTags = Array.from(new Set((storefront.products || []).flatMap(product => product.tags || [])));
@@ -78,8 +80,8 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: storefront.theme.backgroundColor }}>
-      {/* Hero Section */}
-      <div className="relative h-[400px] w-full overflow-hidden">
+      {/* Hero Section with improved styling */}
+      <div className="relative h-[500px] w-full overflow-hidden">
         {storefront.banner ? (
           <Image
             src={storefront.banner}
@@ -90,60 +92,63 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
           />
         ) : (
           <div 
-            className="h-full w-full"
-            style={{ backgroundColor: storefront.theme.primaryColor }}
+            className="h-full w-full bg-gradient-to-br from-gray-50 to-gray-100"
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/20" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/30" />
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center">
           {storefront.logo && (
-            <div className="mb-6 h-24 w-24 overflow-hidden rounded-full border-4 border-white">
+            <div className="mb-8 h-32 w-32 overflow-hidden rounded-full border-4 border-white shadow-xl">
               <Image
                 src={storefront.logo || '/briklyst-logo.png'}
                 alt={storefront.name}
-                width={96}
-                height={96}
+                width={128}
+                height={128}
                 className="h-full w-full object-cover"
               />
             </div>
           )}
-          <h1 className="mb-4 text-4xl font-bold text-white">{storefront.name}</h1>
-          <p className="max-w-2xl text-lg text-white/90">{storefront.description}</p>
+          <h1 className="mb-4 text-5xl font-bold text-white font-inter">{storefront.name}</h1>
+          <p className="max-w-2xl text-xl text-white/90 font-light">{storefront.description}</p>
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        {/* Search and Filter Section */}
-        <div className="mb-12 rounded-lg bg-white p-6 shadow-sm">
-          <div className="relative mb-6">
-            <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+      <div className="mx-auto max-w-7xl px-6 py-16 sm:px-8 lg:px-12">
+        {/* Search and Filter Section with improved styling */}
+        <div className="mb-16 rounded-xl bg-white p-8 shadow-sm border border-gray-100">
+          <div className="relative mb-8">
+            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
             <Input
               type="text"
               placeholder="Search products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
+              className="pl-12 h-12 text-lg rounded-xl border-gray-200 focus:border-primary"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
               >
                 <X className="h-5 w-5" />
               </button>
             )}
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-3">
             {allTags.map((tag) => (
               <button
                 key={tag}
                 onClick={() => toggleTag(tag)}
-                className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+                className={`rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-200 ${
                   selectedTags.includes(tag)
-                    ? `bg-[${storefront.theme.primaryColor}] text-white`
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    ? `bg-gradient-to-r from-primary to-primary/80 text-white shadow-md`
+                    : "bg-gray-50 text-gray-600 hover:bg-gray-100 hover:shadow-sm"
                 }`}
+                style={{
+                  backgroundColor: selectedTags.includes(tag) ? storefront.theme.primaryColor : undefined,
+                  color: selectedTags.includes(tag) ? 'white' : undefined
+                }}
               >
                 {tag}
               </button>
@@ -151,15 +156,15 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
           </div>
         </div>
 
-        {/* Featured Product Section */}
+        {/* Featured Product Section with improved styling */}
         {filteredProducts.length > 0 && (
-          <div className="mb-16">
+          <div className="mb-20">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <Card className="group overflow-hidden bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300">
+              <Card className="group overflow-hidden bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
                 <div className="grid md:grid-cols-2 gap-0">
                   {/* Featured Image */}
                   <div className="relative aspect-square w-full overflow-hidden">
@@ -173,7 +178,7 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
                   </div>
                   
                   {/* Featured Content */}
-                  <div className="p-8 md:p-12 flex flex-col justify-center">
+                  <div className="p-10 md:p-12 flex flex-col justify-center">
                     <div className="space-y-6">
                       {filteredProducts[0]?.tags?.length > 0 && (
                         <div className="flex flex-wrap gap-2">
@@ -182,7 +187,7 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
                               key={tag}
                               className="px-4 py-1.5 text-sm font-medium rounded-full"
                               style={{
-                                backgroundColor: `${storefront.theme.primaryColor}20`,
+                                backgroundColor: `${storefront.theme.primaryColor}15`,
                                 color: storefront.theme.primaryColor
                               }}
                             >
@@ -191,19 +196,19 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
                           ))}
                         </div>
                       )}
-                      <h2 className="font-bold text-3xl" style={{ color: storefront.theme.textColor }}>
+                      <h2 className="font-bold text-4xl font-inter" style={{ color: storefront.theme.textColor }}>
                         {filteredProducts[0].title}
                       </h2>
-                      <p className="text-lg" style={{ color: `${storefront.theme.textColor}99` }}>
+                      <p className="text-lg text-gray-600 font-light" style={{ color: `${storefront.theme.textColor}99` }}>
                         {filteredProducts[0].description}
                       </p>
-                      <div className="flex items-center justify-between pt-6">
-                        <span className="text-2xl font-semibold" style={{ color: storefront.theme.textColor }}>
+                      <div className="flex items-center justify-between pt-8">
+                        <span className="text-3xl font-semibold" style={{ color: storefront.theme.textColor }}>
                           ${filteredProducts[0].price.toFixed(2)}
                         </span>
                         <Button
                           size="lg"
-                          className="group/button flex items-center gap-3 rounded-full px-6 py-3 transition-all duration-300"
+                          className="group/button flex items-center gap-3 rounded-full px-8 py-4 transition-all duration-300 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary"
                           style={{
                             backgroundColor: storefront.theme.accentColor,
                             color: storefront.theme.backgroundColor
@@ -225,7 +230,7 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
           </div>
         )}
 
-        {/* Product Grid */}
+        {/* Product Grid with improved styling */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {filteredProducts.slice(1).map((product) => (
             <motion.div
@@ -233,8 +238,10 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
+              onMouseEnter={() => setHoveredProduct(product.id)}
+              onMouseLeave={() => setHoveredProduct(null)}
             >
-              <Card className="group overflow-hidden bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300">
+              <Card className="group overflow-hidden bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100">
                 <div className="relative aspect-square">
                   <Image
                     src={product.imageUrl || '/placeholder-product.jpg'}
@@ -242,6 +249,14 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
+                  {product.images && product.images[1] && hoveredProduct === product.id && (
+                    <Image
+                      src={product.images[1]}
+                      alt={product.title}
+                      fill
+                      className="object-cover transition-opacity duration-300"
+                    />
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
                 <div className="p-6">
@@ -252,7 +267,7 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
                           key={tag}
                           className="px-3 py-1 text-sm font-medium rounded-full"
                           style={{
-                            backgroundColor: `${storefront.theme.primaryColor}20`,
+                            backgroundColor: `${storefront.theme.primaryColor}15`,
                             color: storefront.theme.primaryColor
                           }}
                         >
@@ -261,10 +276,10 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
                       ))}
                     </div>
                   )}
-                  <h3 className="font-semibold text-xl mb-2" style={{ color: storefront.theme.textColor }}>
+                  <h3 className="font-semibold text-xl mb-2 font-inter" style={{ color: storefront.theme.textColor }}>
                     {product.title}
                   </h3>
-                  <p className="mb-4 line-clamp-2" style={{ color: `${storefront.theme.textColor}99` }}>
+                  <p className="mb-4 line-clamp-2 text-gray-600 font-light" style={{ color: `${storefront.theme.textColor}99` }}>
                     {product.description}
                   </p>
                   <div className="flex items-center justify-between">
@@ -273,7 +288,7 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
                     </span>
                     <Button
                       size="sm"
-                      className="rounded-full px-4 py-2 transition-all duration-300"
+                      className="rounded-full px-5 py-2 transition-all duration-300 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary"
                       style={{
                         backgroundColor: storefront.theme.accentColor,
                         color: storefront.theme.backgroundColor
