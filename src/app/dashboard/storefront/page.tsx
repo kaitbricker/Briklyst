@@ -52,6 +52,14 @@ interface Storefront {
   fontFamily?: string
   layoutStyle?: string
   themeId?: string
+  tagline?: string
+}
+
+interface Collection {
+  id: string
+  name: string
+  description?: string
+  tags: string[]
 }
 
 export default function StorefrontPage() {
@@ -68,11 +76,13 @@ export default function StorefrontPage() {
   const [saving, setSaving] = useState<{ [key: string]: boolean }>({})
   const [saveSuccess, setSaveSuccess] = useState<{ [key: string]: boolean }>({})
   const [saveError, setSaveError] = useState<{ [key: string]: string }>({})
+  const [collections, setCollections] = useState<Collection[]>([])
+  const [newCollection, setNewCollection] = useState<{ name: string; description: string; tags: string[] }>({ name: '', description: '', tags: [] })
 
   useEffect(() => {
     const fetchStorefront = async () => {
       try {
-        const response = await fetch('/api/storefronts?userId=current')
+        const response = await fetch('/api/storefronts')
         if (!response.ok) throw new Error('Failed to fetch storefront')
         const data = await response.json()
         setStorefront(data)
@@ -276,9 +286,10 @@ export default function StorefrontPage() {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="bg-white/60 backdrop-blur-md rounded-2xl shadow-md p-6">
         <TabsList className="flex gap-4 mb-6">
-          <TabsTrigger value="design" className="text-lg font-semibold text-gray-700">Design</TabsTrigger>
+          <TabsTrigger value="design" className="text-lg font-semibold text-gray-700">Design & Theme</TabsTrigger>
           <TabsTrigger value="products" className="text-lg font-semibold text-gray-700">Products</TabsTrigger>
-          <TabsTrigger value="settings" className="text-lg font-semibold text-gray-700">Settings</TabsTrigger>
+          <TabsTrigger value="details" className="text-lg font-semibold text-gray-700">Storefront Details</TabsTrigger>
+          <TabsTrigger value="collections" className="text-lg font-semibold text-gray-700">Collections</TabsTrigger>
         </TabsList>
         <TabsContent value="design">
           <Card className="p-8 rounded-2xl bg-white/80 backdrop-blur-lg shadow-md mb-8">
@@ -296,7 +307,7 @@ export default function StorefrontPage() {
             <ProductGrid products={products.map(p => ({ ...p, tags: [] }))} />
           </Card>
         </TabsContent>
-        <TabsContent value="settings">
+        <TabsContent value="details">
           <Card className="p-8 rounded-2xl bg-white/80 backdrop-blur-lg shadow-md">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
@@ -308,8 +319,52 @@ export default function StorefrontPage() {
                   className="mt-1"
                 />
               </div>
-              <Button type="submit" className="bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-md hover:from-orange-600 hover:to-pink-600">Save Settings</Button>
+              <div>
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  value={localStorefront?.description || ''}
+                  onChange={e => setLocalStorefront({ ...localStorefront, description: e.target.value })}
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="tagline">Tagline</Label>
+                <Input
+                  id="tagline"
+                  value={localStorefront?.tagline || ''}
+                  onChange={e => setLocalStorefront({ ...localStorefront, tagline: e.target.value })}
+                  className="mt-1"
+                />
+              </div>
+              <Button type="submit" className="bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-md hover:from-orange-600 hover:to-pink-600">Save Changes</Button>
             </form>
+          </Card>
+        </TabsContent>
+        <TabsContent value="collections">
+          <Card className="p-8 rounded-2xl bg-white/80 backdrop-blur-lg shadow-md">
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold">Your Collections</h3>
+                <Button 
+                  onClick={() => setNewCollection({ name: '', description: '', tags: [] })}
+                  className="bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-md hover:from-orange-600 hover:to-pink-600"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Collection
+                </Button>
+              </div>
+              <div className="grid gap-4">
+                {collections.map((collection) => (
+                  <div key={collection.id} className="p-4 border rounded-lg">
+                    <h4 className="font-medium">{collection.name}</h4>
+                    {collection.description && (
+                      <p className="text-sm text-gray-600 mt-1">{collection.description}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
           </Card>
         </TabsContent>
       </Tabs>

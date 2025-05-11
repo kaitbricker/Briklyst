@@ -7,7 +7,7 @@ import { useStorefront } from '@/hooks/useStorefront';
 const navigationItems = [
   { name: 'Analytics', path: '/dashboard/analytics', icon: ChartBarIcon },
   { name: 'Storefront Customization', path: '/dashboard/storefront', icon: ShoppingBagIcon },
-  { name: 'Settings', path: '/dashboard/settings', icon: CogIcon },
+  { name: 'Account Settings', path: '/dashboard/settings', icon: CogIcon },
 ];
 
 const Sidebar = () => {

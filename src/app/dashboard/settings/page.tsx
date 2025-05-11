@@ -11,6 +11,9 @@ import { Input } from '@/components/ui/input'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { useToast } from '@/components/ui/use-toast'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { Switch } from '@/components/ui/switch'
 
 interface Storefront {
   id: string
@@ -23,6 +26,14 @@ interface Storefront {
   backgroundColor: string | null
   textColor: string | null
   fontFamily: string | null
+  user: {
+    name: string
+    email: string
+    bio: string | null
+    emailAlerts: boolean
+    weeklyReport: boolean
+    monthlyReport: boolean
+  }
 }
 
 interface Collection {
@@ -32,148 +43,67 @@ interface Collection {
   tags: string[]
 }
 
-const SettingsPage: React.FC = () => {
+export default function SettingsPage() {
   const router = useRouter()
-  const { storefront, isLoading, error } = useStorefront()
-  const [isCreating, setIsCreating] = useState(false)
-  const [collections, setCollections] = useState<Collection[]>([])
-  const [newCollection, setNewCollection] = useState({ name: '', description: '', tags: [] as string[] })
-  const [editingCollection, setEditingCollection] = useState<Collection | null>(null)
-  const [loading, setLoading] = useState(false)
+  const [storefront, setStorefront] = useState<Storefront | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const { toast } = useToast()
 
-  const fetchCollections = async () => {
-    try {
-      const response = await fetch('/api/collections')
-      if (!response.ok) {
-        throw new Error('Failed to fetch collections')
-      }
-      const data = await response.json()
-      setCollections(data)
-    } catch (error) {
-      console.error('Error fetching collections:', error)
-      toast({
-        title: 'Error',
-        description: 'Failed to load collections. Please try again.',
-        variant: 'destructive',
-      })
-    }
-  }
-
   useEffect(() => {
-    fetchCollections()
-  }, [fetchCollections])
+    const fetchStorefront = async () => {
+      try {
+        setIsLoading(true)
+        setError(null)
+        const response = await fetch('/api/storefronts')
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch storefront')
+        }
 
-  const handleCreateStorefront = async () => {
+        const data = await response.json()
+        setStorefront(data)
+      } catch (err) {
+        console.error('Error fetching storefront:', err)
+        setError(err instanceof Error ? err.message : 'Failed to load storefront')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchStorefront()
+  }, [])
+
+  const handleFieldChange = async (field: keyof Storefront['user'], value: string | boolean) => {
+    if (!storefront) return
+
     try {
-      setIsCreating(true)
       const response = await fetch('/api/storefronts', {
-        method: 'POST',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          title: 'My Storefront',
-          description: 'Welcome to my storefront',
+          user: {
+            ...storefront.user,
+            [field]: value,
+          },
         }),
       })
 
-      if (!response.ok) {
-        throw new Error('Failed to create storefront')
-      }
+      if (!response.ok) throw new Error('Failed to update user')
 
       const data = await response.json()
+      setStorefront(data)
       toast({
         title: 'Success',
-        description: 'Your storefront has been created!',
+        description: 'Settings updated successfully',
       })
-      router.push('/dashboard/storefront')
     } catch (error) {
-      console.error('Error creating storefront:', error)
+      console.error('Error updating settings:', error)
       toast({
         title: 'Error',
-        description: 'Failed to create storefront. Please try again.',
-        variant: 'destructive',
-      })
-    } finally {
-      setIsCreating(false)
-    }
-  }
-
-  const handleAddCollection = async () => {
-    try {
-      const response = await fetch('/api/collections', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newCollection),
-      })
-
-      if (!response.ok) throw new Error('Failed to add collection')
-
-      toast({
-        title: 'Success',
-        description: 'Collection added successfully',
-      })
-      setNewCollection({ name: '', description: '', tags: [] })
-      fetchCollections()
-    } catch (error) {
-      console.error('Error adding collection:', error)
-      toast({
-        title: 'Error',
-        description: 'Failed to add collection',
-        variant: 'destructive',
-      })
-    }
-  }
-
-  const handleUpdateCollection = async () => {
-    if (!editingCollection) return
-
-    try {
-      const response = await fetch('/api/collections', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(editingCollection),
-      })
-
-      if (!response.ok) throw new Error('Failed to update collection')
-
-      toast({
-        title: 'Success',
-        description: 'Collection updated successfully',
-      })
-      setEditingCollection(null)
-      fetchCollections()
-    } catch (error) {
-      console.error('Error updating collection:', error)
-      toast({
-        title: 'Error',
-        description: 'Failed to update collection',
-        variant: 'destructive',
-      })
-    }
-  }
-
-  const handleDeleteCollection = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this collection?')) return
-
-    try {
-      const response = await fetch(`/api/collections?id=${id}`, {
-        method: 'DELETE',
-      })
-
-      if (!response.ok) throw new Error('Failed to delete collection')
-
-      toast({
-        title: 'Success',
-        description: 'Collection deleted successfully',
-      })
-      fetchCollections()
-    } catch (error) {
-      console.error('Error deleting collection:', error)
-      toast({
-        title: 'Error',
-        description: 'Failed to delete collection',
+        description: 'Failed to update settings',
         variant: 'destructive',
       })
     }
@@ -216,15 +146,10 @@ const SettingsPage: React.FC = () => {
           Get started by creating your storefront. You can customize it later.
         </p>
         <Button 
-          onClick={handleCreateStorefront}
-          disabled={isCreating}
+          onClick={() => router.push('/dashboard/storefront')}
           className="flex items-center gap-2"
         >
-          {isCreating ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <Plus className="w-4 h-4" />
-          )}
+          <Plus className="w-4 h-4" />
           Create Storefront
         </Button>
       </motion.div>
@@ -240,13 +165,9 @@ const SettingsPage: React.FC = () => {
         className="flex items-center justify-between bg-white/70 backdrop-blur-lg p-8 rounded-2xl shadow-lg"
       >
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-pink-500">Settings</h1>
-          <p className="text-gray-500">Customize your storefront appearance and collections</p>
+          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-pink-500">Account Settings</h1>
+          <p className="text-gray-500">Manage your account preferences and notifications</p>
         </div>
-        <Button className="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-md hover:from-orange-600 hover:to-pink-600">
-          <Settings2 className="w-4 h-4" />
-          Save Changes
-        </Button>
       </motion.div>
 
       <div className="grid gap-8 md:grid-cols-2">
@@ -257,10 +178,42 @@ const SettingsPage: React.FC = () => {
         >
           <Card className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-md">
             <CardHeader>
-              <CardTitle>Storefront Details</CardTitle>
+              <CardTitle>Profile Settings</CardTitle>
             </CardHeader>
             <CardContent>
-              <StorefrontForm defaultValues={storefront} />
+              <form className="space-y-6">
+                <div>
+                  <Label htmlFor="name">Display Name</Label>
+                  <Input
+                    id="name"
+                    value={storefront?.user?.name || ''}
+                    onChange={(e) => handleFieldChange('name', e.target.value)}
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={storefront?.user?.email || ''}
+                    onChange={(e) => handleFieldChange('email', e.target.value)}
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="bio">Bio</Label>
+                  <Textarea
+                    id="bio"
+                    value={storefront?.user?.bio || ''}
+                    onChange={(e) => handleFieldChange('bio', e.target.value)}
+                    className="mt-1"
+                  />
+                </div>
+                <Button type="submit" className="bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-md hover:from-orange-600 hover:to-pink-600">
+                  Save Profile
+                </Button>
+              </form>
             </CardContent>
           </Card>
         </motion.div>
@@ -272,68 +225,40 @@ const SettingsPage: React.FC = () => {
         >
           <Card className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-md">
             <CardHeader>
-              <CardTitle>Collections</CardTitle>
+              <CardTitle>Notification Preferences</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex gap-4">
-                <Input
-                  placeholder="Collection name"
-                  value={newCollection.name}
-                  onChange={(e) => setNewCollection({ ...newCollection, name: e.target.value })}
-                  className="flex-1"
-                />
-                <Button 
-                  onClick={handleAddCollection}
-                  className="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-md hover:from-orange-600 hover:to-pink-600"
-                >
-                  <Plus className="w-4 h-4" />
-                  Add
-                </Button>
-              </div>
-
+            <CardContent>
               <div className="space-y-4">
-                <AnimatePresence>
-                  {collections.map((collection, index) => (
-                    <motion.div
-                      key={collection.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      transition={{ duration: 0.2, delay: index * 0.1 }}
-                    >
-                      <Card className="group bg-white/90 backdrop-blur-lg rounded-xl hover:shadow-lg transition-all duration-200">
-                        <CardContent className="flex items-center justify-between p-4">
-                          <div>
-                            <h3 className="font-medium text-gray-900 group-hover:text-orange-600 transition-colors">
-                              {collection.name}
-                            </h3>
-                            {collection.description && (
-                              <p className="text-sm text-gray-500">{collection.description}</p>
-                            )}
-                          </div>
-                          <div className="flex gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="hover:bg-orange-100 rounded-lg transition-colors"
-                              onClick={() => setEditingCollection(collection)}
-                            >
-                              <Edit2 className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="hover:bg-red-100 text-red-500 rounded-lg transition-colors"
-                              onClick={() => handleDeleteCollection(collection.id)}
-                            >
-                              <Trash className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-medium">Email Alerts</h3>
+                    <p className="text-sm text-gray-500">Receive notifications about your storefront activity</p>
+                  </div>
+                  <Switch
+                    checked={storefront?.user?.emailAlerts}
+                    onCheckedChange={(checked) => handleFieldChange('emailAlerts', checked)}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-medium">Weekly Reports</h3>
+                    <p className="text-sm text-gray-500">Get weekly summaries of your storefront performance</p>
+                  </div>
+                  <Switch
+                    checked={storefront?.user?.weeklyReport}
+                    onCheckedChange={(checked) => handleFieldChange('weeklyReport', checked)}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-medium">Monthly Reports</h3>
+                    <p className="text-sm text-gray-500">Receive detailed monthly analytics reports</p>
+                  </div>
+                  <Switch
+                    checked={storefront?.user?.monthlyReport}
+                    onCheckedChange={(checked) => handleFieldChange('monthlyReport', checked)}
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -341,6 +266,4 @@ const SettingsPage: React.FC = () => {
       </div>
     </div>
   )
-}
-
-export default SettingsPage 
+} 

@@ -9,34 +9,69 @@ export const dynamic = 'force-dynamic' // This ensures the route is not statical
 
 export async function GET(
   request: Request,
-  { params }: { params: { username: string } }
+  { params }: { params: { username?: string } }
 ) {
   try {
-    const username = params.username
+    const { searchParams } = new URL(request.url)
+    const username = searchParams.get('username')
+    const userId = searchParams.get('userId')
 
-    // Fetch storefront by username
-    const user = await prisma.user.findFirst({
-      where: {
-        name: {
-          equals: username,
-          mode: 'insensitive'
-        }
-      },
-      include: {
-        storefronts: {
-          include: {
-            products: {
-              include: {
-                clickEvents: true
-              },
-              orderBy: {
-                createdAt: 'desc'
+    let user
+
+    if (username) {
+      // Fetch storefront by username
+      user = await prisma.user.findFirst({
+        where: {
+          name: {
+            equals: username,
+            mode: 'insensitive'
+          }
+        },
+        include: {
+          storefronts: {
+            include: {
+              products: {
+                include: {
+                  clickEvents: true
+                },
+                orderBy: {
+                  createdAt: 'desc'
+                }
               }
             }
           }
         }
+      })
+    } else {
+      // Fetch current user's storefront
+      const session = await getServerSession(authOptions)
+      if (!session?.user?.email) {
+        return NextResponse.json(
+          { error: 'Unauthorized' },
+          { status: 401 }
+        )
       }
-    })
+
+      user = await prisma.user.findUnique({
+        where: {
+          email: session.user.email
+        },
+        include: {
+          storefronts: {
+            include: {
+              products: {
+                include: {
+                  clickEvents: true
+                },
+                orderBy: {
+                  createdAt: 'desc'
+                }
+              }
+            }
+          }
+        }
+      })
+    }
 
     if (!user || !user.storefronts.length) {
       return NextResponse.json(
@@ -70,6 +105,14 @@ export async function GET(
         twitter: user.twitter,
         tiktok: user.tiktok,
         youtube: user.youtube
+      },
+      user: {
+        name: user.name,
+        email: user.email,
+        bio: user.bio,
+        emailAlerts: user.emailAlerts,
+        weeklyReport: user.weeklyReport,
+        monthlyReport: user.monthlyReport
       },
       products: storefront.products.map(product => ({
         id: product.id,
