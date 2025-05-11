@@ -1,12 +1,10 @@
-"use client";
 import type { Metadata } from "next";
 import { GeistSans, GeistMono } from "geist/font";
 import "../globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Inter } from 'next/font/google'
 import { ScrollProgress } from '@/components/ScrollProgress'
-import { Providers } from './providers'
-import { StorefrontUpdateProvider } from '@/context/StorefrontUpdateContext';
+import ClientProviders from '@/components/ClientProviders';
 
 const geistSans = GeistSans;
 const geistMono = GeistMono;
@@ -30,13 +28,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={GeistSans.className}>
       <body className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} font-sans`}>
-        <StorefrontUpdateProvider>
-          <Providers>
-            <ScrollProgress />
-            {children}
-            <Toaster />
-          </Providers>
-        </StorefrontUpdateProvider>
+        <ClientProviders>
+          {children}
+        </ClientProviders>
       </body>
     </html>
   );
