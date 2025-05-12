@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 import { useSession, signOut } from 'next-auth/react'
 import { TopNav } from '@/components/layout/TopNav'
 import { HomeIcon, BarChart2, ShoppingBag, LayoutGrid, Settings, Store, Mail, User, LogOut, HelpCircle, Palette, Bookmark } from 'lucide-react'
+import OnboardingModal from '@/components/OnboardingModal'
 
 const navItems = [
   { title: 'Dashboard', href: '/dashboard', icon: HomeIcon },
@@ -33,12 +34,22 @@ export default function DashboardLayout({
   const { toast } = useToast()
   const { data: session, status } = useSession()
   const pathname = usePathname()
+  const [showOnboarding, setShowOnboarding] = useState(false)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/auth/sign-in')
     }
   }, [status, router])
+
+  useEffect(() => {
+    if (session?.user && typeof window !== 'undefined') {
+      const onboardingComplete = localStorage.getItem('onboardingComplete')
+      if (!onboardingComplete) {
+        setShowOnboarding(true)
+      }
+    }
+  }, [session?.user])
 
   async function handleSignOut() {
     try {
@@ -52,6 +63,11 @@ export default function DashboardLayout({
         variant: 'destructive',
       })
     }
+  }
+
+  const handleOnboardingComplete = () => {
+    setShowOnboarding(false)
+    localStorage.setItem('onboardingComplete', 'true')
   }
 
   if (status === 'loading') {
@@ -68,6 +84,7 @@ export default function DashboardLayout({
 
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-br from-blue-50 via-white to-orange-50">
+      {showOnboarding && <OnboardingModal onComplete={handleOnboardingComplete} user={session?.user} />}
       <TopNav />
       <div className="flex flex-1 pt-0">
         <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-gray-200 min-h-screen px-0 py-0">
