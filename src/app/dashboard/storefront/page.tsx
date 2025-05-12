@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { ColorPicker } from '@/components/ui/color-picker'
 import { gradients, colors } from '@/lib/colors'
-import { Plus, Settings, Layout, Globe, Palette, Tag, Filter, Flame } from 'lucide-react'
+import { Plus, Settings, Layout, Globe, Palette, Tag, Filter, Flame, ShoppingBag, Info, Folder } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -323,18 +323,19 @@ export default function StorefrontPage() {
         </div>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
         {/* Customization Form */}
-        <div className="space-y-8">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="bg-white/60 backdrop-blur-md rounded-2xl shadow-md p-6">
-            <TabsList className="flex gap-4 mb-6">
-              <TabsTrigger value="design" className="text-lg font-semibold text-gray-700">Design & Theme</TabsTrigger>
-              <TabsTrigger value="products" className="text-lg font-semibold text-gray-700">Products</TabsTrigger>
-              <TabsTrigger value="details" className="text-lg font-semibold text-gray-700">Storefront Details</TabsTrigger>
-              <TabsTrigger value="collections" className="text-lg font-semibold text-gray-700">Collections</TabsTrigger>
+        <div className="space-y-10">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-8">
+            <TabsList className="flex gap-6 mb-8 border-b pb-2">
+              <TabsTrigger value="design" className="text-lg font-semibold flex items-center gap-2 text-gray-700"><Palette className="w-5 h-5" /> Design & Theme</TabsTrigger>
+              <TabsTrigger value="products" className="text-lg font-semibold flex items-center gap-2 text-gray-700"><ShoppingBag className="w-5 h-5" /> Products</TabsTrigger>
+              <TabsTrigger value="details" className="text-lg font-semibold flex items-center gap-2 text-gray-700"><Info className="w-5 h-5" /> Storefront Details</TabsTrigger>
+              <TabsTrigger value="collections" className="text-lg font-semibold flex items-center gap-2 text-gray-700"><Folder className="w-5 h-5" /> Collections</TabsTrigger>
             </TabsList>
             <TabsContent value="design">
-              <Card className="p-8 rounded-2xl bg-white/80 backdrop-blur-lg shadow-md mb-8">
+              <Card className="p-8 rounded-2xl bg-white/90 shadow-md mb-8">
+                <h3 className="text-xl font-bold mb-4">Theme & Colors</h3>
                 <ThemeSelector
                   currentThemeId={localStorefront?.themeId || 'bubblegum-pop'}
                   onThemeChange={themeId => {
@@ -354,14 +355,16 @@ export default function StorefrontPage() {
               </Card>
             </TabsContent>
             <TabsContent value="products">
-              <Card className="p-8 rounded-2xl bg-white/80 backdrop-blur-lg shadow-md">
+              <Card className="p-8 rounded-2xl bg-white/90 shadow-md">
+                <h3 className="text-xl font-bold mb-4">Manage Products</h3>
                 <ProductGrid products={products.map(p => ({ ...p, tags: [] }))} />
               </Card>
             </TabsContent>
             <TabsContent value="details">
-              <Card className="p-8 rounded-2xl bg-white/80 backdrop-blur-lg shadow-md">
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div>
+              <Card className="p-8 rounded-2xl bg-white/90 shadow-md">
+                <h3 className="text-xl font-bold mb-4">Storefront Details</h3>
+                <form onSubmit={handleSubmit} className="space-y-8">
+                  <div className="space-y-4">
                     <Label htmlFor="title">Storefront Title</Label>
                     <Input
                       id="title"
@@ -370,7 +373,7 @@ export default function StorefrontPage() {
                       className="mt-1"
                     />
                   </div>
-                  <div>
+                  <div className="space-y-4">
                     <Label htmlFor="description">Description</Label>
                     <Textarea
                       id="description"
@@ -379,7 +382,7 @@ export default function StorefrontPage() {
                       className="mt-1"
                     />
                   </div>
-                  <div>
+                  <div className="space-y-4">
                     <Label htmlFor="tagline">Tagline</Label>
                     <Input
                       id="tagline"
@@ -388,15 +391,18 @@ export default function StorefrontPage() {
                       className="mt-1"
                     />
                   </div>
-                  <Button type="submit" className="bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-md hover:from-orange-600 hover:to-pink-600">Save Changes</Button>
+                  <div className="pt-4">
+                    <Button type="submit" className="w-full bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-md hover:from-orange-600 hover:to-pink-600 text-lg py-3 rounded-xl sticky bottom-0">Save Changes</Button>
+                  </div>
                 </form>
               </Card>
             </TabsContent>
             <TabsContent value="collections">
-              <Card className="p-8 rounded-2xl bg-white/80 backdrop-blur-lg shadow-md">
+              <Card className="p-8 rounded-2xl bg-white/90 shadow-md">
+                <h3 className="text-xl font-bold mb-4">Collections</h3>
                 <div className="space-y-6">
-                  <div className="flex justify-between items-center">
-                    <h3 className="text-lg font-semibold">Your Collections</h3>
+                  <div className="flex justify-between items-center mb-4">
+                    <h4 className="text-lg font-semibold">Your Collections</h4>
                     <Button 
                       onClick={() => setNewCollection({ name: '', description: '', tags: [] })}
                       className="bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-md hover:from-orange-600 hover:to-pink-600"
@@ -407,7 +413,7 @@ export default function StorefrontPage() {
                   </div>
                   <div className="grid gap-4">
                     {collections.map((collection) => (
-                      <div key={collection.id} className="p-4 border rounded-lg">
+                      <div key={collection.id} className="p-4 border rounded-lg bg-gray-50">
                         <h4 className="font-medium">{collection.name}</h4>
                         {collection.description && (
                           <p className="text-sm text-gray-600 mt-1">{collection.description}</p>
@@ -423,7 +429,7 @@ export default function StorefrontPage() {
 
         {/* Live Preview */}
         <div className="sticky top-8">
-          <div className="bg-white/60 backdrop-blur-md rounded-2xl shadow-md p-6">
+          <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl p-8 border border-gray-100">
             <h2 className="text-xl font-semibold mb-4">Live Preview</h2>
             <div className="relative">
               <StorefrontPreview storefront={localStorefront} isEditing={true} />
