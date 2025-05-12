@@ -73,10 +73,16 @@ export default function ProductsPage() {
 
   const handleAddProduct = async (product: Omit<Product, 'id' | 'clicks'>) => {
     try {
+      // Fetch the current user's storefront
+      const storefrontRes = await fetch('/api/storefronts?userId=current');
+      if (!storefrontRes.ok) throw new Error('Failed to fetch storefront');
+      const storefront = await storefrontRes.json();
+      if (!storefront?.id) throw new Error('No storefront found');
+
       const response = await fetch('/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(product),
+        body: JSON.stringify({ ...product, storefrontId: storefront.id }),
       })
 
       if (!response.ok) throw new Error('Failed to add product')
