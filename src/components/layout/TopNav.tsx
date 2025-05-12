@@ -25,10 +25,13 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { ProductForm } from '@/components/forms/ProductForm'
+import { useSession } from 'next-auth/react'
 
 export function TopNav() {
   const [isAddProductOpen, setIsAddProductOpen] = useState(false)
   const { toast } = useToast()
+  const { data: session } = useSession()
+  const username = session?.user?.name || ''
 
   const handleAddProduct = async (data: {
     title: string
@@ -106,27 +109,27 @@ export function TopNav() {
 
           {/* Right Side Actions */}
           <div className="flex items-center space-x-4">
-            {/* My Storefront Dropdown */}
+            {/* Storefront Actions Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="text-gray-500 hover:text-gray-900">
-                  <Store className="w-4 h-4 mr-2" />
-                  My Storefront
+                <Button variant="ghost" className="text-gray-500 hover:text-gray-900 flex items-center gap-2">
+                  <Store className="w-4 h-4" />
+                  Storefront Actions
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>Storefront Actions</DropdownMenuLabel>
+              <DropdownMenuContent align="end" className="w-64 rounded-xl shadow-2xl border border-gray-200 animate-fade-in bg-white">
+                <DropdownMenuLabel className="font-bold text-lg py-2">Storefront Actions</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Link href="/dashboard/storefront" className="flex items-center w-full">
-                    <Store className="w-4 h-4 mr-2" />
-                    Edit Storefront
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard/storefront" className="flex items-center w-full py-3 px-2 hover:bg-gray-50 rounded-lg transition">
+                    <Store className="w-5 h-5 mr-3 text-gray-700" />
+                    <span className="font-medium text-gray-800">Edit Storefront</span>
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link href="/preview" className="flex items-center w-full" target="_blank">
-                    <Eye className="w-4 h-4 mr-2" />
-                    Preview Storefront
+                <DropdownMenuItem asChild>
+                  <Link href={`/storefronts/${username}`} className="flex items-center w-full py-3 px-2 hover:bg-gray-50 rounded-lg transition" target="_blank">
+                    <Eye className="w-5 h-5 mr-3 text-gray-700" />
+                    <span className="font-medium text-gray-800">Preview Storefront</span>
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -141,7 +144,7 @@ export function TopNav() {
             {/* Add Product Button */}
             <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-gradient-to-r from-orange-400 to-pink-500 text-white hover:from-orange-500 hover:to-pink-600 transition-all duration-200">
+                <Button className="bg-gradient-to-r from-[#4F8CFF] to-[#A259E6] text-white font-semibold px-6 py-3 rounded-lg shadow-none hover:from-[#3a6fd8] hover:to-[#7d3fc7] transition-all">
                   <Plus className="w-4 h-4 mr-2" />
                   Add Product
                 </Button>
