@@ -43,39 +43,7 @@ function Hero() {
           </Link>
         </div>
         {/* Storefront Previews Carousel (moved here) */}
-        <div className="relative flex flex-col items-center w-full max-w-2xl mx-auto mb-8">
-          {storefronts.map((store, idx) => (
-            <div
-              key={store.title}
-              className={`transition-all duration-700 ease-in-out absolute w-full ${idx === currentStore ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-95 z-0'} ${store.bg} rounded-2xl shadow-md p-6 flex flex-col items-center border border-gray-100`}
-              style={{ minHeight: 320 }}
-            >
-              <div className="flex w-full items-center justify-between mb-4">
-                <div>
-                  <h3 className={`font-bold text-xl mb-1 ${store.text}`}>{store.title}</h3>
-                  <span className="text-gray-700 text-sm">{store.username}</span>
-                </div>
-                <div className="flex gap-2">
-                  <span className="w-3 h-3 rounded-full bg-red-400 inline-block" />
-                  <span className="w-3 h-3 rounded-full bg-yellow-400 inline-block" />
-                  <span className="w-3 h-3 rounded-full bg-green-400 inline-block" />
-                </div>
-              </div>
-              <Image src={store.image} alt={store.title} width={900} height={320} className="rounded-lg object-cover w-full h-48" />
-            </div>
-          ))}
-          {/* Carousel dots */}
-          <div className="flex gap-2 mt-6 z-20 relative">
-            {storefronts.map((_, idx) => (
-              <button
-                key={idx}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${idx === currentStore ? 'bg-[#1D1E33]' : 'bg-gray-300'}`}
-                onClick={() => setCurrentStore(idx)}
-                aria-label={`Show ${storefronts[idx].title}`}
-              />
-            ))}
-          </div>
-        </div>
+        {/* Removed: inlined carousel code. Use <StorefrontPreviews ... /> in Home instead. */}
       </div>
     </main>
   )
@@ -203,23 +171,7 @@ function Features() {
 }
 
 // Preview Storefronts Section
-function StorefrontPreviews() {
-  const storefronts = [
-    { image: '/storefront1.png', title: 'Beauty & Lifestyle', username: '@beautyessentials', bg: 'bg-pink-100', text: 'text-pink-700' },
-    { image: '/storefront2.png', title: 'Fitness Gear', username: '@fitnessfirst', bg: 'bg-green-100', text: 'text-green-700' },
-    { image: '/storefront3.png', title: 'Tech Reviews', username: '@techinsider', bg: 'bg-blue-100', text: 'text-blue-700' },
-    { image: '/storefront4.png', title: 'Home Finds', username: '@homefinds', bg: 'bg-yellow-100', text: 'text-yellow-800' },
-  ]
-
-  // Carousel state for Storefront Previews
-  const [currentStore, setCurrentStore] = useState(0)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentStore((prev) => (prev + 1) % storefronts.length)
-    }, 3500)
-    return () => clearInterval(interval)
-  }, [storefronts.length])
-
+function StorefrontPreviews({ storefronts, currentStore, setCurrentStore }: { storefronts: any[], currentStore: number, setCurrentStore: (idx: number) => void }) {
   return (
     <section id="examples" className="bg-white py-20 w-full">
       <div className="max-w-4xl mx-auto px-4">
@@ -431,20 +383,13 @@ const testimonials = [
 export default function Home() {
   // Storefront carousel data and state
   const storefronts = [
-    { image: '/storefront1.png', title: 'Beauty & Lifestyle', username: '@beautyessentials', bg: 'bg-pink-100', text: 'text-pink-700' },
-    { image: '/storefront2.png', title: 'Fitness Gear', username: '@fitnessfirst', bg: 'bg-green-100', text: 'text-green-700' },
-    { image: '/storefront3.png', title: 'Tech Reviews', username: '@techinsider', bg: 'bg-blue-100', text: 'text-blue-700' },
-    { image: '/storefront4.png', title: 'Home Finds', username: '@homefinds', bg: 'bg-yellow-100', text: 'text-yellow-800' },
+    { image: '/storefront1.png', title: 'Beauty & Lifestyle', username: '@beautyessentials', bg: 'bg-gradient-to-br from-pink-200 to-pink-600', text: 'text-pink-100' },
+    { image: '/storefront2.png', title: 'Fitness Gear', username: '@fitnessfirst', bg: 'bg-gradient-to-br from-green-200 to-green-600', text: 'text-green-100' },
+    { image: '/storefront3.png', title: 'Tech Reviews', username: '@techinsider', bg: 'bg-gradient-to-br from-blue-200 to-blue-600', text: 'text-blue-100' },
+    { image: '/storefront4.png', title: 'Home Finds', username: '@homefinds', bg: 'bg-gradient-to-br from-yellow-200 to-yellow-500', text: 'text-yellow-900' },
   ];
-  const [currentStore, setCurrentStore] = useState(0);
+  const [currentStore, setCurrentStore] = useState<number>(0);
   const [selectedStorefront, setSelectedStorefront] = useState(null);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentStore((prev) => (prev + 1) % storefronts.length);
-    }, 3500);
-    return () => clearInterval(interval);
-  }, [storefronts.length]);
 
   return (
     <>
@@ -481,39 +426,7 @@ export default function Home() {
             </Link>
           </div>
           {/* Storefront Previews Carousel (moved here) */}
-          <div className="relative flex flex-col items-center w-full max-w-2xl mx-auto mb-8">
-            {storefronts.map((store, idx) => (
-              <div
-                key={store.title}
-                className={`transition-all duration-700 ease-in-out absolute w-full ${idx === currentStore ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-95 z-0'} ${store.bg} rounded-2xl shadow-md p-6 flex flex-col items-center border border-gray-100`}
-                style={{ minHeight: 400 }}
-              >
-                <div className="flex w-full items-center justify-between mb-4">
-                  <div>
-                    <h3 className={`font-bold text-xl mb-1 ${store.text}`}>{store.title}</h3>
-                    <span className="text-gray-700 text-sm">{store.username}</span>
-                  </div>
-                  <div className="flex gap-2">
-                    <span className="w-3 h-3 rounded-full bg-red-400 inline-block" />
-                    <span className="w-3 h-3 rounded-full bg-yellow-400 inline-block" />
-                    <span className="w-3 h-3 rounded-full bg-green-400 inline-block" />
-                  </div>
-                </div>
-                <Image src={store.image} alt={store.title} width={900} height={400} className="rounded-lg object-cover w-full h-72" />
-              </div>
-            ))}
-            {/* Carousel dots */}
-            <div className="flex gap-2 mt-6 z-20 relative">
-              {storefronts.map((_, idx) => (
-                <button
-                  key={idx}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${idx === currentStore ? 'bg-[#1D1E33]' : 'bg-gray-300'}`}
-                  onClick={() => setCurrentStore(idx)}
-                  aria-label={`Show ${storefronts[idx].title}`}
-                />
-              ))}
-            </div>
-          </div>
+          {/* Removed: inlined carousel code. Use <StorefrontPreviews ... /> in Home instead. */}
         </div>
       </main>
 
@@ -576,44 +489,7 @@ export default function Home() {
       </section>
 
       {/* Storefront Previews Carousel Section */}
-      <section id="examples" className="bg-white py-20 w-full">
-        <div className="max-w-4xl mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-[#1D1E33]">Storefront Previews</h2>
-          <div className="relative flex flex-col items-center">
-            {storefronts.map((store, idx) => (
-              <div
-                key={store.title}
-                className={`transition-all duration-700 ease-in-out absolute w-full ${idx === currentStore ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-95 z-0'} ${store.bg} rounded-2xl shadow-md p-6 flex flex-col items-center border border-gray-100`}
-                style={{ minHeight: 400 }}
-              >
-                <div className="flex w-full items-center justify-between mb-4">
-                  <div>
-                    <h3 className={`font-bold text-xl mb-1 ${store.text}`}>{store.title}</h3>
-                    <span className="text-gray-700 text-sm">{store.username}</span>
-                  </div>
-                  <div className="flex gap-2">
-                    <span className="w-3 h-3 rounded-full bg-red-400 inline-block" />
-                    <span className="w-3 h-3 rounded-full bg-yellow-400 inline-block" />
-                    <span className="w-3 h-3 rounded-full bg-green-400 inline-block" />
-                  </div>
-                </div>
-                <Image src={store.image} alt={store.title} width={900} height={400} className="rounded-lg object-cover w-full h-72" />
-              </div>
-            ))}
-            {/* Carousel dots */}
-            <div className="flex gap-2 mt-6 z-20 relative">
-              {storefronts.map((_, idx) => (
-                <button
-                  key={idx}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${idx === currentStore ? 'bg-[#1D1E33]' : 'bg-gray-300'}`}
-                  onClick={() => setCurrentStore(idx)}
-                  aria-label={`Show ${storefronts[idx].title}`}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <StorefrontPreviews storefronts={storefronts} currentStore={currentStore} setCurrentStore={setCurrentStore} />
 
       {/* Testimonials Section */}
       <section className="bg-pink-50 py-20 w-full">
