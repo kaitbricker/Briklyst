@@ -22,6 +22,7 @@ import ProductGrid from '@/components/storefront/ProductGrid'
 import Link from 'next/link'
 import { ImageUpload } from '@/components/ui/image-upload'
 import { useStorefrontUpdate } from '@/context/StorefrontUpdateContext'
+import StorefrontPreview from '@/components/storefront/StorefrontPreview'
 
 interface Product {
   id: string
@@ -200,26 +201,42 @@ export default function StorefrontPage() {
   }
 
   const handleFieldChange = async (field: keyof Storefront, value: any) => {
-    if (!localStorefront) return
-    setLocalStorefront({ ...localStorefront, [field]: value })
-    setSaving((prev) => ({ ...prev, [field]: true }))
-    setSaveSuccess((prev) => ({ ...prev, [field]: false }))
-    setSaveError((prev) => ({ ...prev, [field]: '' }))
+    if (!localStorefront) return;
+    
+    // Update local state immediately for instant preview
+    setLocalStorefront({ ...localStorefront, [field]: value });
+    
+    // Show saving state
+    setSaving((prev) => ({ ...prev, [field]: true }));
+    setSaveSuccess((prev) => ({ ...prev, [field]: false }));
+    setSaveError((prev) => ({ ...prev, [field]: '' }));
+
     try {
       const response = await fetch('/api/storefronts', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...localStorefront, [field]: value }),
-      })
-      if (!response.ok) throw new Error('Failed to save')
-      setSaving((prev) => ({ ...prev, [field]: false }))
-      setSaveSuccess((prev) => ({ ...prev, [field]: true }))
-      setTimeout(() => setSaveSuccess((prev) => ({ ...prev, [field]: false })), 1500)
+      });
+
+      if (!response.ok) throw new Error('Failed to save');
+
+      // Update success state
+      setSaving((prev) => ({ ...prev, [field]: false }));
+      setSaveSuccess((prev) => ({ ...prev, [field]: true }));
+      
+      // Trigger preview update
+      triggerUpdate();
+
+      // Clear success state after delay
+      setTimeout(() => setSaveSuccess((prev) => ({ ...prev, [field]: false })), 1500);
     } catch (err: any) {
-      setSaving((prev) => ({ ...prev, [field]: false }))
-      setSaveError((prev) => ({ ...prev, [field]: err.message || 'Save failed' }))
+      setSaving((prev) => ({ ...prev, [field]: false }));
+      setSaveError((prev) => ({ ...prev, [field]: err.message || 'Save failed' }));
+      
+      // Revert local state on error
+      setLocalStorefront(localStorefront);
     }
-  }
+  };
 
   const handleEditProduct = (updatedProduct: Product) => {
     setProducts(products.map(p => p.id === updatedProduct.id ? updatedProduct : p))
@@ -305,90 +322,102 @@ export default function StorefrontPage() {
         </div>
       </motion.div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="bg-white/60 backdrop-blur-md rounded-2xl shadow-md p-6">
-        <TabsList className="flex gap-4 mb-6">
-          <TabsTrigger value="design" className="text-lg font-semibold text-gray-700">Design & Theme</TabsTrigger>
-          <TabsTrigger value="products" className="text-lg font-semibold text-gray-700">Products</TabsTrigger>
-          <TabsTrigger value="details" className="text-lg font-semibold text-gray-700">Storefront Details</TabsTrigger>
-          <TabsTrigger value="collections" className="text-lg font-semibold text-gray-700">Collections</TabsTrigger>
-        </TabsList>
-        <TabsContent value="design">
-          <Card className="p-8 rounded-2xl bg-white/80 backdrop-blur-lg shadow-md mb-8">
-            <ThemeSelector
-              currentThemeId={localStorefront?.themeId || 'bubblegum-pop'}
-              storefrontId={localStorefront?.id || ''}
-            />
-          </Card>
-          <Card className="p-8 rounded-2xl bg-white/80 backdrop-blur-lg shadow-md">
-            <StorefrontHeader storefront={storefront} user={{ name: 'You' }} isOwner={true} />
-          </Card>
-        </TabsContent>
-        <TabsContent value="products">
-          <Card className="p-8 rounded-2xl bg-white/80 backdrop-blur-lg shadow-md">
-            <ProductGrid products={products.map(p => ({ ...p, tags: [] }))} />
-          </Card>
-        </TabsContent>
-        <TabsContent value="details">
-          <Card className="p-8 rounded-2xl bg-white/80 backdrop-blur-lg shadow-md">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <Label htmlFor="title">Storefront Title</Label>
-                <Input
-                  id="title"
-                  value={localStorefront?.title || ''}
-                  onChange={e => setLocalStorefront({ ...localStorefront, title: e.target.value })}
-                  className="mt-1"
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Customization Form */}
+        <div className="space-y-8">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="bg-white/60 backdrop-blur-md rounded-2xl shadow-md p-6">
+            <TabsList className="flex gap-4 mb-6">
+              <TabsTrigger value="design" className="text-lg font-semibold text-gray-700">Design & Theme</TabsTrigger>
+              <TabsTrigger value="products" className="text-lg font-semibold text-gray-700">Products</TabsTrigger>
+              <TabsTrigger value="details" className="text-lg font-semibold text-gray-700">Storefront Details</TabsTrigger>
+              <TabsTrigger value="collections" className="text-lg font-semibold text-gray-700">Collections</TabsTrigger>
+            </TabsList>
+            <TabsContent value="design">
+              <Card className="p-8 rounded-2xl bg-white/80 backdrop-blur-lg shadow-md mb-8">
+                <ThemeSelector
+                  currentThemeId={localStorefront?.themeId || 'bubblegum-pop'}
+                  storefrontId={localStorefront?.id || ''}
                 />
-              </div>
-              <div>
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={localStorefront?.description || ''}
-                  onChange={e => setLocalStorefront({ ...localStorefront, description: e.target.value })}
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label htmlFor="tagline">Tagline</Label>
-                <Input
-                  id="tagline"
-                  value={localStorefront?.tagline || ''}
-                  onChange={e => setLocalStorefront({ ...localStorefront, tagline: e.target.value })}
-                  className="mt-1"
-                />
-              </div>
-              <Button type="submit" className="bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-md hover:from-orange-600 hover:to-pink-600">Save Changes</Button>
-            </form>
-          </Card>
-        </TabsContent>
-        <TabsContent value="collections">
-          <Card className="p-8 rounded-2xl bg-white/80 backdrop-blur-lg shadow-md">
-            <div className="space-y-6">
-              <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold">Your Collections</h3>
-                <Button 
-                  onClick={() => setNewCollection({ name: '', description: '', tags: [] })}
-                  className="bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-md hover:from-orange-600 hover:to-pink-600"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Collection
-                </Button>
-              </div>
-              <div className="grid gap-4">
-                {collections.map((collection) => (
-                  <div key={collection.id} className="p-4 border rounded-lg">
-                    <h4 className="font-medium">{collection.name}</h4>
-                    {collection.description && (
-                      <p className="text-sm text-gray-600 mt-1">{collection.description}</p>
-                    )}
+              </Card>
+            </TabsContent>
+            <TabsContent value="products">
+              <Card className="p-8 rounded-2xl bg-white/80 backdrop-blur-lg shadow-md">
+                <ProductGrid products={products.map(p => ({ ...p, tags: [] }))} />
+              </Card>
+            </TabsContent>
+            <TabsContent value="details">
+              <Card className="p-8 rounded-2xl bg-white/80 backdrop-blur-lg shadow-md">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div>
+                    <Label htmlFor="title">Storefront Title</Label>
+                    <Input
+                      id="title"
+                      value={localStorefront?.title || ''}
+                      onChange={e => setLocalStorefront({ ...localStorefront, title: e.target.value })}
+                      className="mt-1"
+                    />
                   </div>
-                ))}
-              </div>
+                  <div>
+                    <Label htmlFor="description">Description</Label>
+                    <Textarea
+                      id="description"
+                      value={localStorefront?.description || ''}
+                      onChange={e => setLocalStorefront({ ...localStorefront, description: e.target.value })}
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="tagline">Tagline</Label>
+                    <Input
+                      id="tagline"
+                      value={localStorefront?.tagline || ''}
+                      onChange={e => setLocalStorefront({ ...localStorefront, tagline: e.target.value })}
+                      className="mt-1"
+                    />
+                  </div>
+                  <Button type="submit" className="bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-md hover:from-orange-600 hover:to-pink-600">Save Changes</Button>
+                </form>
+              </Card>
+            </TabsContent>
+            <TabsContent value="collections">
+              <Card className="p-8 rounded-2xl bg-white/80 backdrop-blur-lg shadow-md">
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold">Your Collections</h3>
+                    <Button 
+                      onClick={() => setNewCollection({ name: '', description: '', tags: [] })}
+                      className="bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-md hover:from-orange-600 hover:to-pink-600"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Collection
+                    </Button>
+                  </div>
+                  <div className="grid gap-4">
+                    {collections.map((collection) => (
+                      <div key={collection.id} className="p-4 border rounded-lg">
+                        <h4 className="font-medium">{collection.name}</h4>
+                        {collection.description && (
+                          <p className="text-sm text-gray-600 mt-1">{collection.description}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </div>
+
+        {/* Live Preview */}
+        <div className="sticky top-8">
+          <div className="bg-white/60 backdrop-blur-md rounded-2xl shadow-md p-6">
+            <h2 className="text-xl font-semibold mb-4">Live Preview</h2>
+            <div className="relative">
+              <StorefrontPreview storefront={localStorefront} isEditing={true} />
             </div>
-          </Card>
-        </TabsContent>
-      </Tabs>
+          </div>
+        </div>
+      </div>
     </div>
   )
 } 
