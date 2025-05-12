@@ -23,6 +23,7 @@ import Link from 'next/link'
 import { ImageUpload } from '@/components/ui/image-upload'
 import { useStorefrontUpdate } from '@/context/StorefrontUpdateContext'
 import StorefrontPreview from '@/components/storefront/StorefrontPreview'
+import { themes } from '@/lib/themes'
 
 interface Product {
   id: string
@@ -336,7 +337,19 @@ export default function StorefrontPage() {
               <Card className="p-8 rounded-2xl bg-white/80 backdrop-blur-lg shadow-md mb-8">
                 <ThemeSelector
                   currentThemeId={localStorefront?.themeId || 'bubblegum-pop'}
-                  storefrontId={localStorefront?.id || ''}
+                  onThemeChange={themeId => {
+                    const theme = themes.find(t => t.id === themeId);
+                    if (!theme || !localStorefront) return;
+                    setLocalStorefront({
+                      ...localStorefront,
+                      themeId: theme.id,
+                      primaryColor: theme.primaryColor,
+                      accentColor: theme.accentColor,
+                      backgroundColor: theme.backgroundColor,
+                      textColor: theme.textColor,
+                      fontFamily: JSON.stringify(theme.fontFamily),
+                    });
+                  }}
                 />
               </Card>
             </TabsContent>
