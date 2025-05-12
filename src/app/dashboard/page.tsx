@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { DollarSign, Eye, ShoppingBag, Search as SearchIcon, Link2, Plus, Mail, Zap } from 'lucide-react';
+import { DollarSign, Eye, ShoppingBag, Search as SearchIcon, Link2, Plus, Mail, Zap, BarChart2, MailOpen, Video, Share2, UserCheck } from 'lucide-react';
 import Image from 'next/image';
 import { useSession } from "next-auth/react";
 import { motion } from 'framer-motion';
@@ -32,6 +32,20 @@ const statCards = [
     icon: <Eye className="h-7 w-7 text-white" />, 
     bg: 'bg-[#FFD233]',
   },
+  {
+    label: 'Revenue This Week',
+    value: '$1,234', // TODO: Replace with real data
+    info: '+8% from last week',
+    icon: <BarChart2 className="h-7 w-7 text-white" />,
+    bg: 'bg-[#34D399]',
+  },
+  {
+    label: 'Email Open Rate',
+    value: '42%', // TODO: Replace with real data
+    info: 'vs. 38% last week',
+    icon: <MailOpen className="h-7 w-7 text-white" />,
+    bg: 'bg-[#F472B6]',
+  },
 ];
 
 const quickLinks = [
@@ -44,7 +58,7 @@ const quickLinks = [
   {
     label: 'Add Product',
     icon: <Plus className="h-5 w-5 text-white" />, 
-    gradient: 'bg-gradient-to-r from-[#4F8CFF] to-[#A259E6]',
+    gradient: 'bg-gradient-to-r from-[#4F8CFF] to-[#7F4FFF]',
     action: 'addProduct',
   },
   {
@@ -107,8 +121,8 @@ export default function DashboardPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-10">
           <div>
-            <h2 className="text-lg font-semibold text-gray-500 tracking-wide">Your Briklyst Dashboard</h2>
-            <h1 className="text-3xl font-extrabold text-gray-900 mt-1 tracking-tight leading-tight">Welcome Back, {user.name}</h1>
+            <h2 className="text-lg font-semibold text-gray-500 tracking-wide" style={{ textShadow: '0 2px 8px rgba(79,140,255,0.15)' }}>Your Briklyst Dashboard</h2>
+            <h1 className="text-3xl font-extrabold text-gray-900 mt-1 tracking-tight leading-tight" style={{ textShadow: '0 4px 16px rgba(79,140,255,0.18)' }}>Welcome Back, {user.name}</h1>
           </div>
           <div className="flex items-center gap-3">
             <motion.div
@@ -126,19 +140,11 @@ export default function DashboardPage() {
               />
               <SearchIcon className={`absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 transition-all duration-200 ${focused ? 'text-orange-400 scale-110' : 'text-gray-400'}`} />
             </motion.div>
-            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-              <Button
-                className="bg-gradient-to-r from-[#4F8CFF] to-[#A259E6] text-white font-semibold px-6 py-3 rounded-lg shadow-none hover:from-[#3a6fd8] hover:to-[#7d3fc7] transition-all"
-                onClick={() => router.push('/storefronts/' + (session?.user?.name || ''))}
-              >
-                View My Storefront
-              </Button>
-            </motion.div>
           </div>
         </div>
 
         {/* Stat Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 mb-10">
           {statCards.map(card => (
             <motion.div
               key={card.label}
@@ -157,6 +163,40 @@ export default function DashboardPage() {
             </motion.div>
           ))}
         </div>
+
+        {/* To-Do List / Reminders */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="bg-white rounded-2xl shadow-lg p-6 mb-10 border border-gray-200 max-w-3xl mx-auto"
+        >
+          <h3 className="text-xl font-bold mb-4 text-[#A259E6] flex items-center gap-2" style={{ textShadow: '0 2px 8px rgba(162,89,230,0.18)' }}>
+            <Zap className="h-5 w-5" /> To-Do List
+          </h3>
+          <ul className="space-y-4">
+            <li className="flex items-center justify-between">
+              <span className="flex items-center gap-2"><Zap className="h-4 w-4 text-[#F59E42]" /> Create a new product drop</span>
+              <Button size="sm" variant="outline" onClick={() => router.push('/dashboard/products')}>Create</Button>
+            </li>
+            <li className="flex items-center justify-between">
+              <span className="flex items-center gap-2"><Video className="h-4 w-4 text-[#4F8CFF]" /> Add a hero video</span>
+              <Button size="sm" variant="outline" onClick={() => router.push('/dashboard/storefront')}>Add</Button>
+            </li>
+            <li className="flex items-center justify-between">
+              <span className="flex items-center gap-2"><Share2 className="h-4 w-4 text-[#A259E6]" /> Share on social media</span>
+              <Button size="sm" variant="outline" onClick={() => window.open('https://instagram.com', '_blank')}>Share</Button>
+            </li>
+            <li className="flex items-center justify-between">
+              <span className="flex items-center gap-2"><UserCheck className="h-4 w-4 text-[#34D399]" /> Complete your profile</span>
+              <Button size="sm" variant="outline" onClick={() => router.push('/dashboard/settings')}>Complete</Button>
+            </li>
+            <li className="flex items-center justify-between">
+              <span className="flex items-center gap-2"><MailOpen className="h-4 w-4 text-[#F472B6]" /> Send your first email</span>
+              <Button size="sm" variant="outline" onClick={() => router.push('/dashboard/email')}>Send</Button>
+            </li>
+          </ul>
+        </motion.div>
 
         {/* Suggestion Banner */}
         <motion.div
