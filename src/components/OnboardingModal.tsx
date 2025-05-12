@@ -9,6 +9,7 @@ import { useToast } from '@/components/ui/use-toast';
 
 interface OnboardingModalProps {
   onComplete: () => void;
+  onClose?: () => void;
   user?: { name?: string; email?: string };
 }
 
@@ -21,7 +22,7 @@ const steps = [
   'Finish',
 ];
 
-export default function OnboardingModal({ onComplete, user }: OnboardingModalProps) {
+export default function OnboardingModal({ onComplete, onClose, user }: OnboardingModalProps) {
   const [step, setStep] = useState(0);
   const [storefrontName, setStorefrontName] = useState('');
   const [storefrontTitle, setStorefrontTitle] = useState('');
@@ -75,7 +76,7 @@ export default function OnboardingModal({ onComplete, user }: OnboardingModalPro
   };
 
   return (
-    <DialogPrimitive.Root open>
+    <DialogPrimitive.Root open onOpenChange={open => { if (!open && onClose) onClose(); }}>
       <DialogContent className="max-w-lg w-full">
         <DialogHeader>
           <DialogTitle>
@@ -87,6 +88,16 @@ export default function OnboardingModal({ onComplete, user }: OnboardingModalPro
             {steps[step] === 'Finish' && 'You&apos;re All Set!'}
           </DialogTitle>
         </DialogHeader>
+        <DialogPrimitive.Close asChild>
+          <button
+            aria-label="Close"
+            className="absolute right-4 top-4 rounded-full p-2 hover:bg-gray-100 transition"
+            onClick={onClose}
+            type="button"
+          >
+            <span aria-hidden>×</span>
+          </button>
+        </DialogPrimitive.Close>
         <div className="mt-4 space-y-6">
           {/* Stepper */}
           <div className="flex items-center justify-center gap-2 mb-4">
