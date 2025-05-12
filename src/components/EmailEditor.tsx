@@ -1,14 +1,17 @@
 import React, { useRef, useState } from 'react';
-import EmailEditor, { EmailEditorProps } from 'react-email-editor';
+import dynamic from 'next/dynamic';
 import { toast } from '@/components/ui/use-toast';
 import EmailTemplateLibrary from './EmailTemplateLibrary';
 import html2canvas from 'html2canvas';
+
+const EmailEditor = dynamic(() => import('react-email-editor'), { ssr: false });
 
 const THUMBNAIL_WIDTH = 400;
 const THUMBNAIL_HEIGHT = 200;
 
 const EmailEditorComponent: React.FC = () => {
   const emailEditorRef = useRef<any>(null);
+  const [editorLoaded, setEditorLoaded] = useState(false);
   const [testEmail, setTestEmail] = useState('');
   const [previewHtml, setPreviewHtml] = useState<string | null>(null);
   const [templateLibraryKey, setTemplateLibraryKey] = useState(0); // for refresh
@@ -18,23 +21,26 @@ const EmailEditorComponent: React.FC = () => {
   const [thumbnailLoading, setThumbnailLoading] = useState(false);
 
   const onLoad = () => {
-    // Load a default template or design
-    emailEditorRef.current?.loadDesign({
-      body: {
-        rows: [
-          {
-            cells: [
-              {
-                content: {
-                  type: 'text',
-                  data: { text: 'Hello, World!' }
+    setEditorLoaded(true);
+    // Only call loadDesign if the method exists
+    if (emailEditorRef.current && typeof emailEditorRef.current.loadDesign === 'function') {
+      emailEditorRef.current.loadDesign({
+        body: {
+          rows: [
+            {
+              cells: [
+                {
+                  content: {
+                    type: 'text',
+                    data: { text: 'Hello, World!' }
+                  }
                 }
-              }
-            ]
-          }
-        ]
-      }
-    });
+              ]
+            }
+          ]
+        }
+      });
+    }
   };
 
   const onUseTemplate = (design: any) => {
