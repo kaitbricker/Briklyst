@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { motion } from 'framer-motion';
+import { useToast } from '@/components/ui/use-toast';
 
 interface OnboardingModalProps {
   onComplete: () => void;
@@ -28,12 +30,52 @@ export default function OnboardingModal({ onComplete, user }: OnboardingModalPro
   const [productDesc, setProductDesc] = useState('');
   const [profileBio, setProfileBio] = useState('');
   const [profilePhoto, setProfilePhoto] = useState('');
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const next = () => setStep((s) => Math.min(s + 1, steps.length - 1));
   const prev = () => setStep((s) => Math.max(s - 1, 0));
 
+  const handleFinish = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      // Save storefront info
+      const storefrontRes = await fetch('/api/storefronts', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: storefrontName,
+          title: storefrontTitle,
+        }),
+      });
+      if (!storefrontRes.ok) throw new Error('Failed to save storefront info');
+
+      // Save profile info (if provided)
+      if (profileBio || profilePhoto) {
+        const profileRes = await fetch('/api/profile', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            bio: profileBio,
+            profileImage: profilePhoto,
+          }),
+        });
+        if (!profileRes.ok) throw new Error('Failed to save profile info');
+      }
+      toast({ title: 'Success', description: 'Onboarding complete!' });
+      onComplete();
+    } catch (err: any) {
+      setError(err.message || 'Failed to save onboarding data');
+      toast({ title: 'Error', description: err.message || 'Failed to save onboarding data', variant: 'destructive' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <Dialog open>
+    <DialogPrimitive.Root open>
       <DialogContent className="max-w-lg w-full">
         <DialogHeader>
           <DialogTitle>
@@ -42,7 +84,7 @@ export default function OnboardingModal({ onComplete, user }: OnboardingModalPro
             {steps[step] === 'Affiliate Connection' && 'Connect Affiliate Link (Optional)'}
             {steps[step] === 'Add First Product' && 'Add Your First Product (Optional)'}
             {steps[step] === 'Profile Customization' && 'Customize Your Profile'}
-            {steps[step] === 'Finish' && 'You're All Set!'}
+            {steps[step] === 'Finish' && 'You&apos;re All Set!'}
           </DialogTitle>
         </DialogHeader>
         <div className="mt-4 space-y-6">
@@ -56,8 +98,8 @@ export default function OnboardingModal({ onComplete, user }: OnboardingModalPro
           {/* Step Content */}
           {step === 0 && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <p className="text-lg text-gray-700 mb-4">Let's get your digital storefront up and running in a few quick steps.</p>
-              <Button className="w-full bg-gradient-to-r from-orange-400 to-pink-500 text-white" onClick={next}>Let's Go</Button>
+              <p className="text-lg text-gray-700 mb-4">Let&apos;s get your digital storefront up and running in a few quick steps.</p>
+              <Button className="w-full bg-gradient-to-r from-orange-400 to-pink-500 text-white" onClick={next}>Let&apos;s Go</Button>
             </motion.div>
           )}
           {step === 1 && (
@@ -101,12 +143,15 @@ export default function OnboardingModal({ onComplete, user }: OnboardingModalPro
           )}
           {step === 5 && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4 text-center">
-              <p className="text-lg font-semibold text-gray-700 mb-4">You're ready to start building your Briklyst storefront!</p>
-              <Button className="w-full bg-gradient-to-r from-orange-400 to-pink-500 text-white" onClick={onComplete}>Finish</Button>
+              <p className="text-lg font-semibold text-gray-700 mb-4">You&apos;re ready to start building your Briklyst storefront!</p>
+              {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
+              <Button className="w-full bg-gradient-to-r from-orange-400 to-pink-500 text-white" onClick={handleFinish} disabled={loading}>
+                {loading ? 'Saving...' : 'Finish'}
+              </Button>
             </motion.div>
           )}
         </div>
       </DialogContent>
-    </Dialog>
+    </DialogPrimitive.Root>
   );
 } 
