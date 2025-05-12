@@ -16,35 +16,40 @@ const statCards = [
     value: '12,345',
     info: '+12% from last week',
     icon: <DollarSign className="h-7 w-7 text-white" />, 
-    bg: 'bg-[#4F8CFF]',
+    bg: 'from-[#4F8CFF] to-[#A0C8FF]',
+    shadow: 'shadow-blue-200',
   },
   {
     label: 'Top Product',
     value: 'Glow Serum',
     info: 'Most clicked',
     icon: <ShoppingBag className="h-7 w-7 text-white" />, 
-    bg: 'bg-[#A259E6]',
+    bg: 'from-[#A259E6] to-[#E0C8FF]',
+    shadow: 'shadow-purple-200',
   },
   {
     label: 'Storefront Views',
     value: '12,345',
     info: '-5% from last week',
     icon: <Eye className="h-7 w-7 text-white" />, 
-    bg: 'bg-[#FFD233]',
+    bg: 'from-[#FFD233] to-[#FFF7CC]',
+    shadow: 'shadow-yellow-100',
   },
   {
     label: 'Revenue This Week',
     value: '$1,234', // TODO: Replace with real data
     info: '+8% from last week',
     icon: <BarChart2 className="h-7 w-7 text-white" />,
-    bg: 'bg-[#34D399]',
+    bg: 'from-[#34D399] to-[#C6F6D5]',
+    shadow: 'shadow-green-100',
   },
   {
     label: 'Email Open Rate',
     value: '42%', // TODO: Replace with real data
     info: 'vs. 38% last week',
     icon: <MailOpen className="h-7 w-7 text-white" />,
-    bg: 'bg-[#F472B6]',
+    bg: 'from-[#F472B6] to-[#FDE8F3]',
+    shadow: 'shadow-pink-100',
   },
 ];
 
@@ -140,6 +145,14 @@ export default function DashboardPage() {
               />
               <SearchIcon className={`absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 transition-all duration-200 ${focused ? 'text-orange-400 scale-110' : 'text-gray-400'}`} />
             </motion.div>
+            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+              <Button
+                className="bg-gradient-to-r from-[#4F8CFF] to-[#A259E6] text-white font-semibold px-6 py-3 rounded-lg shadow-none hover:from-[#3a6fd8] hover:to-[#7d3fc7] transition-all"
+                onClick={() => router.push('/storefronts/' + (session?.user?.name || ''))}
+              >
+                View My Storefront
+              </Button>
+            </motion.div>
           </div>
         </div>
 
@@ -150,7 +163,8 @@ export default function DashboardPage() {
               key={card.label}
               whileHover={{ scale: 1.025 }}
               whileTap={{ scale: 0.98 }}
-              className={`rounded-2xl shadow-none p-8 flex flex-col justify-between ${card.bg} text-white`}
+              className={`rounded-2xl p-8 flex flex-col justify-between text-white bg-gradient-to-br ${card.bg} ${card.shadow} shadow-xl`}
+              style={{ boxShadow: '0 8px 32px 0 rgba(0,0,0,0.08)' }}
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="text-lg font-semibold tracking-wide flex items-center gap-2">
@@ -164,85 +178,43 @@ export default function DashboardPage() {
           ))}
         </div>
 
-        {/* To-Do List / Reminders */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="bg-white rounded-2xl shadow-lg p-6 mb-10 border border-gray-200 max-w-3xl mx-auto"
-        >
-          <h3 className="text-xl font-bold mb-4 text-[#A259E6] flex items-center gap-2" style={{ textShadow: '0 2px 8px rgba(162,89,230,0.18)' }}>
-            <Zap className="h-5 w-5" /> To-Do List
-          </h3>
-          <ul className="space-y-4">
-            <li className="flex items-center justify-between">
-              <span className="flex items-center gap-2"><Zap className="h-4 w-4 text-[#F59E42]" /> Create a new product drop</span>
-              <Button size="sm" variant="outline" onClick={() => router.push('/dashboard/products')}>Create</Button>
-            </li>
-            <li className="flex items-center justify-between">
-              <span className="flex items-center gap-2"><Video className="h-4 w-4 text-[#4F8CFF]" /> Add a hero video</span>
-              <Button size="sm" variant="outline" onClick={() => router.push('/dashboard/storefront')}>Add</Button>
-            </li>
-            <li className="flex items-center justify-between">
-              <span className="flex items-center gap-2"><Share2 className="h-4 w-4 text-[#A259E6]" /> Share on social media</span>
-              <Button size="sm" variant="outline" onClick={() => window.open('https://instagram.com', '_blank')}>Share</Button>
-            </li>
-            <li className="flex items-center justify-between">
-              <span className="flex items-center gap-2"><UserCheck className="h-4 w-4 text-[#34D399]" /> Complete your profile</span>
-              <Button size="sm" variant="outline" onClick={() => router.push('/dashboard/settings')}>Complete</Button>
-            </li>
-            <li className="flex items-center justify-between">
-              <span className="flex items-center gap-2"><MailOpen className="h-4 w-4 text-[#F472B6]" /> Send your first email</span>
-              <Button size="sm" variant="outline" onClick={() => router.push('/dashboard/email')}>Send</Button>
-            </li>
-          </ul>
-        </motion.div>
-
-        {/* Suggestion Banner */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="flex items-center gap-2 bg-gradient-to-r from-orange-50 to-pink-50 border-l-4 border-orange-400 p-4 rounded-lg shadow mb-10"
-        >
-          <span className="text-orange-400 text-xl">★</span>
-          <span className="font-medium text-gray-800">Suggestion:</span>
-          <span className="text-gray-700">Try our new email templates.</span>
-        </motion.div>
-
-        <div className="flex flex-col lg:flex-row gap-10">
-          {/* Live Storefront Section */}
+        {/* To-Do List / Reminders & Quick Links */}
+        <div className="flex flex-col lg:flex-row gap-8 mb-10">
           <motion.div
-            className="flex-1 bg-white rounded-2xl shadow-lg p-6 mb-8 lg:mb-0 border border-gray-200"
-            whileHover={{ boxShadow: '0 8px 32px 0 rgba(249, 115, 22, 0.1)' }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200 max-w-3xl w-full"
           >
-            <div className="mb-4 flex items-center gap-2">
-              <span className="font-semibold text-lg text-gray-900">Live Storefront</span>
-              <span className="bg-gradient-to-r from-orange-400 to-pink-500 text-white text-xs px-2 py-1 rounded-full ml-2">Rec</span>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="relative aspect-video rounded-xl overflow-hidden col-span-1">
-                <Image src={mainImage} alt="Main" fill className="object-cover" />
-                <div className="absolute bottom-4 left-4 bg-black/60 text-white px-3 py-1 rounded-lg text-lg font-semibold">Front Side<br />Living Room</div>
-              </div>
-              <div className="flex flex-col gap-2 col-span-1">
-                {liveStorefrontImages.map((img, idx) => (
-                  <motion.button
-                    key={img}
-                    className={`rounded-lg overflow-hidden border-2 transition-all duration-200 ${mainImage === img ? 'border-orange-400 scale-105' : 'border-transparent'}`}
-                    onClick={() => setMainImage(img)}
-                    whileHover={{ scale: 1.05 }}
-                  >
-                    <Image src={img} alt={`Thumb ${idx + 1}`} width={120} height={80} className="object-cover w-full h-20" />
-                  </motion.button>
-                ))}
-              </div>
-            </div>
+            <h3 className="text-xl font-bold mb-4 text-[#A259E6] flex items-center gap-2" style={{ textShadow: '0 2px 8px rgba(162,89,230,0.18)' }}>
+              <Zap className="h-5 w-5" /> To-Do List
+            </h3>
+            <ul className="space-y-4">
+              <li className="flex items-center justify-between">
+                <span className="flex items-center gap-2"><Zap className="h-4 w-4 text-[#F59E42]" /> Create a new product drop</span>
+                <Button size="sm" variant="outline" onClick={() => router.push('/dashboard/products')}>Create</Button>
+              </li>
+              <li className="flex items-center justify-between">
+                <span className="flex items-center gap-2"><Video className="h-4 w-4 text-[#4F8CFF]" /> Add a hero video</span>
+                <Button size="sm" variant="outline" onClick={() => router.push('/dashboard/storefront')}>Add</Button>
+              </li>
+              <li className="flex items-center justify-between">
+                <span className="flex items-center gap-2"><Share2 className="h-4 w-4 text-[#A259E6]" /> Share on social media</span>
+                <Button size="sm" variant="outline" onClick={() => window.open('https://instagram.com', '_blank')}>Share</Button>
+              </li>
+              <li className="flex items-center justify-between">
+                <span className="flex items-center gap-2"><UserCheck className="h-4 w-4 text-[#34D399]" /> Complete your profile</span>
+                <Button size="sm" variant="outline" onClick={() => router.push('/dashboard/settings')}>Complete</Button>
+              </li>
+              <li className="flex items-center justify-between">
+                <span className="flex items-center gap-2"><MailOpen className="h-4 w-4 text-[#F472B6]" /> Send your first email</span>
+                <Button size="sm" variant="outline" onClick={() => router.push('/dashboard/email')}>Send</Button>
+              </li>
+            </ul>
           </motion.div>
-
           {/* Quick Links */}
-          <div className="w-full lg:w-64 flex-shrink-0">
-            <div className="bg-white rounded-2xl shadow-none p-6 mb-8 border border-0">
+          <div className="w-full lg:w-80 flex-shrink-0">
+            <div className="bg-white rounded-2xl shadow-none p-6 border border-0">
               <div className="font-bold text-lg mb-4 text-[#A259E6] flex items-center gap-2">
                 <Link2 className="h-5 w-5" /> Quick Links
               </div>
@@ -262,6 +234,18 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
+
+        {/* Suggestion Banner */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="flex items-center gap-2 bg-gradient-to-r from-orange-50 to-pink-50 border-l-4 border-orange-400 p-4 rounded-lg shadow mb-10"
+        >
+          <span className="text-orange-400 text-xl">★</span>
+          <span className="font-medium text-gray-800">Suggestion:</span>
+          <span className="text-gray-700">Try our new email templates.</span>
+        </motion.div>
       </main>
     </div>
   );
