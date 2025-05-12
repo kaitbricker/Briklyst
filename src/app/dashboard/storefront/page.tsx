@@ -323,7 +323,8 @@ export default function StorefrontPage() {
         </div>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+      {/* Customization Form and Live Preview (stacked) */}
+      <div className="flex flex-col gap-10">
         {/* Customization Form */}
         <div className="space-y-10">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-8">
@@ -427,8 +428,8 @@ export default function StorefrontPage() {
           </Tabs>
         </div>
 
-        {/* Live Preview */}
-        <div className="sticky top-8">
+        {/* Live Preview (now below the form) */}
+        <div>
           <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl p-8 border border-gray-100">
             <h2 className="text-xl font-semibold mb-4">Live Preview</h2>
             <div className="relative">
