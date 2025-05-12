@@ -10,6 +10,7 @@ interface StorefrontFormProps {
     description: string;
     logoUrl?: string;
     bannerUrl?: string;
+    tagline: string;
   };
 }
 
@@ -74,6 +75,21 @@ export default function StorefrontForm({ initialData }: StorefrontFormProps) {
           id="description"
           rows={3}
           value={formData.description}
+          onChange={handleChange}
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+          required
+        />
+      </div>
+
+      <div>
+        <label htmlFor="tagline" className="block text-sm font-medium text-gray-700">
+          Tagline
+        </label>
+        <input
+          type="text"
+          name="tagline"
+          id="tagline"
+          value={formData.tagline}
           onChange={handleChange}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
           required

@@ -104,6 +104,13 @@ export default function SettingsPage() {
     }
   };
 
+  const handleRestartOnboarding = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('onboardingComplete');
+      router.push('/dashboard'); // reload dashboard to trigger onboarding
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -258,6 +265,14 @@ export default function SettingsPage() {
             </CardContent>
           </Card>
         </motion.div>
+      </div>
+
+      <div className="mt-8">
+        <h2 className="text-lg font-bold mb-2">Onboarding</h2>
+        <p className="text-gray-600 mb-2">Need a refresher? You can restart the onboarding guide at any time.</p>
+        <Button variant="outline" onClick={handleRestartOnboarding}>
+          Restart Onboarding
+        </Button>
       </div>
     </div>
   )

@@ -24,6 +24,8 @@ import { ImageUpload } from '@/components/ui/image-upload'
 import { useStorefrontUpdate } from '@/context/StorefrontUpdateContext'
 import StorefrontPreview from '@/components/storefront/StorefrontPreview'
 import { themes } from '@/lib/themes'
+import ProductList from '@/components/ProductList'
+import LivePreview from '@/components/LivePreview'
 
 interface Product {
   id: string
@@ -262,6 +264,14 @@ export default function StorefrontPage() {
   const bannerColor = 'bg-gradient-to-r from-orange-400 to-pink-500';
   const liveDropText = hasLiveDrop ? '🔥 Live Drop Happening Now!' : '';
 
+  const handleReorder = (result: any) => {
+    if (!result.destination) return;
+    const items = Array.from(products);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+    setProducts(items);
+  };
+
   if (loading) {
     return (
       <div className="flex h-[50vh] items-center justify-center">
@@ -358,7 +368,7 @@ export default function StorefrontPage() {
             <TabsContent value="products">
               <Card className="p-8 rounded-2xl bg-white/90 shadow-md">
                 <h3 className="text-xl font-bold mb-4">Manage Products</h3>
-                <ProductGrid products={products.map(p => ({ ...p, tags: [] }))} />
+                <ProductList products={products} onReorder={handleReorder} />
               </Card>
             </TabsContent>
             <TabsContent value="details">

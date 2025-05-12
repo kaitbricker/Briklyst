@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import StorefrontClient from "./StorefrontClient";
+import { ThemeProvider } from '@/components/theme/ThemeProvider';
 
 export const metadata: Metadata = {
   title: "Storefront",
@@ -18,5 +19,9 @@ export default async function StorefrontPage({ params }: { params: { username: s
 
   const storefront = await res.json();
 
-  return <StorefrontClient storefront={storefront} />;
+  return (
+    <ThemeProvider themeId={storefront.theme?.id || 'bubblegum-pop'}>
+      <StorefrontClient storefront={storefront} />
+    </ThemeProvider>
+  );
 }
