@@ -221,6 +221,24 @@ export default function StorefrontPage() {
     }
   }
 
+  const handleEditProduct = (updatedProduct: Product) => {
+    setProducts(products.map(p => p.id === updatedProduct.id ? updatedProduct : p))
+    toast({
+      title: 'Success',
+      description: 'Product updated successfully',
+    })
+    triggerUpdate()
+  }
+
+  const handleDeleteProduct = (productId: string) => {
+    setProducts(products.filter(p => p.id !== productId))
+    toast({
+      title: 'Success',
+      description: 'Product deleted successfully',
+    })
+    triggerUpdate()
+  }
+
   // Check for live drop
   const hasLiveDrop = products.some(p => p.tags?.some(tag => tag.toLowerCase().includes('drop')));
   const bannerColor = 'bg-gradient-to-r from-orange-400 to-pink-500';
