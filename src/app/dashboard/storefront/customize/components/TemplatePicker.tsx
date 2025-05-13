@@ -10,11 +10,13 @@ import { cn } from '@/lib/utils'
 interface TemplatePickerProps {
   currentTemplate: string
   onSelect: (templateId: string) => Promise<void>
+  onPreview: (templateId: string) => void
 }
 
 export default function TemplatePicker({
   currentTemplate,
   onSelect,
+  onPreview,
 }: TemplatePickerProps) {
   const [selectedTemplate, setSelectedTemplate] = useState(currentTemplate)
   const [isUpdating, setIsUpdating] = useState(false)
@@ -62,8 +64,8 @@ export default function TemplatePicker({
                   {template.description}
                 </p>
               </div>
-              {selectedTemplate === template.id && (
-                <div className="absolute right-2 top-2">
+              <div className="absolute right-2 top-2 flex flex-col gap-2">
+                {selectedTemplate === template.id && (
                   <Button
                     size="sm"
                     variant="secondary"
@@ -71,8 +73,18 @@ export default function TemplatePicker({
                   >
                     {isUpdating ? 'Updating...' : 'Selected'}
                   </Button>
-                </div>
-              )}
+                )}
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={e => {
+                    e.stopPropagation()
+                    onPreview(template.id)
+                  }}
+                >
+                  Preview
+                </Button>
+              </div>
             </Card>
           ))}
         </div>

@@ -2,11 +2,11 @@
 
 import { useState } from 'react'
 import { Card } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { ImageUpload } from '@/components/ui/image-upload'
-import { cn } from '@/lib/utils'
+import { ColorPicker } from '@/components/ui/color-picker'
 
 interface BrandingAssets {
   logo?: string
@@ -20,119 +20,173 @@ interface BrandingAssets {
 }
 
 interface BrandingSettingsProps {
-  assets: BrandingAssets
+  settings?: BrandingAssets
   onUpdate: (updates: BrandingAssets) => Promise<void>
 }
 
 export default function BrandingSettings({
-  assets = {},
+  settings = {},
   onUpdate,
 }: BrandingSettingsProps) {
-  const handleUpdate = async (key: string, value: any) => {
-    await onUpdate({ ...assets, [key]: value })
+  const [isUpdating, setIsUpdating] = useState(false)
+
+  const handleUpdate = async (updates: Partial<BrandingAssets>) => {
+    setIsUpdating(true)
+    try {
+      await onUpdate({
+        ...settings,
+        ...updates,
+      })
+    } finally {
+      setIsUpdating(false)
+    }
   }
 
   return (
-    <div className="space-y-6">
-      <Card className="p-6">
-        <h3 className="text-lg font-medium mb-4">Brand Assets</h3>
-        <div className="space-y-4">
-          <div>
-            <Label>Logo</Label>
-            <ImageUpload
-              value={assets.logo}
-              onChange={(url) => handleUpdate('logo', url)}
-            />
-          </div>
-          <div>
-            <Label>Banner Image</Label>
-            <ImageUpload
-              value={assets.banner}
-              onChange={(url) => handleUpdate('banner', url)}
-            />
-          </div>
-          <div>
-            <Label>Favicon</Label>
-            <ImageUpload
-              value={assets.favicon}
-              onChange={(url) => handleUpdate('favicon', url)}
-            />
-          </div>
-        </div>
-      </Card>
+    <div className="space-y-8">
+      <div>
+        <h2 className="text-xl font-semibold">Branding Settings</h2>
+        <p className="text-sm text-muted-foreground">
+          Customize your storefront's branding elements
+        </p>
+      </div>
 
-      <Card className="p-6">
-        <h3 className="text-lg font-medium mb-4">Button Styles</h3>
-        <div className="space-y-4">
-          <div>
-            <Label>Primary Button Style</Label>
-            <select
-              value={assets.buttonStyles?.primary || 'default'}
-              onChange={(e) =>
-                handleUpdate('buttonStyles', {
-                  ...assets.buttonStyles,
-                  primary: e.target.value,
-                })
-              }
-              className="w-full rounded-md border border-input bg-background px-3 py-2"
-            >
-              <option value="default">Default</option>
-              <option value="rounded">Rounded</option>
-              <option value="pill">Pill</option>
-              <option value="outline">Outline</option>
-            </select>
-          </div>
-          <div>
-            <Label>Secondary Button Style</Label>
-            <select
-              value={assets.buttonStyles?.secondary || 'default'}
-              onChange={(e) =>
-                handleUpdate('buttonStyles', {
-                  ...assets.buttonStyles,
-                  secondary: e.target.value,
-                })
-              }
-              className="w-full rounded-md border border-input bg-background px-3 py-2"
-            >
-              <option value="default">Default</option>
-              <option value="rounded">Rounded</option>
-              <option value="pill">Pill</option>
-              <option value="outline">Outline</option>
-            </select>
-          </div>
-        </div>
-      </Card>
-
-      <Card className="p-6">
-        <h3 className="text-lg font-medium mb-4">Color Palette</h3>
-        <div className="space-y-4">
-          {(assets.colorPalette || []).map((color, index) => (
-            <div key={index}>
-              <Label>Color {index + 1}</Label>
+      <div className="grid gap-8 md:grid-cols-2">
+        {/* Logo */}
+        <Card className="p-6">
+          <h3 className="mb-4 font-medium">Logo</h3>
+          <div className="space-y-4">
+            <ImageUpload
+              value={settings.logo}
+              onChange={(url) => handleUpdate({ logo: url })}
+            />
+            <div className="space-y-2">
+              <Label>Logo URL</Label>
               <Input
-                type="color"
-                value={color}
-                onChange={(e) => {
-                  const newPalette = [...(assets.colorPalette || [])]
-                  newPalette[index] = e.target.value
-                  handleUpdate('colorPalette', newPalette)
-                }}
+                value={settings.logo || ''}
+                onChange={(e) => handleUpdate({ logo: e.target.value })}
+                placeholder="Enter logo URL"
               />
             </div>
-          ))}
-          <Button
-            variant="outline"
-            onClick={() =>
-              handleUpdate('colorPalette', [
-                ...(assets.colorPalette || []),
-                '#000000',
-              ])
-            }
-          >
-            Add Color
-          </Button>
-        </div>
-      </Card>
+          </div>
+        </Card>
+
+        {/* Banner */}
+        <Card className="p-6">
+          <h3 className="mb-4 font-medium">Banner</h3>
+          <div className="space-y-4">
+            <ImageUpload
+              value={settings.banner}
+              onChange={(url) => handleUpdate({ banner: url })}
+            />
+            <div className="space-y-2">
+              <Label>Banner URL</Label>
+              <Input
+                value={settings.banner || ''}
+                onChange={(e) => handleUpdate({ banner: e.target.value })}
+                placeholder="Enter banner URL"
+              />
+            </div>
+          </div>
+        </Card>
+
+        {/* Favicon */}
+        <Card className="p-6">
+          <h3 className="mb-4 font-medium">Favicon</h3>
+          <div className="space-y-4">
+            <ImageUpload
+              value={settings.favicon}
+              onChange={(url) => handleUpdate({ favicon: url })}
+            />
+            <div className="space-y-2">
+              <Label>Favicon URL</Label>
+              <Input
+                value={settings.favicon || ''}
+                onChange={(e) => handleUpdate({ favicon: e.target.value })}
+                placeholder="Enter favicon URL"
+              />
+            </div>
+          </div>
+        </Card>
+
+        {/* Button Styles */}
+        <Card className="p-6">
+          <h3 className="mb-4 font-medium">Button Styles</h3>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Primary Button Color</Label>
+              <ColorPicker
+                color={settings.buttonStyles?.primary || '#000000'}
+                onChange={(color) =>
+                  handleUpdate({
+                    buttonStyles: {
+                      ...settings.buttonStyles,
+                      primary: color,
+                    },
+                  })
+                }
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Secondary Button Color</Label>
+              <ColorPicker
+                color={settings.buttonStyles?.secondary || '#ffffff'}
+                onChange={(color) =>
+                  handleUpdate({
+                    buttonStyles: {
+                      ...settings.buttonStyles,
+                      secondary: color,
+                    },
+                  })
+                }
+              />
+            </div>
+          </div>
+        </Card>
+
+        {/* Color Palette */}
+        <Card className="p-6">
+          <h3 className="mb-4 font-medium">Color Palette</h3>
+          <div className="space-y-4">
+            <div className="grid grid-cols-5 gap-2">
+              {(settings.colorPalette || []).map((color, index) => (
+                <div key={index} className="relative">
+                  <ColorPicker
+                    color={color}
+                    onChange={(newColor) => {
+                      const newPalette = [...(settings.colorPalette || [])]
+                      newPalette[index] = newColor
+                      handleUpdate({ colorPalette: newPalette })
+                    }}
+                  />
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="absolute -top-2 -right-2"
+                    onClick={() => {
+                      const newPalette = [...(settings.colorPalette || [])]
+                      newPalette.splice(index, 1)
+                      handleUpdate({ colorPalette: newPalette })
+                    }}
+                  >
+                    ×
+                  </Button>
+                </div>
+              ))}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const newPalette = [...(settings.colorPalette || []), '#000000']
+                  handleUpdate({ colorPalette: newPalette })
+                }}
+              >
+                Add Color
+              </Button>
+            </div>
+          </div>
+        </Card>
+      </div>
     </div>
   )
 } 

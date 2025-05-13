@@ -20,7 +20,7 @@ export interface StorefrontSettings {
       borderRadius?: string
     }
   }
-  branding?: {
+  brandingAssets?: {
     logo?: string
     banner?: string
     favicon?: string

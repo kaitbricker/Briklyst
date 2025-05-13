@@ -32,6 +32,7 @@ model User {
   storefront    Storefront?
   storefrontSettings StorefrontSettings?
   favorites     Product[]    @relation("Favorites")
+  templates     StorefrontTemplate[]
 
   @@index([email])
 }
@@ -163,6 +164,20 @@ model StorefrontSettings {
   customCSS     String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model StorefrontTemplate {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  settings    Json
+  isPublic    Boolean  @default(false)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@index([userId])
 }

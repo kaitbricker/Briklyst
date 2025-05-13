@@ -3,6 +3,7 @@ export interface StorefrontTemplate {
   name: string
   description: string
   previewImage: string
+  features: string[]
   defaultColors: {
     primary: string
     secondary: string
@@ -27,6 +28,13 @@ export const templates: StorefrontTemplate[] = [
     name: 'Minimal',
     description: 'A clean, minimalist design focused on your products',
     previewImage: '/templates/minimal.jpg',
+    features: [
+      'Clean, minimalist layout',
+      'Focus on product imagery',
+      'Ample white space',
+      'Simple navigation',
+      'Mobile-responsive design'
+    ],
     defaultColors: {
       primary: '#000000',
       secondary: '#ffffff',
@@ -49,6 +57,13 @@ export const templates: StorefrontTemplate[] = [
     name: 'Modern',
     description: 'A contemporary design with bold typography and vibrant colors',
     previewImage: '/templates/modern.jpg',
+    features: [
+      'Bold typography',
+      'Vibrant color scheme',
+      'Dynamic layouts',
+      'Modern UI elements',
+      'Enhanced product showcases'
+    ],
     defaultColors: {
       primary: '#2563eb',
       secondary: '#1e40af',
@@ -71,6 +86,13 @@ export const templates: StorefrontTemplate[] = [
     name: 'Vintage',
     description: 'A classic design with warm colors and traditional typography',
     previewImage: '/templates/vintage.jpg',
+    features: [
+      'Warm color palette',
+      'Traditional typography',
+      'Classic layout elements',
+      'Vintage-inspired UI',
+      'Nostalgic design touches'
+    ],
     defaultColors: {
       primary: '#854d0e',
       secondary: '#fef3c7',
@@ -93,6 +115,13 @@ export const templates: StorefrontTemplate[] = [
     name: 'Bold',
     description: 'A striking design with high contrast and dramatic elements',
     previewImage: '/templates/bold.jpg',
+    features: [
+      'High contrast design',
+      'Dramatic typography',
+      'Bold color combinations',
+      'Eye-catching layouts',
+      'Strong visual hierarchy'
+    ],
     defaultColors: {
       primary: '#dc2626',
       secondary: '#1f2937',
@@ -115,6 +144,13 @@ export const templates: StorefrontTemplate[] = [
     name: 'Elegant',
     description: 'A sophisticated design with refined typography and subtle colors',
     previewImage: '/templates/elegant.jpg',
+    features: [
+      'Refined typography',
+      'Subtle color palette',
+      'Sophisticated layouts',
+      'Premium UI elements',
+      'Luxury-inspired design'
+    ],
     defaultColors: {
       primary: '#4b5563',
       secondary: '#f3f4f6',

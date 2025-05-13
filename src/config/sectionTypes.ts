@@ -20,136 +20,119 @@ interface SectionType {
   id: string
   name: string
   description: string
-  icon: LucideIcon
-  defaultContent: Record<string, any>
+  defaultContent: any
 }
 
 export const sectionTypes: SectionType[] = [
   {
     id: 'hero',
     name: 'Hero Section',
-    description: 'A prominent section at the top of your page with a large image and call-to-action.',
-    icon: Image,
+    description: 'A prominent section at the top of your storefront',
     defaultContent: {
       title: 'Welcome to Our Store',
       subtitle: 'Discover our amazing products',
-      imageUrl: '',
       ctaText: 'Shop Now',
       ctaLink: '/products',
+      backgroundImage: '',
+      layout: 'centered',
     },
   },
   {
-    id: 'featured_products',
+    id: 'featured-products',
     name: 'Featured Products',
-    description: 'Showcase your best-selling or featured products in a grid or carousel.',
-    icon: ShoppingBag,
+    description: 'Showcase your best-selling products',
     defaultContent: {
       title: 'Featured Products',
+      subtitle: 'Our most popular items',
       layout: 'grid',
+      columns: 3,
       products: [],
+    },
+  },
+  {
+    id: 'category-showcase',
+    name: 'Category Showcase',
+    description: 'Display your product categories',
+    defaultContent: {
+      title: 'Shop by Category',
+      layout: 'grid',
+      columns: 4,
+      categories: [],
     },
   },
   {
     id: 'testimonials',
     name: 'Testimonials',
-    description: 'Display customer reviews and testimonials to build trust.',
-    icon: MessageSquare,
+    description: 'Show customer reviews and feedback',
     defaultContent: {
       title: 'What Our Customers Say',
+      layout: 'carousel',
       testimonials: [],
-    },
-  },
-  {
-    id: 'collection_grid',
-    name: 'Collection Grid',
-    description: 'Showcase your product collections',
-    icon: LayoutGrid,
-    defaultContent: {
-      title: 'Our Collections',
-      collections: [],
-    },
-  },
-  {
-    id: 'team',
-    name: 'Team Section',
-    description: 'Introduce your team members',
-    icon: Users,
-    defaultContent: {
-      title: 'Meet Our Team',
-      members: [],
     },
   },
   {
     id: 'newsletter',
     name: 'Newsletter Signup',
-    description: 'Add a newsletter subscription form to collect email addresses.',
-    icon: Mail,
+    description: 'Collect email addresses for your newsletter',
     defaultContent: {
       title: 'Subscribe to Our Newsletter',
-      subtitle: 'Get the latest updates and offers',
+      subtitle: 'Get updates on new products and special offers',
       buttonText: 'Subscribe',
+      layout: 'centered',
     },
   },
   {
-    id: 'collab_highlights',
-    name: 'Collaboration Highlights',
-    description: 'Showcase your brand collaborations',
-    icon: Star,
-    defaultContent: {
-      title: 'Our Collaborations',
-      highlights: [],
-    },
-  },
-  {
-    id: 'social_feed',
+    id: 'social-feed',
     name: 'Social Media Feed',
-    description: 'Display your social media content',
-    icon: Instagram,
+    description: 'Display your social media posts',
     defaultContent: {
       title: 'Follow Us',
-      platforms: ['instagram', 'youtube', 'twitter'],
+      platform: 'instagram',
+      layout: 'grid',
+      columns: 3,
       posts: [],
     },
   },
   {
-    id: 'custom_html',
-    name: 'Custom HTML',
-    description: 'Add custom HTML content with full styling control.',
-    icon: Code,
+    id: 'brand-showcase',
+    name: 'Brand Showcase',
+    description: 'Highlight partner brands or manufacturers',
     defaultContent: {
-      html: '',
+      title: 'Our Brands',
+      layout: 'carousel',
+      brands: [],
     },
   },
   {
-    id: 'text',
-    name: 'Text Block',
-    description: 'A simple text section with rich formatting options.',
-    icon: Type,
+    id: 'faq',
+    name: 'FAQ Section',
+    description: 'Display frequently asked questions',
     defaultContent: {
-      title: 'About Us',
-      content: '<p>Add your content here...</p>',
-    },
-  },
-  {
-    id: 'image_gallery',
-    name: 'Image Gallery',
-    description: 'Display a collection of images in a grid or masonry layout.',
-    icon: ImageIcon,
-    defaultContent: {
-      title: 'Our Gallery',
-      layout: 'grid',
-      images: [],
+      title: 'Frequently Asked Questions',
+      layout: 'accordion',
+      questions: [],
     },
   },
   {
     id: 'contact',
-    name: 'Contact Form',
-    description: 'Add a contact form for customer inquiries.',
-    icon: Contact,
+    name: 'Contact Section',
+    description: 'Provide contact information and form',
     defaultContent: {
       title: 'Contact Us',
-      subtitle: 'We\'d love to hear from you',
-      buttonText: 'Send Message',
+      subtitle: 'Get in touch with our team',
+      email: '',
+      phone: '',
+      address: '',
+      formEnabled: true,
+    },
+  },
+  {
+    id: 'custom-html',
+    name: 'Custom HTML',
+    description: 'Add custom HTML content',
+    defaultContent: {
+      html: '',
+      css: '',
     },
   },
 ] 
