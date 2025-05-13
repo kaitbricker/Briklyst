@@ -16,7 +16,13 @@ export async function GET(
     const username = searchParams.get('username')
     const userId = searchParams.get('userId')
 
-    let user
+    let user: (User & {
+      storefront?: (Storefront & {
+        products: (Product & {
+          clickEvents: any[]
+        })[]
+      }) | null
+    }) | null
 
     if (username) {
       // Fetch storefront by username
@@ -44,7 +50,9 @@ export async function GET(
       })
     } else {
       // Fetch current user's storefront
-      const session = await getServerSession(authOptions)
+      const session = await getServerSession(authOptions) as Session & {
+        user: { email: string }
+      }
       if (!session?.user?.email) {
         return NextResponse.json(
           { error: 'Unauthorized' },
@@ -88,17 +96,9 @@ export async function GET(
       name: storefront.title,
       description: storefront.description,
       logoUrl: storefront.logoUrl,
-      bannerUrl: storefront.bannerUrl,
-      headerImageUrl: storefront.headerImageUrl,
-      tagline: storefront.tagline,
       theme: {
-        id: storefront.themeId,
-        primaryColor: storefront.primaryColor,
-        accentColor: storefront.accentColor,
-        backgroundColor: storefront.backgroundColor,
-        textColor: storefront.textColor,
-        fontFamily: storefront.fontFamily,
-        layoutStyle: storefront.layoutStyle
+        id: storefront.templateId,
+        ...(storefront.templateOverrides as Record<string, any>)
       },
       socials: {
         instagram: user.instagram,
@@ -127,8 +127,12 @@ export async function GET(
         tags: product.tags,
         imageUrls: product.imageUrls
       })),
-      footerContent: storefront.footerContent || '',
-      footerLinks: storefront.footerLinks || []
+      customSections: storefront.customSections,
+      brandingAssets: storefront.brandingAssets,
+      customCSS: storefront.customCSS,
+      socialLinks: storefront.socialLinks,
+      collabHighlights: storefront.collabHighlights,
+      subscriberBlock: storefront.subscriberBlock
     }
 
     return NextResponse.json(transformedData)
@@ -146,7 +150,9 @@ export async function PUT(
   { params }: { params: { username: string } }
 ) {
   try {
-    const session = await getServerSession()
+    const session = await getServerSession(authOptions) as Session & {
+      user: { id: string }
+    }
     if (!session?.user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -188,18 +194,14 @@ export async function PUT(
         title: data.name,
         description: data.description,
         logoUrl: data.logoUrl,
-        bannerUrl: data.bannerUrl,
-        headerImageUrl: data.headerImageUrl,
-        tagline: data.tagline,
-        themeId: data.theme.id,
-        primaryColor: data.theme.primaryColor,
-        accentColor: data.theme.accentColor,
-        backgroundColor: data.theme.backgroundColor,
-        textColor: data.theme.textColor,
-        fontFamily: data.theme.fontFamily,
-        layoutStyle: data.theme.layoutStyle,
-        footerContent: data.footerContent,
-        footerLinks: data.footerLinks
+        templateId: data.theme.id,
+        templateOverrides: data.theme as any,
+        customSections: data.customSections,
+        brandingAssets: data.brandingAssets,
+        customCSS: data.customCSS,
+        socialLinks: data.socialLinks,
+        collabHighlights: data.collabHighlights,
+        subscriberBlock: data.subscriberBlock
       }
     })
 

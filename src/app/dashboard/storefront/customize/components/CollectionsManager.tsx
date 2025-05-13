@@ -18,12 +18,11 @@ interface Collection {
 }
 
 interface CollectionsManagerProps {
-  collections: Collection[]
-  allProducts: any[]
-  onUpdate: (collections: Collection[]) => Promise<void>
+  collections: any[]
+  onUpdateCollections: (collections: any[]) => void
 }
 
-export default function CollectionsManager({ collections, allProducts, onUpdate }: CollectionsManagerProps) {
+export default function CollectionsManager({ collections, onUpdateCollections }: CollectionsManagerProps) {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null)
@@ -47,7 +46,7 @@ export default function CollectionsManager({ collections, allProducts, onUpdate 
         name: newCollectionName.trim(),
         products: [],
       }
-      await onUpdate([...collections, newCollection])
+      onUpdateCollections([...collections, newCollection])
       setIsAddDialogOpen(false)
       setNewCollectionName('')
       toast({
@@ -79,7 +78,7 @@ export default function CollectionsManager({ collections, allProducts, onUpdate 
           ? { ...collection, name: newCollectionName.trim() }
           : collection
       )
-      await onUpdate(updatedCollections)
+      onUpdateCollections(updatedCollections)
       setIsEditDialogOpen(false)
       setSelectedCollection(null)
       setNewCollectionName('')
@@ -101,7 +100,7 @@ export default function CollectionsManager({ collections, allProducts, onUpdate 
 
     try {
       const updatedCollections = collections.filter(collection => collection.id !== collectionId)
-      await onUpdate(updatedCollections)
+      onUpdateCollections(updatedCollections)
       toast({
         title: 'Success',
         description: 'Collection deleted successfully',
@@ -122,7 +121,7 @@ export default function CollectionsManager({ collections, allProducts, onUpdate 
           ? { ...collection, products: [...collection.products, productId] }
           : collection
       )
-      await onUpdate(updatedCollections)
+      onUpdateCollections(updatedCollections)
       toast({
         title: 'Success',
         description: 'Product added to collection',
@@ -143,7 +142,7 @@ export default function CollectionsManager({ collections, allProducts, onUpdate 
           ? { ...collection, products: collection.products.filter(id => id !== productId) }
           : collection
       )
-      await onUpdate(updatedCollections)
+      onUpdateCollections(updatedCollections)
       toast({
         title: 'Success',
         description: 'Product removed from collection',
@@ -157,7 +156,7 @@ export default function CollectionsManager({ collections, allProducts, onUpdate 
     }
   }
 
-  const filteredProducts = allProducts.filter(product =>
+  const filteredProducts = collections.filter(product =>
     product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     product.description?.toLowerCase().includes(searchQuery.toLowerCase())
   )
@@ -235,7 +234,7 @@ export default function CollectionsManager({ collections, allProducts, onUpdate 
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 flex-wrap">
                     {collection.products.map((productId) => {
-                      const product = allProducts.find(p => p.id === productId)
+                      const product = collections.find(p => p.id === productId)
                       if (!product) return null
                       return (
                         <Badge

@@ -6,12 +6,16 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Loader2, Save, RefreshCw, Settings, LayoutGrid } from 'lucide-react'
+import { Loader2, Save, RefreshCw, Settings, LayoutGrid, User, Image as ImageIcon } from 'lucide-react'
 import ThemeSelector from './components/ThemeSelector'
 import ThemePreview from './components/ThemePreview'
 import CollectionsManager from './components/CollectionsManager'
 import { Theme } from '@/lib/themes'
 import { themes } from '@/lib/themes'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { ImageUpload } from '@/components/ui/image-upload'
 
 interface Storefront {
   id: string
@@ -39,60 +43,22 @@ export default function CustomizePage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [activeTab, setActiveTab] = useState('theme')
+  const [storefront, setStorefront] = useState<Storefront | null>(null)
   const [selectedTheme, setSelectedTheme] = useState<Theme>(themes[0])
-  const [storefront, setStorefront] = useState<Storefront>({
-    id: '1',
-    name: 'My Store',
-    description: 'Welcome to my store',
-    logoUrl: '/placeholder-logo.png',
-    bannerUrl: '/placeholder-banner.jpg',
-    socials: {
-      instagram: '@myinstagram',
-      twitter: '@mytwitter',
-      tiktok: '@mytiktok',
-    },
-    products: [
-      {
-        id: '1',
-        title: 'Product 1',
-        price: 99.99,
-        imageUrl: '/placeholder-product.jpg',
-      },
-      {
-        id: '2',
-        title: 'Product 2',
-        price: 149.99,
-        imageUrl: '/placeholder-product.jpg',
-      },
-      {
-        id: '3',
-        title: 'Product 3',
-        price: 199.99,
-        imageUrl: '/placeholder-product.jpg',
-      },
-    ],
-    collections: [],
-    theme: themes[0],
-  })
+  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false)
 
-  // Load storefront data
   useEffect(() => {
-    const loadStorefrontData = async () => {
+    const fetchStorefront = async () => {
       try {
         const response = await fetch('/api/storefront')
         if (!response.ok) {
-          throw new Error('Failed to load storefront data')
+          throw new Error('Failed to fetch storefront')
         }
         const data = await response.json()
         setStorefront(data)
-        if (data.templateId) {
-          const theme = themes.find(t => t.id === data.templateId)
-          if (theme) {
-            setSelectedTheme(theme)
-          }
-        }
+        setSelectedTheme(data.theme || themes[0])
       } catch (error) {
-        console.error('Error loading storefront:', error)
+        console.error('Error fetching storefront:', error)
         toast({
           title: 'Error',
           description: 'Failed to load storefront data',
@@ -103,10 +69,12 @@ export default function CustomizePage() {
       }
     }
 
-    loadStorefrontData()
+    fetchStorefront()
   }, [toast])
 
   const handleSaveTheme = async () => {
+    if (!storefront) return
+
     setIsSaving(true)
     try {
       const response = await fetch('/api/storefront/theme', {
@@ -126,11 +94,8 @@ export default function CustomizePage() {
 
       // Update local storefront state with new theme
       setStorefront(prev => ({
-        ...prev,
-        theme: {
-          id: selectedTheme.id,
-          ...selectedTheme
-        }
+        ...prev!,
+        theme: selectedTheme
       }))
 
       toast({
@@ -149,79 +114,71 @@ export default function CustomizePage() {
     }
   }
 
-  const handleUpdateCollections = async (collections: any[]) => {
+  const handleUpdateProfile = async () => {
+    if (!storefront) return
+
+    setIsUpdatingProfile(true)
     try {
-      setStorefront(prev => ({
-        ...prev,
-        collections,
-      }))
+      const response = await fetch('/api/storefront/profile', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          storefrontId: storefront.id,
+          bio: storefront.description,
+          logoUrl: storefront.logoUrl,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update profile')
+      }
+
       toast({
         title: 'Success',
-        description: 'Collections updated successfully',
+        description: 'Profile updated successfully',
       })
     } catch (error) {
+      console.error('Error updating profile:', error)
       toast({
         title: 'Error',
-        description: 'Failed to update collections',
+        description: 'Failed to update profile',
         variant: 'destructive',
       })
+    } finally {
+      setIsUpdatingProfile(false)
     }
   }
 
   if (isLoading) {
     return (
-      <div className="h-screen flex items-center justify-center" style={{ border: '4px solid red', borderRadius: 12 }}>
-        <div className="bg-red-100 text-red-700 font-bold p-2 rounded mb-2 text-center w-full">DEBUG MODE: CustomizePage</div>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="flex flex-col items-center gap-4"
-        >
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-muted-foreground">Loading your storefront...</p>
-        </motion.div>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center space-y-4">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto" />
+          <p className="text-muted-foreground">Loading storefront data...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!storefront) {
+    return (
+      <div className="text-center space-y-4">
+        <p className="text-muted-foreground">No storefront data found</p>
       </div>
     )
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="container mx-auto py-8 space-y-8"
-    >
+    <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.2 }}
-        >
+        <div>
           <h1 className="text-3xl font-bold">Customize Storefront</h1>
-          <p className="text-muted-foreground">Customize your storefront appearance and content</p>
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <Button
-            onClick={handleSaveTheme}
-            disabled={isSaving}
-            className="gap-2"
-          >
-            {isSaving ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              <>
-                <Save className="h-4 w-4" />
-                Save Changes
-              </>
-            )}
-          </Button>
-        </motion.div>
+          <p className="text-muted-foreground mt-1">
+            Customize your storefront's appearance and layout
+          </p>
+        </div>
       </div>
 
       <Tabs
@@ -230,10 +187,14 @@ export default function CustomizePage() {
         onValueChange={setActiveTab}
         className="space-y-8"
       >
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="theme" className="gap-2">
             <Settings className="h-4 w-4" />
             Theme
+          </TabsTrigger>
+          <TabsTrigger value="details" className="gap-2">
+            <User className="h-4 w-4" />
+            Storefront Details
           </TabsTrigger>
           <TabsTrigger value="collections" className="gap-2">
             <LayoutGrid className="h-4 w-4" />
@@ -252,53 +213,99 @@ export default function CustomizePage() {
               <ThemeSelector
                 selectedTheme={selectedTheme}
                 onSelectTheme={setSelectedTheme}
+                onSaveTheme={handleSaveTheme}
+                isSaving={isSaving}
               />
             </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.2, delay: 0.1 }}
-            >
-              <Card className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-2xl font-bold">Live Preview</h2>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-2"
-                    onClick={() => window.location.reload()}
-                  >
-                    <RefreshCw className="h-4 w-4" />
-                    Refresh Preview
-                  </Button>
-                </div>
-                <div className="border rounded-lg overflow-hidden">
-                  <ThemePreview
-                    theme={selectedTheme}
-                    storefrontData={storefront}
-                  />
-                </div>
-              </Card>
-            </motion.div>
-          </TabsContent>
 
-          <TabsContent value="collections">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.2 }}
             >
-              <CollectionsManager
-                collections={storefront.collections || []}
-                allProducts={storefront.products}
-                onUpdate={handleUpdateCollections}
+              <ThemePreview
+                theme={selectedTheme}
+                storefrontData={storefront}
               />
             </motion.div>
           </TabsContent>
+
+          <TabsContent value="details">
+            <Card className="p-6">
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-lg font-semibold">Profile Picture</h3>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Upload a profile picture for your storefront
+                  </p>
+                  <div className="mt-4">
+                    <ImageUpload
+                      currentImage={storefront?.logoUrl}
+                      onImageUpload={(url) => {
+                        setStorefront(prev => ({
+                          ...prev!,
+                          logoUrl: url
+                        }))
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold">Bio</h3>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Write a brief description about your storefront
+                  </p>
+                  <div className="mt-4">
+                    <Textarea
+                      value={storefront?.description || ''}
+                      onChange={(e) => {
+                        setStorefront(prev => ({
+                          ...prev!,
+                          description: e.target.value
+                        }))
+                      }}
+                      placeholder="Tell visitors about your storefront..."
+                      className="min-h-[100px]"
+                    />
+                  </div>
+                </div>
+
+                <Button
+                  onClick={handleUpdateProfile}
+                  disabled={isUpdatingProfile}
+                  className="w-full"
+                >
+                  {isUpdatingProfile ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Updating Profile...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4 mr-2" />
+                      Save Profile Changes
+                    </>
+                  )}
+                </Button>
+              </div>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="collections">
+            <CollectionsManager
+              collections={storefront?.collections || []}
+              onUpdateCollections={(collections) => {
+                setStorefront(prev => ({
+                  ...prev!,
+                  collections
+                }))
+              }}
+            />
+          </TabsContent>
         </AnimatePresence>
       </Tabs>
-    </motion.div>
+    </div>
   )
 } 
