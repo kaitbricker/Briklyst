@@ -21,7 +21,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { useToast } from '@/components/ui/use-toast'
-import { Pencil, Trash2, Plus, Search, Filter, ArrowUpRight } from 'lucide-react'
+import { Pencil, Trash2, Plus, Search, Filter, ArrowUpRight, ShoppingBag } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
@@ -36,6 +36,7 @@ interface Product {
   imageUrl: string
   affiliateUrl: string
   clicks: number
+  tags?: string[]
 }
 
 export default function ProductsPage() {
@@ -201,25 +202,25 @@ export default function ProductsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f9fafb] to-[#f1f5f9] space-y-8 p-8">
-      <motion.div 
+      <motion.div
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.3 }}
-        className="flex items-center justify-between bg-white/70 backdrop-blur-lg p-8 rounded-2xl shadow-lg"
+        className="flex items-center justify-between bg-white/70 backdrop-blur-lg p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100/50"
       >
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-pink-500">Products</h1>
-          <p className="text-gray-500">Manage and track your product listings</p>
+          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#4F8CFF] to-[#A259E6]">Product Management</h1>
+          <p className="text-gray-500">Add, edit, and manage your products</p>
         </div>
         <div className="flex gap-2">
           <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
             <DialogTrigger asChild>
-              <Button className="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-md hover:from-orange-600 hover:to-pink-600">
+              <Button className="flex items-center gap-2 bg-gradient-to-r from-[#4F8CFF] to-[#A259E6] text-white shadow-md hover:from-[#3a6fd8] hover:to-[#7d3fc7] hover:shadow-lg transition-all duration-300">
                 <Plus className="w-4 h-4" />
                 Add Product
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="bg-white/95 backdrop-blur-md shadow-2xl border border-gray-100/50">
               <DialogHeader>
                 <DialogTitle>Add Product</DialogTitle>
               </DialogHeader>

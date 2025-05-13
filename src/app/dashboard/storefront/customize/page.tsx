@@ -12,6 +12,7 @@ import { useToast } from '@/components/ui/use-toast'
 import { nanoid } from 'nanoid'
 import TemplateManager from './components/TemplateManager'
 import TemplatePreview from './components/TemplatePreview'
+import { Button } from '@/components/ui/button'
 
 export default function CustomizePage() {
   const { toast } = useToast()
@@ -26,6 +27,7 @@ export default function CustomizePage() {
   } = useStorefrontCustomization()
 
   const [previewedTemplateId, setPreviewedTemplateId] = useState<string | null>(null)
+  const [isSaving, setIsSaving] = useState(false)
 
   const handleTemplateSelect = async (templateId: string) => {
     try {
@@ -40,6 +42,27 @@ export default function CustomizePage() {
         description: 'Failed to update template',
         variant: 'destructive',
       })
+    }
+  }
+
+  const handleSaveTheme = async () => {
+    setIsSaving(true)
+    try {
+      await updateTemplate(customization.templateId)
+      await updateCustomSections(customization.customSections || [])
+      await updateBrandingAssets(customization.brandingAssets)
+      toast({
+        title: 'Success',
+        description: 'Theme saved and deployed successfully',
+      })
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to save theme',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsSaving(false)
     }
   }
 
@@ -198,12 +221,21 @@ export default function CustomizePage() {
       <h1 className="text-3xl font-bold mb-8">Customize Storefront</h1>
 
       <Tabs defaultValue="template" className="space-y-8">
-        <TabsList>
-          <TabsTrigger value="template">Template</TabsTrigger>
-          <TabsTrigger value="sections">Sections</TabsTrigger>
-          <TabsTrigger value="branding">Branding</TabsTrigger>
-          <TabsTrigger value="templates">Templates</TabsTrigger>
-        </TabsList>
+        <div className="flex justify-between items-center">
+          <TabsList>
+            <TabsTrigger value="template">Template</TabsTrigger>
+            <TabsTrigger value="sections">Sections</TabsTrigger>
+            <TabsTrigger value="branding">Branding</TabsTrigger>
+            <TabsTrigger value="templates">Templates</TabsTrigger>
+          </TabsList>
+          <Button
+            onClick={handleSaveTheme}
+            disabled={isSaving}
+            className="bg-gradient-to-r from-orange-400 to-pink-500 text-white font-semibold shadow-md hover:from-orange-500 hover:to-pink-600 transition-all"
+          >
+            {isSaving ? 'Saving...' : 'Save Theme'}
+          </Button>
+        </div>
 
         <TabsContent value="template">
           <TemplatePicker

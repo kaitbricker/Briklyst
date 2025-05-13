@@ -129,7 +129,7 @@ export function TopNav() {
                 <DropdownMenuItem asChild>
                   <Link href={`/storefronts/${username}`} className="flex items-center w-full py-3 px-2 hover:bg-gray-50 rounded-lg transition" target="_blank">
                     <Eye className="w-5 h-5 mr-3 text-gray-700" />
-                    <span className="font-medium text-gray-800">Preview Storefront</span>
+                    <span className="font-medium text-gray-800">View My Storefront</span>
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>

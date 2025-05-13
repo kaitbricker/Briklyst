@@ -261,7 +261,7 @@ export default function StorefrontPage() {
 
   // Check for live drop
   const hasLiveDrop = products.some(p => p.tags?.some(tag => tag.toLowerCase().includes('drop')));
-  const bannerColor = 'bg-gradient-to-r from-orange-400 to-pink-500';
+  const bannerColor = 'bg-gradient-to-r from-[#4F8CFF] to-[#A259E6]';
   const liveDropText = hasLiveDrop ? '🔥 Live Drop Happening Now!' : '';
 
   const handleReorder = (result: any) => {
@@ -309,21 +309,21 @@ export default function StorefrontPage() {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.3 }}
-        className="flex items-center justify-between bg-white/70 backdrop-blur-lg p-8 rounded-2xl shadow-lg"
+        className="flex items-center justify-between bg-white/70 backdrop-blur-lg p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100/50"
       >
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-pink-500">Storefront Customization</h1>
+          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#4F8CFF] to-[#A259E6]">Storefront Customization</h1>
           <p className="text-gray-500">Edit your storefront&apos;s look, feel, and content</p>
         </div>
         <div className="flex gap-2">
           <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
             <DialogTrigger asChild>
-              <Button className="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-md hover:from-orange-600 hover:to-pink-600">
+              <Button className="flex items-center gap-2 bg-gradient-to-r from-[#4F8CFF] to-[#A259E6] text-white shadow-md hover:from-[#3a6fd8] hover:to-[#7d3fc7] hover:shadow-lg transition-all duration-300">
                 <Plus className="w-4 h-4" />
                 Add Product
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="bg-white/95 backdrop-blur-md shadow-2xl border border-gray-100/50">
               <DialogHeader>
                 <DialogTitle>Add Product</DialogTitle>
               </DialogHeader>
@@ -337,15 +337,15 @@ export default function StorefrontPage() {
       <div className="flex flex-col gap-10">
         {/* Customization Form */}
         <div className="space-y-10">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-8">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 border border-gray-100/50">
             <TabsList className="flex gap-6 mb-8 border-b pb-2">
-              <TabsTrigger value="design" className="text-lg font-semibold flex items-center gap-2 text-gray-700"><Palette className="w-5 h-5" /> Design & Theme</TabsTrigger>
-              <TabsTrigger value="products" className="text-lg font-semibold flex items-center gap-2 text-gray-700"><ShoppingBag className="w-5 h-5" /> Products</TabsTrigger>
-              <TabsTrigger value="details" className="text-lg font-semibold flex items-center gap-2 text-gray-700"><Info className="w-5 h-5" /> Storefront Details</TabsTrigger>
-              <TabsTrigger value="collections" className="text-lg font-semibold flex items-center gap-2 text-gray-700"><Folder className="w-5 h-5" /> Collections</TabsTrigger>
+              <TabsTrigger value="design" className="text-lg font-semibold flex items-center gap-2 text-gray-700 hover:text-[#4F8CFF] transition-colors"><Palette className="w-5 h-5" /> Design & Theme</TabsTrigger>
+              <TabsTrigger value="products" className="text-lg font-semibold flex items-center gap-2 text-gray-700 hover:text-[#4F8CFF] transition-colors"><ShoppingBag className="w-5 h-5" /> Products</TabsTrigger>
+              <TabsTrigger value="details" className="text-lg font-semibold flex items-center gap-2 text-gray-700 hover:text-[#4F8CFF] transition-colors"><Info className="w-5 h-5" /> Storefront Details</TabsTrigger>
+              <TabsTrigger value="collections" className="text-lg font-semibold flex items-center gap-2 text-gray-700 hover:text-[#4F8CFF] transition-colors"><Folder className="w-5 h-5" /> Collections</TabsTrigger>
             </TabsList>
             <TabsContent value="design">
-              <Card className="p-8 rounded-2xl bg-white/90 shadow-md mb-8">
+              <Card className="p-8 rounded-2xl bg-white/90 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100/50">
                 <h3 className="text-xl font-bold mb-4">Theme & Colors</h3>
                 <ThemeSelector
                   currentThemeId={localStorefront?.themeId || 'bubblegum-pop'}
@@ -366,13 +366,13 @@ export default function StorefrontPage() {
               </Card>
             </TabsContent>
             <TabsContent value="products">
-              <Card className="p-8 rounded-2xl bg-white/90 shadow-md">
+              <Card className="p-8 rounded-2xl bg-white/90 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100/50">
                 <h3 className="text-xl font-bold mb-4">Manage Products</h3>
                 <ProductList products={products} onReorder={handleReorder} />
               </Card>
             </TabsContent>
             <TabsContent value="details">
-              <Card className="p-8 rounded-2xl bg-white/90 shadow-md">
+              <Card className="p-8 rounded-2xl bg-white/90 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100/50">
                 <h3 className="text-xl font-bold mb-4">Storefront Details</h3>
                 <form onSubmit={handleSubmit} className="space-y-8">
                   <div className="space-y-4">
@@ -381,7 +381,7 @@ export default function StorefrontPage() {
                       id="title"
                       value={localStorefront?.title || ''}
                       onChange={e => setLocalStorefront({ ...localStorefront, title: e.target.value })}
-                      className="mt-1"
+                      className="mt-1 bg-white/50 backdrop-blur-sm border-gray-200 focus:border-[#4F8CFF] focus:ring-[#4F8CFF]/20 transition-all duration-200"
                     />
                   </div>
                   <div className="space-y-4">
@@ -390,7 +390,7 @@ export default function StorefrontPage() {
                       id="description"
                       value={localStorefront?.description || ''}
                       onChange={e => setLocalStorefront({ ...localStorefront, description: e.target.value })}
-                      className="mt-1"
+                      className="mt-1 bg-white/50 backdrop-blur-sm border-gray-200 focus:border-[#4F8CFF] focus:ring-[#4F8CFF]/20 transition-all duration-200"
                     />
                   </div>
                   <div className="space-y-4">
@@ -399,24 +399,24 @@ export default function StorefrontPage() {
                       id="tagline"
                       value={localStorefront?.tagline || ''}
                       onChange={e => setLocalStorefront({ ...localStorefront, tagline: e.target.value })}
-                      className="mt-1"
+                      className="mt-1 bg-white/50 backdrop-blur-sm border-gray-200 focus:border-[#4F8CFF] focus:ring-[#4F8CFF]/20 transition-all duration-200"
                     />
                   </div>
                   <div className="pt-4">
-                    <Button type="submit" className="w-full bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-md hover:from-orange-600 hover:to-pink-600 text-lg py-3 rounded-xl sticky bottom-0">Save Changes</Button>
+                    <Button type="submit" className="w-full bg-gradient-to-r from-[#4F8CFF] to-[#A259E6] text-white shadow-md hover:from-[#3a6fd8] hover:to-[#7d3fc7] hover:shadow-lg text-lg py-3 rounded-xl sticky bottom-0 transition-all duration-300">Save Changes</Button>
                   </div>
                 </form>
               </Card>
             </TabsContent>
             <TabsContent value="collections">
-              <Card className="p-8 rounded-2xl bg-white/90 shadow-md">
+              <Card className="p-8 rounded-2xl bg-white/90 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100/50">
                 <h3 className="text-xl font-bold mb-4">Collections</h3>
                 <div className="space-y-6">
                   <div className="flex justify-between items-center mb-4">
                     <h4 className="text-lg font-semibold">Your Collections</h4>
                     <Button 
                       onClick={() => setNewCollection({ name: '', description: '', tags: [] })}
-                      className="bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-md hover:from-orange-600 hover:to-pink-600"
+                      className="bg-gradient-to-r from-[#4F8CFF] to-[#A259E6] text-white shadow-md hover:from-[#3a6fd8] hover:to-[#7d3fc7] hover:shadow-lg transition-all duration-300"
                     >
                       <Plus className="w-4 h-4 mr-2" />
                       Add Collection
@@ -424,7 +424,7 @@ export default function StorefrontPage() {
                   </div>
                   <div className="grid gap-4">
                     {collections.map((collection) => (
-                      <div key={collection.id} className="p-4 border rounded-lg bg-gray-50">
+                      <div key={collection.id} className="p-4 border rounded-lg bg-white/50 backdrop-blur-sm hover:bg-white/80 transition-all duration-300 shadow-sm hover:shadow-md border-gray-100/50">
                         <h4 className="font-medium">{collection.name}</h4>
                         {collection.description && (
                           <p className="text-sm text-gray-600 mt-1">{collection.description}</p>
@@ -440,7 +440,7 @@ export default function StorefrontPage() {
 
         {/* Live Preview (now below the form) */}
         <div>
-          <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl p-8 border border-gray-100">
+          <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 p-8 border border-gray-100/50">
             <h2 className="text-xl font-semibold mb-4">Live Preview</h2>
             <div className="relative">
               <StorefrontPreview storefront={localStorefront} isEditing={true} />

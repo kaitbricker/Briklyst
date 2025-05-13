@@ -136,7 +136,10 @@ export default function DashboardLayout({
           </nav>
           <div className="px-8 py-6">
             {session?.user?.name && (
-              <Button className="w-full bg-gradient-to-r from-[#4F8CFF] to-[#A259E6] text-white font-bold shadow-none hover:from-[#3a6fd8] hover:to-[#7d3fc7] transition-all">
+              <Button 
+                className="w-full bg-gradient-to-r from-[#4F8CFF] to-[#A259E6] text-white font-bold shadow-none hover:from-[#3a6fd8] hover:to-[#7d3fc7] transition-all"
+                onClick={() => router.push(`/storefronts/${session.user.name}`)}
+              >
                 View My Storefront
               </Button>
             )}

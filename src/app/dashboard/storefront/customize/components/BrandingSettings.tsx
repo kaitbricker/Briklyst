@@ -7,11 +7,14 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ImageUpload } from '@/components/ui/image-upload'
 import { ColorPicker } from '@/components/ui/color-picker'
+import Image from 'next/image'
 
 interface BrandingAssets {
   logo?: string
   banner?: string
   favicon?: string
+  profilePicture?: string
+  headingPicture?: string
   buttonStyles?: {
     primary?: string
     secondary?: string
@@ -50,6 +53,86 @@ export default function BrandingSettings({
       </div>
 
       <div className="grid gap-8 md:grid-cols-2">
+        {/* Profile Picture */}
+        <Card className="p-6">
+          <h3 className="mb-4 font-medium">Profile Picture</h3>
+          <div className="space-y-4">
+            <div className="relative h-32 w-32 rounded-full overflow-hidden border mx-auto">
+              {settings.profilePicture ? (
+                <Image
+                  src={settings.profilePicture}
+                  alt="Profile picture preview"
+                  fill
+                  className="object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = '/placeholder-avatar.jpg';
+                  }}
+                />
+              ) : (
+                <div className="h-full w-full bg-gray-100 flex items-center justify-center">
+                  <p className="text-sm text-gray-500">No profile picture</p>
+                </div>
+              )}
+            </div>
+            <ImageUpload
+              value={settings.profilePicture}
+              onChange={(url) => handleUpdate({ profilePicture: url })}
+            />
+            <div className="space-y-2">
+              <Label>Profile Picture URL</Label>
+              <Input
+                value={settings.profilePicture || ''}
+                onChange={(e) => handleUpdate({ profilePicture: e.target.value })}
+                placeholder="Enter profile picture URL"
+              />
+              <p className="text-xs text-muted-foreground">
+                Recommended size: 400x400px. Max file size: 2MB
+              </p>
+            </div>
+          </div>
+        </Card>
+
+        {/* Heading Picture */}
+        <Card className="p-6">
+          <h3 className="mb-4 font-medium">Heading Picture</h3>
+          <div className="space-y-4">
+            <div className="relative h-48 w-full rounded-lg overflow-hidden border">
+              {settings.headingPicture ? (
+                <Image
+                  src={settings.headingPicture}
+                  alt="Heading picture preview"
+                  fill
+                  className="object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = '/placeholder-banner.jpg';
+                  }}
+                />
+              ) : (
+                <div className="h-full w-full bg-gray-100 flex items-center justify-center">
+                  <p className="text-sm text-gray-500">No heading picture</p>
+                </div>
+              )}
+            </div>
+            <ImageUpload
+              value={settings.headingPicture}
+              onChange={(url) => handleUpdate({ headingPicture: url })}
+            />
+            <div className="space-y-2">
+              <Label>Heading Picture URL</Label>
+              <Input
+                value={settings.headingPicture || ''}
+                onChange={(e) => handleUpdate({ headingPicture: e.target.value })}
+                placeholder="Enter heading picture URL"
+              />
+              <p className="text-xs text-muted-foreground">
+                Recommended size: 1200x400px. Max file size: 5MB
+              </p>
+            </div>
+          </div>
+        </Card>
+
         {/* Logo */}
         <Card className="p-6">
           <h3 className="mb-4 font-medium">Logo</h3>
@@ -73,6 +156,24 @@ export default function BrandingSettings({
         <Card className="p-6">
           <h3 className="mb-4 font-medium">Banner</h3>
           <div className="space-y-4">
+            <div className="relative h-48 w-full rounded-lg overflow-hidden border">
+              {settings.banner ? (
+                <Image
+                  src={settings.banner}
+                  alt="Banner preview"
+                  fill
+                  className="object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = '/placeholder-banner.jpg';
+                  }}
+                />
+              ) : (
+                <div className="h-full w-full bg-gray-100 flex items-center justify-center">
+                  <p className="text-sm text-gray-500">No banner image selected</p>
+                </div>
+              )}
+            </div>
             <ImageUpload
               value={settings.banner}
               onChange={(url) => handleUpdate({ banner: url })}
@@ -84,6 +185,9 @@ export default function BrandingSettings({
                 onChange={(e) => handleUpdate({ banner: e.target.value })}
                 placeholder="Enter banner URL"
               />
+              <p className="text-xs text-muted-foreground">
+                Recommended size: 1920x1080px. Max file size: 5MB
+              </p>
             </div>
           </div>
         </Card>

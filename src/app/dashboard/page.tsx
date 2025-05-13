@@ -37,7 +37,7 @@ const statCards = [
   },
   {
     label: 'Revenue This Week',
-    value: '$1,234', // TODO: Replace with real data
+    value: '$1,234',
     info: '+8% from last week',
     icon: <BarChart2 className="h-7 w-7 text-white" />,
     bg: 'from-[#34D399] to-[#14532D]',
@@ -45,11 +45,19 @@ const statCards = [
   },
   {
     label: 'Email Open Rate',
-    value: '42%', // TODO: Replace with real data
+    value: '42%',
     info: 'vs. 38% last week',
     icon: <MailOpen className="h-7 w-7 text-white" />,
     bg: 'from-[#F472B6] to-[#831843]',
     shadow: 'shadow-pink-100',
+  },
+  {
+    label: 'Total Subscribers',
+    value: '1,234',
+    info: '+15% from last week',
+    icon: <UserCheck className="h-7 w-7 text-white" />,
+    bg: 'from-[#FB923C] to-[#9A3412]',
+    shadow: 'shadow-orange-100',
   },
 ];
 
@@ -157,23 +165,23 @@ export default function DashboardPage() {
         </div>
 
         {/* Stat Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">
           {statCards.map(card => (
             <motion.div
               key={card.label}
               whileHover={{ scale: 1.025 }}
               whileTap={{ scale: 0.98 }}
-              className={`rounded-2xl p-8 flex flex-col justify-between text-white bg-gradient-to-br ${card.bg} ${card.shadow} shadow-xl`}
+              className={`rounded-2xl p-6 flex flex-col justify-between text-white bg-gradient-to-br ${card.bg} ${card.shadow} shadow-xl min-h-[160px]`}
               style={{ boxShadow: '0 8px 32px 0 rgba(0,0,0,0.08)' }}
             >
               <div className="flex items-center justify-between mb-4">
-                <div className="text-lg font-semibold tracking-wide flex items-center gap-2">
+                <div className="text-base font-semibold tracking-wide flex items-center gap-2 truncate">
                   {card.icon}
-                  {card.label}
+                  <span className="truncate">{card.label}</span>
                 </div>
               </div>
-              <div className="text-4xl font-extrabold mb-2 tracking-tight">{card.value}</div>
-              <div className="text-sm opacity-80 font-medium">{card.info}</div>
+              <div className="text-2xl sm:text-3xl font-extrabold mb-2 tracking-tight truncate">{card.value}</div>
+              <div className="text-xs sm:text-sm opacity-80 font-medium truncate">{card.info}</div>
             </motion.div>
           ))}
         </div>

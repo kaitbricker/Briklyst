@@ -38,7 +38,7 @@ export default function TemplatePreview({
             variant="outline"
             size="sm"
             onClick={() => setLocalPreviewMode(localPreviewMode === 'desktop' ? 'mobile' : 'desktop')}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 transition-all duration-200"
           >
             {localPreviewMode === 'desktop' ? (
               <>
@@ -57,7 +57,7 @@ export default function TemplatePreview({
               variant="outline"
               size="sm"
               onClick={onReset}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 transition-all duration-200"
             >
               <RefreshCw className="w-4 h-4" />
               <span className="hidden sm:inline">Reset</span>
@@ -86,18 +86,18 @@ export default function TemplatePreview({
 
       <div
         className={cn(
-          "relative border rounded-lg overflow-hidden bg-background transition-all duration-200",
+          "relative border rounded-lg overflow-hidden bg-background transition-all duration-300",
           localPreviewMode === 'mobile' ? "max-w-[375px] mx-auto" : "w-full",
           isFullscreen && "h-[calc(100vh-8rem)]"
         )}
       >
         <div className="absolute inset-0 overflow-auto">
-          <div className="min-h-full">
+          <div className="min-h-full transition-all duration-300">
             {/* Header */}
-            <header className="border-b p-4">
+            <header className="border-b p-4 transition-all duration-300">
               <div className="flex items-center justify-between">
                 <h1 
-                  className="text-xl font-bold" 
+                  className="text-xl font-bold transition-all duration-300" 
                   style={{ 
                     fontFamily: customizations?.fonts?.heading || template.defaultFonts.heading,
                     color: customizations?.colors?.text || template.defaultColors.text
@@ -118,14 +118,14 @@ export default function TemplatePreview({
 
             {/* Hero Section */}
             <section 
-              className="p-8 text-center" 
+              className="p-8 text-center transition-all duration-300" 
               style={{ 
                 backgroundColor: customizations?.colors?.background || template.defaultColors.background,
                 padding: customizations?.layout?.spacing || template.defaultLayout.spacing
               }}
             >
               <h2 
-                className="text-4xl font-bold mb-4" 
+                className="text-4xl font-bold mb-4 transition-all duration-300" 
                 style={{ 
                   fontFamily: customizations?.fonts?.heading || template.defaultFonts.heading,
                   color: customizations?.colors?.text || template.defaultColors.text
@@ -134,7 +134,7 @@ export default function TemplatePreview({
                 Welcome to Our Store
               </h2>
               <p 
-                className="mb-6" 
+                className="mb-6 transition-all duration-300" 
                 style={{ 
                   fontFamily: customizations?.fonts?.body || template.defaultFonts.body,
                   color: customizations?.colors?.text || template.defaultColors.text
@@ -143,7 +143,7 @@ export default function TemplatePreview({
                 Discover our amazing products and services
               </p>
               <button 
-                className="px-6 py-2 rounded-md text-white"
+                className="px-6 py-2 rounded-md text-white transition-all duration-300"
                 style={{ 
                   backgroundColor: customizations?.colors?.primary || template.defaultColors.primary,
                   borderRadius: customizations?.layout?.borderRadius || template.defaultLayout.borderRadius

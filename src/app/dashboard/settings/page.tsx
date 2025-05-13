@@ -8,13 +8,14 @@ import { useStorefront } from '@/hooks/useStorefront'
 import { StorefrontForm } from '@/components/forms/StorefrontForm'
 import { Loader2, Settings2, Plus, X, Edit2, Save, Trash, Search } from 'lucide-react'
 import { Input } from '@/components/ui/input'
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card'
 import { useToast } from '@/components/ui/use-toast'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
 import { useStorefrontUpdate } from '@/context/StorefrontUpdateContext'
+import Image from 'next/image'
 
 interface Storefront {
   id: string
@@ -51,6 +52,21 @@ export default function SettingsPage() {
   const [error, setError] = useState<string | null>(null)
   const { toast } = useToast()
   const { triggerUpdate } = useStorefrontUpdate()
+  const [profileData, setProfileData] = useState({
+    name: '',
+    email: '',
+    bio: '',
+    avatarUrl: '',
+  })
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  })
+  const [notifications, setNotifications] = useState({
+    email: false,
+    marketing: false,
+  })
 
   useEffect(() => {
     const fetchStorefront = async () => {
@@ -65,6 +81,12 @@ export default function SettingsPage() {
 
         const data = await response.json()
         setStorefront(data)
+        setProfileData({
+          name: data.user.name,
+          email: data.user.email,
+          bio: data.user.bio || '',
+          avatarUrl: data.logoUrl || '',
+        })
       } catch (err) {
         console.error('Error fetching storefront:', err)
         setError(err instanceof Error ? err.message : 'Failed to load storefront')
@@ -109,6 +131,16 @@ export default function SettingsPage() {
       localStorage.removeItem('onboardingComplete');
       router.push('/dashboard'); // reload dashboard to trigger onboarding
     }
+  };
+
+  const handleProfileSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Handle form submission
+  };
+
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Handle form submission
   };
 
   if (isLoading) {
@@ -160,119 +192,197 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f9fafb] to-[#f1f5f9] space-y-8 p-8">
-      <motion.div 
+      <motion.div
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.3 }}
-        className="flex items-center justify-between bg-white/70 backdrop-blur-lg p-8 rounded-2xl shadow-lg"
+        className="flex items-center justify-between bg-white/70 backdrop-blur-lg p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100/50"
       >
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-pink-500">Account Settings</h1>
-          <p className="text-gray-500">Manage your account preferences and notifications</p>
+          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#4F8CFF] to-[#A259E6]">Settings</h1>
+          <p className="text-gray-500">Manage your account and preferences</p>
         </div>
       </motion.div>
 
-      <div className="grid gap-8 md:grid-cols-2">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Profile Settings */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
+          className="lg:col-span-2 space-y-8"
         >
-          <Card className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-md">
+          <Card className="bg-white/90 backdrop-blur-md shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100/50">
             <CardHeader>
               <CardTitle>Profile Settings</CardTitle>
+              <CardDescription>Update your personal information</CardDescription>
             </CardHeader>
             <CardContent>
-              <form className="space-y-6">
-                <div>
-                  <Label htmlFor="name">Display Name</Label>
-                  <Input
-                    id="name"
-                    value={storefront?.user?.name || ''}
-                    onChange={(e) => handleFieldChange('name', e.target.value)}
-                    className="mt-1"
-                  />
+              <form onSubmit={handleProfileSubmit} className="space-y-6">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4">
+                    <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-[#4F8CFF] shadow-lg">
+                      <Image
+                        src={profileData.avatarUrl || '/placeholder-avatar.jpg'}
+                        alt="Profile"
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="text-[#4F8CFF] hover:text-[#3a6fd8] hover:border-[#3a6fd8] transition-colors duration-200"
+                      >
+                        Change Avatar
+                      </Button>
+                      <p className="text-sm text-gray-500 mt-1">JPG, GIF or PNG. Max size of 2MB.</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="name">Full Name</Label>
+                      <Input
+                        id="name"
+                        value={profileData.name}
+                        onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
+                        className="bg-white/50 backdrop-blur-sm border-gray-200 focus:border-[#4F8CFF] focus:ring-[#4F8CFF]/20 transition-all duration-200"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={profileData.email}
+                        onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
+                        className="bg-white/50 backdrop-blur-sm border-gray-200 focus:border-[#4F8CFF] focus:ring-[#4F8CFF]/20 transition-all duration-200"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="bio">Bio</Label>
+                    <Textarea
+                      id="bio"
+                      value={profileData.bio}
+                      onChange={(e) => setProfileData({ ...profileData, bio: e.target.value })}
+                      className="bg-white/50 backdrop-blur-sm border-gray-200 focus:border-[#4F8CFF] focus:ring-[#4F8CFF]/20 transition-all duration-200 min-h-[100px]"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={storefront?.user?.email || ''}
-                    onChange={(e) => handleFieldChange('email', e.target.value)}
-                    className="mt-1"
-                  />
+                <Button
+                  type="submit"
+                  className="bg-gradient-to-r from-[#4F8CFF] to-[#A259E6] text-white shadow-md hover:from-[#3a6fd8] hover:to-[#7d3fc7] hover:shadow-lg transition-all duration-300"
+                >
+                  Save Changes
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white/90 backdrop-blur-md shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100/50">
+            <CardHeader>
+              <CardTitle>Password</CardTitle>
+              <CardDescription>Update your password</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handlePasswordSubmit} className="space-y-6">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="currentPassword">Current Password</Label>
+                    <Input
+                      id="currentPassword"
+                      type="password"
+                      value={passwordData.currentPassword}
+                      onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+                      className="bg-white/50 backdrop-blur-sm border-gray-200 focus:border-[#4F8CFF] focus:ring-[#4F8CFF]/20 transition-all duration-200"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="newPassword">New Password</Label>
+                    <Input
+                      id="newPassword"
+                      type="password"
+                      value={passwordData.newPassword}
+                      onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                      className="bg-white/50 backdrop-blur-sm border-gray-200 focus:border-[#4F8CFF] focus:ring-[#4F8CFF]/20 transition-all duration-200"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                    <Input
+                      id="confirmPassword"
+                      type="password"
+                      value={passwordData.confirmPassword}
+                      onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+                      className="bg-white/50 backdrop-blur-sm border-gray-200 focus:border-[#4F8CFF] focus:ring-[#4F8CFF]/20 transition-all duration-200"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <Label htmlFor="bio">Bio</Label>
-                  <Textarea
-                    id="bio"
-                    value={storefront?.user?.bio || ''}
-                    onChange={(e) => handleFieldChange('bio', e.target.value)}
-                    className="mt-1"
-                  />
-                </div>
-                <Button type="submit" className="bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-md hover:from-orange-600 hover:to-pink-600">
-                  Save Profile
+                <Button
+                  type="submit"
+                  className="bg-gradient-to-r from-[#4F8CFF] to-[#A259E6] text-white shadow-md hover:from-[#3a6fd8] hover:to-[#7d3fc7] hover:shadow-lg transition-all duration-300"
+                >
+                  Update Password
                 </Button>
               </form>
             </CardContent>
           </Card>
         </motion.div>
 
+        {/* Sidebar */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3, delay: 0.2 }}
+          className="space-y-8"
         >
-          <Card className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-md">
+          <Card className="bg-white/90 backdrop-blur-md shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100/50">
             <CardHeader>
-              <CardTitle>Notification Preferences</CardTitle>
+              <CardTitle>Account Settings</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-medium">Email Alerts</h3>
-                    <p className="text-sm text-gray-500">Receive notifications about your storefront activity</p>
-                  </div>
-                  <Switch
-                    checked={storefront?.user?.emailAlerts}
-                    onCheckedChange={(checked) => handleFieldChange('emailAlerts', checked.toString())}
-                  />
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Email Notifications</p>
+                  <p className="text-sm text-gray-500">Receive updates about your account</p>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-medium">Weekly Reports</h3>
-                    <p className="text-sm text-gray-500">Get weekly summaries of your storefront performance</p>
-                  </div>
-                  <Switch
-                    checked={storefront?.user?.weeklyReport}
-                    onCheckedChange={(checked) => handleFieldChange('weeklyReport', checked.toString())}
-                  />
+                <Switch
+                  checked={notifications.email}
+                  onCheckedChange={(checked) => setNotifications({ ...notifications, email: checked })}
+                  className="data-[state=checked]:bg-[#4F8CFF]"
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Marketing Emails</p>
+                  <p className="text-sm text-gray-500">Receive marketing communications</p>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-medium">Monthly Reports</h3>
-                    <p className="text-sm text-gray-500">Receive detailed monthly analytics reports</p>
-                  </div>
-                  <Switch
-                    checked={storefront?.user?.monthlyReport}
-                    onCheckedChange={(checked) => handleFieldChange('monthlyReport', checked.toString())}
-                  />
-                </div>
+                <Switch
+                  checked={notifications.marketing}
+                  onCheckedChange={(checked) => setNotifications({ ...notifications, marketing: checked })}
+                  className="data-[state=checked]:bg-[#4F8CFF]"
+                />
               </div>
             </CardContent>
           </Card>
-        </motion.div>
-      </div>
 
-      <div className="mt-8">
-        <h2 className="text-lg font-bold mb-2">Onboarding</h2>
-        <p className="text-gray-600 mb-2">Need a refresher? You can restart the onboarding guide at any time.</p>
-        <Button variant="outline" onClick={handleRestartOnboarding}>
-          Restart Onboarding
-        </Button>
+          <Card className="bg-white/90 backdrop-blur-md shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100/50">
+            <CardHeader>
+              <CardTitle>Danger Zone</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Button
+                variant="destructive"
+                className="w-full bg-red-500 hover:bg-red-600 shadow-md hover:shadow-lg transition-all duration-300"
+                onClick={() => {/* Handle account deletion */}}
+              >
+                Delete Account
+              </Button>
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
     </div>
   )
