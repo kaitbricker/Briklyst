@@ -253,7 +253,7 @@ export default function ThemeSelector({ selectedTheme, onSelectTheme }: ThemeSel
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold mb-2">Choose Your Theme</h2>
-        <p className="text-muted-foreground">Select a theme that matches your brand's personality</p>
+        <p className="text-muted-foreground">Select a theme that matches your brand&apos;s personality</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
