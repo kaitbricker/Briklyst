@@ -151,6 +151,17 @@ export default function CustomizePage() {
     }
   }
 
+  // Create a derived previewStorefront for live preview
+  const previewStorefront = storefront && selectedTheme ? {
+    ...storefront,
+    theme: selectedTheme,
+    primaryColor: selectedTheme.primaryColor,
+    accentColor: selectedTheme.accentColor,
+    backgroundColor: selectedTheme.backgroundColor,
+    textColor: selectedTheme.textColor,
+    fontFamily: selectedTheme.fontFamily,
+  } : storefront;
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -226,7 +237,7 @@ export default function CustomizePage() {
             >
               <ThemePreview
                 theme={selectedTheme}
-                storefrontData={storefront}
+                storefrontData={previewStorefront}
               />
             </motion.div>
           </TabsContent>
