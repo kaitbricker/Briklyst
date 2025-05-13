@@ -284,13 +284,39 @@ export default function StorefrontPage() {
     setProducts(items);
   };
 
+  const handleSelectTheme = (theme: Theme) => {
+    setSelectedTheme(theme);
+    if (localStorefront) {
+      setLocalStorefront({
+        ...localStorefront,
+        themeId: theme.id,
+        primaryColor: theme.primaryColor,
+        accentColor: theme.accentColor,
+        backgroundColor: theme.backgroundColor,
+        textColor: theme.textColor,
+        fontFamily: JSON.stringify(theme.fontFamily),
+      });
+    }
+  };
+
   const handleSaveTheme = async () => {
     if (!localStorefront) return;
     setIsSavingTheme(true);
     try {
-      // Save themeId to backend or localStorefront as needed
-      setLocalStorefront({ ...localStorefront, themeId: selectedTheme.id });
-      // Optionally, make an API call here
+      const response = await fetch('/api/storefront/theme', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          storefrontId: localStorefront.id,
+          themeId: selectedTheme.id,
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to save theme');
+      const updated = await response.json();
+      setLocalStorefront({ ...localStorefront, ...updated });
+      toast({ title: 'Success', description: 'Theme saved successfully!' });
+    } catch (err) {
+      toast({ title: 'Error', description: 'Failed to save theme', variant: 'destructive' });
     } finally {
       setIsSavingTheme(false);
     }
@@ -373,7 +399,7 @@ export default function StorefrontPage() {
                 <h3 className="text-xl font-bold mb-4">Theme & Colors</h3>
                 <ThemeSelector
                   selectedTheme={selectedTheme}
-                  onSelectTheme={theme => setSelectedTheme(theme)}
+                  onSelectTheme={handleSelectTheme}
                   onSaveTheme={handleSaveTheme}
                   isSaving={isSavingTheme}
                 />
