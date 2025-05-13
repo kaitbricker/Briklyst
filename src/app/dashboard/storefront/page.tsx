@@ -15,7 +15,7 @@ import { Plus, Settings, Layout, Globe, Palette, Tag, Filter, Flame, ShoppingBag
 import { Card } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { motion, AnimatePresence } from 'framer-motion'
-import ThemeSelector from '@/components/dashboard/ThemeSelector'
+import ThemeSelector from './customize/components/ThemeSelector'
 import StorefrontHeader from '@/components/storefront/StorefrontHeader'
 import StorefrontDescriptionCard from '@/components/storefront/StorefrontDescriptionCard'
 import ProductGrid from '@/components/storefront/ProductGrid'
@@ -23,7 +23,7 @@ import Link from 'next/link'
 import { ImageUpload } from '@/components/ui/image-upload'
 import { useStorefrontUpdate } from '@/context/StorefrontUpdateContext'
 import StorefrontPreview from '@/components/storefront/StorefrontPreview'
-import { themes } from '@/lib/themes'
+import { themes, Theme } from '@/lib/themes'
 import ProductList from '@/components/ProductList'
 import LivePreview from '@/components/LivePreview'
 
@@ -84,6 +84,11 @@ export default function StorefrontPage() {
   const [collections, setCollections] = useState<Collection[]>([])
   const [newCollection, setNewCollection] = useState<{ name: string; description: string; tags: string[] }>({ name: '', description: '', tags: [] })
   const { triggerUpdate } = useStorefrontUpdate()
+  const [selectedTheme, setSelectedTheme] = useState<Theme>(() => {
+    const initialTheme = themes.find(t => t.id === localStorefront?.themeId) || themes[0];
+    return initialTheme;
+  });
+  const [isSavingTheme, setIsSavingTheme] = useState(false);
 
   useEffect(() => {
     const fetchStorefront = async () => {
@@ -138,6 +143,13 @@ export default function StorefrontPage() {
   useEffect(() => {
     if (storefront) setLocalStorefront(storefront)
   }, [storefront])
+
+  useEffect(() => {
+    if (localStorefront) {
+      const theme = themes.find(t => t.id === localStorefront.themeId) || themes[0];
+      setSelectedTheme(theme);
+    }
+  }, [localStorefront]);
 
   const filteredProducts = selectedCategory
     ? products.filter(product => product.categoryId === selectedCategory)
@@ -272,6 +284,18 @@ export default function StorefrontPage() {
     setProducts(items);
   };
 
+  const handleSaveTheme = async () => {
+    if (!localStorefront) return;
+    setIsSavingTheme(true);
+    try {
+      // Save themeId to backend or localStorefront as needed
+      setLocalStorefront({ ...localStorefront, themeId: selectedTheme.id });
+      // Optionally, make an API call here
+    } finally {
+      setIsSavingTheme(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex h-[50vh] items-center justify-center">
@@ -348,20 +372,10 @@ export default function StorefrontPage() {
               <Card className="p-8 rounded-2xl bg-white/90 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100/50">
                 <h3 className="text-xl font-bold mb-4">Theme & Colors</h3>
                 <ThemeSelector
-                  currentThemeId={localStorefront?.themeId || 'bubblegum-pop'}
-                  onThemeChange={themeId => {
-                    const theme = themes.find(t => t.id === themeId);
-                    if (!theme || !localStorefront) return;
-                    setLocalStorefront({
-                      ...localStorefront,
-                      themeId: theme.id,
-                      primaryColor: theme.primaryColor,
-                      accentColor: theme.accentColor,
-                      backgroundColor: theme.backgroundColor,
-                      textColor: theme.textColor,
-                      fontFamily: JSON.stringify(theme.fontFamily),
-                    });
-                  }}
+                  selectedTheme={selectedTheme}
+                  onSelectTheme={theme => setSelectedTheme(theme)}
+                  onSaveTheme={handleSaveTheme}
+                  isSaving={isSavingTheme}
                 />
               </Card>
             </TabsContent>
