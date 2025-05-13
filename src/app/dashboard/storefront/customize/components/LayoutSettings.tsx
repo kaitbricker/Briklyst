@@ -46,9 +46,7 @@ export default function LayoutSettings({
     <div className="space-y-8">
       <div>
         <h2 className="text-xl font-semibold">Layout Settings</h2>
-        <p className="text-sm text-muted-foreground">
-          Customize your storefront's layout and structure
-        </p>
+        <p className="text-sm text-muted-foreground">Let&apos;s make your storefront uniquely yours</p>
       </div>
 
       <div className="grid gap-8 md:grid-cols-2">

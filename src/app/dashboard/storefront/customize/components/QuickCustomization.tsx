@@ -82,9 +82,7 @@ export default function QuickCustomization({
     <div className="space-y-8">
       <div>
         <h2 className="text-xl font-semibold">Quick Customization</h2>
-        <p className="text-sm text-muted-foreground">
-          Quickly adjust your storefront's appearance
-        </p>
+        <p className="text-sm text-muted-foreground">Let&apos;s make your storefront uniquely yours</p>
       </div>
 
       <div className="grid gap-8 md:grid-cols-2">

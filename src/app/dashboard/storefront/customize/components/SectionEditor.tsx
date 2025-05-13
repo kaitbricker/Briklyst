@@ -12,6 +12,7 @@ import { GripVertical, Trash2, Smartphone, Monitor } from 'lucide-react'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 import { cn } from '@/lib/utils'
 import { sectionTypes } from '@/config/sectionTypes'
+import Image from 'next/image'
 
 interface Section {
   id: string
@@ -159,10 +160,12 @@ export default function SectionEditor({
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {(section.content.images || []).map((image: string, index: number) => (
                 <div key={index} className="aspect-square bg-muted rounded-lg overflow-hidden">
-                  <img
+                  <Image
                     src={image}
                     alt={`Gallery image ${index + 1}`}
                     className="w-full h-full object-cover"
+                    width={400}
+                    height={400}
                   />
                 </div>
               ))}
@@ -367,10 +370,12 @@ export default function SectionEditor({
                                     >
                                       <GripVertical className="h-4 w-4 text-muted-foreground" />
                                     </div>
-                                    <img
+                                    <Image
                                       src={image}
                                       alt={`Image ${index + 1}`}
                                       className="w-16 h-16 object-cover rounded-md"
+                                      width={64}
+                                      height={64}
                                     />
                                     <Button
                                       variant="ghost"

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
@@ -70,7 +70,7 @@ export function ProductForm({ initialData, onSuccess, onSubmit }: ProductFormPro
     },
   })
 
-  const fetchCollections = async () => {
+  const fetchCollections = useCallback(async () => {
     try {
       const response = await fetch('/api/collections')
       if (!response.ok) throw new Error('Failed to fetch collections')
@@ -84,7 +84,7 @@ export function ProductForm({ initialData, onSuccess, onSubmit }: ProductFormPro
         variant: 'destructive',
       })
     }
-  }
+  }, [toast])
 
   useEffect(() => {
     fetchCollections()

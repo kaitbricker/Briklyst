@@ -46,9 +46,7 @@ export default function BrandingSettings({
     <div className="space-y-8">
       <div>
         <h2 className="text-xl font-semibold">Branding Settings</h2>
-        <p className="text-sm text-muted-foreground">
-          Customize your storefront's branding elements
-        </p>
+        <p className="text-sm text-muted-foreground">Let&apos;s make your storefront uniquely yours</p>
       </div>
 
       <div className="grid gap-8 md:grid-cols-2">
