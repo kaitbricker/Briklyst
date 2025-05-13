@@ -249,6 +249,7 @@ interface ThemeSelectorProps {
 }
 
 export default function ThemeSelector({ selectedTheme, onSelectTheme }: ThemeSelectorProps) {
+  throw new Error("DEBUG BREAK: ThemeSelector");
   return (
     <div className="space-y-6" style={{ border: '4px solid red', borderRadius: 12 }}>
       <div className="bg-red-100 text-red-700 font-bold p-2 rounded mb-2 text-center">DEBUG MODE: ThemeSelector</div>
