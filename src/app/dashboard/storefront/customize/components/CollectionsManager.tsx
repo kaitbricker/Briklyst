@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog'
 import { Plus, Edit, Trash2, X } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -179,6 +179,9 @@ export default function CollectionsManager({ collections, allProducts, onUpdate 
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Add New Collection</DialogTitle>
+              <DialogDescription>
+                Create a new collection to organize your products.
+              </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <Input
@@ -293,6 +296,9 @@ export default function CollectionsManager({ collections, allProducts, onUpdate 
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Collection</DialogTitle>
+            <DialogDescription>
+              Update the name of your collection.
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <Input
