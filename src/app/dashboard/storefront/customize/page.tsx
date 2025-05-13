@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Loader2, Save, RefreshCw } from 'lucide-react'
+import { Loader2, Save, RefreshCw, Settings, LayoutGrid } from 'lucide-react'
 import ThemeSelector, { Theme } from './components/ThemeSelector'
 import ThemePreview from './components/ThemePreview'
 import CollectionsManager from './components/CollectionsManager'
@@ -39,6 +39,7 @@ export default function CustomizePage() {
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [activeTab, setActiveTab] = useState('theme')
   const [selectedTheme, setSelectedTheme] = useState<Theme>({
     id: 'elevate',
     name: '🌟 Briklyst Default: Elevate',
@@ -214,10 +215,21 @@ export default function CustomizePage() {
         </motion.div>
       </div>
 
-      <Tabs defaultValue="theme" className="space-y-8">
+      <Tabs
+        defaultValue="theme"
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-8"
+      >
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="theme">Theme</TabsTrigger>
-          <TabsTrigger value="collections">Collections</TabsTrigger>
+          <TabsTrigger value="theme" className="gap-2">
+            <Settings className="h-4 w-4" />
+            Theme
+          </TabsTrigger>
+          <TabsTrigger value="collections" className="gap-2">
+            <LayoutGrid className="h-4 w-4" />
+            Collections
+          </TabsTrigger>
         </TabsList>
 
         <AnimatePresence mode="wait">
