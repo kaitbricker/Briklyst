@@ -1,0 +1,1 @@
+SELECT * FROM "Collection" WHERE "storefrontId" IS NULL; 

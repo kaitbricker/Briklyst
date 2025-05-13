@@ -8,30 +8,32 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
-  emailVerified DateTime?
+  id            String       @id @default(cuid())
+  email         String       @unique
   password      String
+  name          String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  emailVerified DateTime?
   image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  accounts      Account[]
-  sessions      Session[]
-  storefronts   Storefront[]
-  collections   Collection[]
   bio           String?
-  profileImage  String?
-  twitter       String?
   instagram     String?
   linkedin      String?
+  profileImage  String?
+  twitter       String?
+  emailAlerts   Boolean      @default(true)
+  monthlyReport Boolean      @default(true)
+  weeklyReport  Boolean      @default(true)
   tiktok        String?
   youtube       String?
+  accounts      Account[]
   clickEvents   ClickEvent[]
-  emailAlerts   Boolean   @default(true)
-  weeklyReport  Boolean   @default(true)
-  monthlyReport Boolean   @default(true)
-  favorites     Product[] @relation("Favorites")
+  sessions      Session[]
+  storefront    Storefront?
+  storefrontSettings StorefrontSettings?
+  favorites     Product[]    @relation("Favorites")
+
+  @@index([email])
 }
 
 model Account {
@@ -40,15 +42,14 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -71,31 +72,26 @@ model VerificationToken {
 }
 
 model Storefront {
-  id            String    @id @default(cuid())
-  userId        String    @unique
-  title         String
-  description   String?
-  domain        String?   @unique
-  logoUrl       String?
-  bannerUrl     String?
-  themeId       String    @default("bubblegum-pop")
-  primaryColor  String    @default("#FFFFFF")
-  accentColor   String    @default("#000000")
-  backgroundColor String  @default("#F9FAFB")
-  textColor     String    @default("#111827")
-  fontFamily    String    @default("sans-serif")
-  layoutStyle   String    @default("grid")
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  products      Product[]
-  subscribers   Subscriber[]
-  headerImageUrl String?
-  tagline        String?
-  instagram      String?
-  twitter        String?
-  tiktok         String?
-  youtube        String?
+  id              String       @id @default(cuid())
+  userId          String       @unique
+  title           String
+  description     String?
+  logoUrl         String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  templateId      String       // Selected template (now required)
+  templateOverrides Json?      // Color/font/layout overrides
+  customSections  Json?        // Drag-and-drop blocks/sections
+  brandingAssets  Json?        // Logo, banner, button styles, color palette
+  customCSS       String?      // Custom CSS for advanced users
+  savedTemplates  Json?        // User-saved templates
+  socialLinks     Json?        // Array of {icon, url, order}
+  collabHighlights Json?       // Array of collab highlight blocks
+  subscriberBlock Json?        // Settings for signup block
+  products        Product[]
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscribers     Subscriber[]
+  collections     Collection[]
 }
 
 model Collection {
@@ -103,36 +99,34 @@ model Collection {
   name        String
   description String?
   slug        String    @unique
-  userId      String
-  user        User      @relation(fields: [userId], references: [id])
-  products    Product[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  storefrontId String
+  storefront  Storefront @relation(fields: [storefrontId], references: [id])
+  products    Product[]
   tags        String[]  @default([])
-
-  @@index([userId])
 }
 
 model Product {
-  id            String     @id @default(cuid())
-  title         String
-  description   String?
-  price         Float
-  imageUrl      String?
-  affiliateUrl  String
-  collectionId  String?
-  collection    Collection? @relation(fields: [collectionId], references: [id])
-  storefrontId  String
-  storefront    Storefront @relation(fields: [storefrontId], references: [id])
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  clickEvents   ClickEvent[]
-  clicks        Int        @default(0)
-  order         Int        @default(0)
-  featured      Boolean    @default(false)
-  tags          String[]   @default([])
-  imageUrls     String[]
-  favoritedBy    User[]   @relation("Favorites")
+  id           String       @id @default(cuid())
+  storefrontId String
+  title        String
+  description  String?
+  price        Float
+  imageUrl     String?
+  affiliateUrl String
+  clicks       Int          @default(0)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  order        Int          @default(0)
+  featured     Boolean      @default(false)
+  tags         String[]     @default([])
+  collectionId String?
+  imageUrls    String[]
+  clickEvents  ClickEvent[]
+  collection   Collection?  @relation(fields: [collectionId], references: [id])
+  storefront   Storefront   @relation(fields: [storefrontId], references: [id])
+  favoritedBy  User[]       @relation("Favorites")
 
   @@index([storefrontId])
   @@index([collectionId])
@@ -140,20 +134,35 @@ model Product {
 
 model ClickEvent {
   id        String   @id @default(cuid())
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
   createdAt DateTime @default(now())
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
   @@index([productId, createdAt])
 }
 
 model Subscriber {
-  id           String    @id @default(cuid())
-  email        String    @unique
+  id           String     @id @default(cuid())
+  email        String     @unique
   storefrontId String
-  createdAt    DateTime  @default(now())
+  createdAt    DateTime   @default(now())
   storefront   Storefront @relation(fields: [storefrontId], references: [id], onDelete: Cascade)
-} 
+}
+
+model StorefrontSettings {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  branding      Json?
+  layout        Json?
+  typography    Json?
+  sections      Json?
+  customCSS     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+}

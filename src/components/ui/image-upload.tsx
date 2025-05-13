@@ -1,103 +1,85 @@
 'use client'
 
-import { useState, useCallback } from 'react'
-import { useDropzone } from 'react-dropzone'
-import Image from 'next/image'
+import { useState } from 'react'
 import { Button } from './button'
-import { X } from 'lucide-react'
+import { Input } from './input'
+import { Label } from './label'
+import { Image, Upload } from 'lucide-react'
 
 interface ImageUploadProps {
   value?: string
-  onChange: (value: string) => void
+  onChange: (url: string) => void
   disabled?: boolean
 }
 
-export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
+export function ImageUpload({
+  value,
+  onChange,
+  disabled = false,
+}: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false)
 
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    const file = acceptedFiles[0]
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
     if (!file) return
 
     setIsUploading(true)
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      })
-
-      if (!response.ok) throw new Error('Upload failed')
-
-      const data = await response.json()
-      onChange(data.url)
+      // TODO: Implement actual file upload logic
+      // For now, we'll just create a fake URL
+      const fakeUrl = URL.createObjectURL(file)
+      onChange(fakeUrl)
     } catch (error) {
-      console.error('Upload error:', error)
+      console.error('Error uploading image:', error)
     } finally {
       setIsUploading(false)
     }
-  }, [onChange])
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    disabled: disabled || isUploading,
-    accept: {
-      'image/*': ['.png', '.jpg', '.jpeg', '.gif', '.webp']
-    },
-    maxFiles: 1
-  })
+  }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       {value ? (
-        <div className="relative aspect-square w-full overflow-hidden rounded-lg">
-          <Image
+        <div className="relative aspect-video w-full overflow-hidden rounded-lg border">
+          <img
             src={value}
-            alt="Uploaded image"
-            fill
-            className="object-cover"
+            alt="Uploaded"
+            className="object-cover w-full h-full"
           />
           <Button
-            type="button"
             variant="destructive"
-            size="icon"
-            className="absolute right-2 top-2"
+            size="sm"
+            className="absolute top-2 right-2"
             onClick={() => onChange('')}
-            disabled={disabled}
+            disabled={disabled || isUploading}
           >
-            <X className="h-4 w-4" />
+            Remove
           </Button>
         </div>
       ) : (
-        <div
-          {...getRootProps()}
-          className={`
-            border-2 border-dashed rounded-lg p-4 text-center cursor-pointer
-            transition-colors duration-200
-            ${isDragActive ? 'border-primary bg-primary/5' : 'border-gray-300 hover:border-primary'}
-            ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
-          `}
-        >
-          <input {...getInputProps()} />
-          {isUploading ? (
-            <div className="flex flex-col items-center gap-2">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-              <p className="text-sm text-gray-500">Uploading...</p>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center gap-2">
-              <p className="text-sm text-gray-500">
-                {isDragActive
-                  ? 'Drop the image here'
-                  : 'Drag & drop an image here, or click to select'}
+        <div className="flex items-center justify-center w-full">
+          <Label
+            htmlFor="image-upload"
+            className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer hover:bg-muted/50"
+          >
+            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+              <Upload className="w-8 h-8 mb-2 text-muted-foreground" />
+              <p className="mb-2 text-sm text-muted-foreground">
+                <span className="font-semibold">Click to upload</span> or drag and
+                drop
               </p>
-              <p className="text-xs text-gray-400">
-                PNG, JPG, GIF up to 10MB
+              <p className="text-xs text-muted-foreground">
+                PNG, JPG or GIF (MAX. 800x400px)
               </p>
             </div>
-          )}
+            <Input
+              id="image-upload"
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFileChange}
+              disabled={disabled || isUploading}
+            />
+          </Label>
         </div>
       )}
     </div>

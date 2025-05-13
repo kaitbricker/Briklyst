@@ -16,7 +16,7 @@ const statCards = [
     value: '12,345',
     info: '+12% from last week',
     icon: <DollarSign className="h-7 w-7 text-white" />, 
-    bg: 'from-[#4F8CFF] to-[#A0C8FF]',
+    bg: 'from-[#4F8CFF] to-[#1C3A6B]',
     shadow: 'shadow-blue-200',
   },
   {
@@ -24,7 +24,7 @@ const statCards = [
     value: 'Glow Serum',
     info: 'Most clicked',
     icon: <ShoppingBag className="h-7 w-7 text-white" />, 
-    bg: 'from-[#A259E6] to-[#E0C8FF]',
+    bg: 'from-[#A259E6] to-[#3B2063]',
     shadow: 'shadow-purple-200',
   },
   {
@@ -32,7 +32,7 @@ const statCards = [
     value: '12,345',
     info: '-5% from last week',
     icon: <Eye className="h-7 w-7 text-white" />, 
-    bg: 'from-[#FFD233] to-[#FFF7CC]',
+    bg: 'from-[#FFD233] to-[#B89B1A]',
     shadow: 'shadow-yellow-100',
   },
   {
@@ -40,7 +40,7 @@ const statCards = [
     value: '$1,234', // TODO: Replace with real data
     info: '+8% from last week',
     icon: <BarChart2 className="h-7 w-7 text-white" />,
-    bg: 'from-[#34D399] to-[#C6F6D5]',
+    bg: 'from-[#34D399] to-[#14532D]',
     shadow: 'shadow-green-100',
   },
   {
@@ -48,7 +48,7 @@ const statCards = [
     value: '42%', // TODO: Replace with real data
     info: 'vs. 38% last week',
     icon: <MailOpen className="h-7 w-7 text-white" />,
-    bg: 'from-[#F472B6] to-[#FDE8F3]',
+    bg: 'from-[#F472B6] to-[#831843]',
     shadow: 'shadow-pink-100',
   },
 ];

@@ -28,7 +28,7 @@ export async function GET(
           }
         },
         include: {
-          storefronts: {
+          storefront: {
             include: {
               products: {
                 include: {
@@ -57,7 +57,7 @@ export async function GET(
           email: session.user.email
         },
         include: {
-          storefronts: {
+          storefront: {
             include: {
               products: {
                 include: {
@@ -73,14 +73,14 @@ export async function GET(
       })
     }
 
-    if (!user || !user.storefronts.length) {
+    if (!user || !user.storefront) {
       return NextResponse.json(
         { error: 'Storefront not found' },
         { status: 404 }
       )
     }
 
-    const storefront = user.storefronts[0]
+    const storefront = user.storefront
 
     // Transform the data for the frontend
     const transformedData = {
@@ -126,7 +126,9 @@ export async function GET(
         featured: product.featured,
         tags: product.tags,
         imageUrls: product.imageUrls
-      }))
+      })),
+      footerContent: storefront.footerContent || '',
+      footerLinks: storefront.footerLinks || []
     }
 
     return NextResponse.json(transformedData)
@@ -164,18 +166,18 @@ export async function PUT(
         }
       },
       include: {
-        storefronts: true
+        storefront: true
       }
     })
 
-    if (!user || !user.storefronts.length) {
+    if (!user || !user.storefront) {
       return NextResponse.json(
         { error: 'Storefront not found' },
         { status: 404 }
       )
     }
 
-    const storefront = user.storefronts[0]
+    const storefront = user.storefront
 
     // Update storefront
     const updatedStorefront = await prisma.storefront.update({
@@ -195,7 +197,9 @@ export async function PUT(
         backgroundColor: data.theme.backgroundColor,
         textColor: data.theme.textColor,
         fontFamily: data.theme.fontFamily,
-        layoutStyle: data.theme.layoutStyle
+        layoutStyle: data.theme.layoutStyle,
+        footerContent: data.footerContent,
+        footerLinks: data.footerLinks
       }
     })
 

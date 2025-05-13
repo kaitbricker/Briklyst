@@ -1,0 +1,142 @@
+export const templates = [
+  {
+    id: 'minimal',
+    name: 'Minimal',
+    description: 'A clean and minimal design focused on content.',
+    previewImage: '/templates/minimal.jpg',
+    features: [
+      'Clean and modern design',
+      'Focus on content and products',
+      'Responsive layout',
+      'Easy to customize',
+    ],
+    defaultColors: {
+      primary: '#000000',
+      secondary: '#ffffff',
+      accent: '#3b82f6',
+      background: '#ffffff',
+      text: '#1f2937',
+    },
+    defaultFonts: {
+      heading: 'Inter',
+      body: 'Inter',
+    },
+    defaultLayout: {
+      spacing: '1.5rem',
+      containerWidth: '1200px',
+      borderRadius: '0.5rem',
+    },
+  },
+  {
+    id: 'modern',
+    name: 'Modern',
+    description: 'A contemporary design with bold typography and vibrant colors.',
+    previewImage: '/templates/modern.jpg',
+    features: [
+      'Bold typography',
+      'Vibrant color scheme',
+      'Dynamic layouts',
+      'Modern UI elements',
+    ],
+    defaultColors: {
+      primary: '#1a1a1a',
+      secondary: '#f3f4f6',
+      accent: '#f43f5e',
+      background: '#ffffff',
+      text: '#374151',
+    },
+    defaultFonts: {
+      heading: 'Poppins',
+      body: 'Inter',
+    },
+    defaultLayout: {
+      spacing: '2rem',
+      containerWidth: '1280px',
+      borderRadius: '1rem',
+    },
+  },
+  {
+    id: 'classic',
+    name: 'Classic',
+    description: 'A timeless design with traditional elements and elegant typography.',
+    previewImage: '/templates/classic.jpg',
+    features: [
+      'Traditional design elements',
+      'Elegant typography',
+      'Warm color palette',
+      'Classic UI components',
+    ],
+    defaultColors: {
+      primary: '#2c1810',
+      secondary: '#f5f5f4',
+      accent: '#854d0e',
+      background: '#ffffff',
+      text: '#44403c',
+    },
+    defaultFonts: {
+      heading: 'Playfair Display',
+      body: 'Source Serif Pro',
+    },
+    defaultLayout: {
+      spacing: '1.25rem',
+      containerWidth: '1140px',
+      borderRadius: '0.25rem',
+    },
+  },
+  {
+    id: 'bold',
+    name: 'Bold',
+    description: 'A striking design with dramatic elements and high contrast.',
+    previewImage: '/templates/bold.jpg',
+    features: [
+      'High contrast design',
+      'Dramatic typography',
+      'Bold color combinations',
+      'Impactful layouts',
+    ],
+    defaultColors: {
+      primary: '#ffffff',
+      secondary: '#000000',
+      accent: '#fbbf24',
+      background: '#000000',
+      text: '#ffffff',
+    },
+    defaultFonts: {
+      heading: 'Montserrat',
+      body: 'Inter',
+    },
+    defaultLayout: {
+      spacing: '2.5rem',
+      containerWidth: '1400px',
+      borderRadius: '0',
+    },
+  },
+  {
+    id: 'playful',
+    name: 'Playful',
+    description: 'A fun and energetic design with rounded corners and playful elements.',
+    previewImage: '/templates/playful.jpg',
+    features: [
+      'Playful design elements',
+      'Rounded corners',
+      'Bright color palette',
+      'Fun typography',
+    ],
+    defaultColors: {
+      primary: '#4f46e5',
+      secondary: '#f0f9ff',
+      accent: '#f97316',
+      background: '#ffffff',
+      text: '#1e293b',
+    },
+    defaultFonts: {
+      heading: 'Quicksand',
+      body: 'Nunito',
+    },
+    defaultLayout: {
+      spacing: '1.75rem',
+      containerWidth: '1200px',
+      borderRadius: '1.5rem',
+    },
+  },
+] 
