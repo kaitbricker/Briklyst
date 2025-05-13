@@ -59,13 +59,13 @@ export default function ThemePreview({ theme, storefrontData }: ThemePreviewProp
           <div className="pt-20">
             <h1 
               className="text-3xl font-bold mb-2"
-              style={{ fontFamily: theme.fontFamily.heading }}
+              style={{ fontFamily: theme.fontFamily.heading, color: theme.textColor }}
             >
               {storefrontData?.name}
             </h1>
             <p 
-              className="text-lg text-gray-600"
-              style={{ fontFamily: theme.fontFamily.body }}
+              className="text-lg"
+              style={{ fontFamily: theme.fontFamily.body, color: theme.textColor }}
             >
               {storefrontData?.description}
             </p>
@@ -79,7 +79,8 @@ export default function ThemePreview({ theme, storefrontData }: ThemePreviewProp
                   href={storefrontData.socials.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-600 hover:text-gray-900"
+                  style={{ color: theme.textColor }}
+                  className="hover:underline"
                 >
                   Instagram
                 </a>
@@ -89,7 +90,8 @@ export default function ThemePreview({ theme, storefrontData }: ThemePreviewProp
                   href={storefrontData.socials.twitter}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-600 hover:text-gray-900"
+                  style={{ color: theme.textColor }}
+                  className="hover:underline"
                 >
                   Twitter
                 </a>
@@ -99,7 +101,8 @@ export default function ThemePreview({ theme, storefrontData }: ThemePreviewProp
                   href={storefrontData.socials.tiktok}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-600 hover:text-gray-900"
+                  style={{ color: theme.textColor }}
+                  className="hover:underline"
                 >
                   TikTok
                 </a>
