@@ -7,9 +7,11 @@ import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Loader2, Save, RefreshCw, Settings, LayoutGrid } from 'lucide-react'
-import ThemeSelector, { Theme } from './components/ThemeSelector'
+import ThemeSelector from './components/ThemeSelector'
 import ThemePreview from './components/ThemePreview'
 import CollectionsManager from './components/CollectionsManager'
+import { Theme } from '@/lib/themes'
+import { themes } from '@/lib/themes'
 
 interface Storefront {
   id: string
@@ -18,21 +20,18 @@ interface Storefront {
   logoUrl: string
   bannerUrl: string
   socials: {
-    instagram?: string
-    twitter?: string
-    tiktok?: string
+    instagram: string
+    twitter: string
+    tiktok: string
   }
-  products: Array<{
+  products: {
     id: string
     title: string
     price: number
     imageUrl: string
-  }>
-  collections: Array<{
-    id: string
-    name: string
-    products: string[]
-  }>
+  }[]
+  collections: any[]
+  theme: Theme
 }
 
 export default function CustomizePage() {
@@ -40,33 +39,7 @@ export default function CustomizePage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [activeTab, setActiveTab] = useState('theme')
-  const [selectedTheme, setSelectedTheme] = useState<Theme>({
-    id: 'elevate',
-    name: '🌟 Briklyst Default: Elevate',
-    description: 'The signature theme for Briklyst, designed for ambitious creators',
-    vibe: 'Sleek, professional, and impactful',
-    typography: {
-      header: 'Poppins',
-      body: 'Inter',
-      button: 'Inter',
-    },
-    colors: {
-      primary: '#000000',
-      secondary: '#FFFFFF',
-      background: '#FFFFFF',
-      text: '#000000',
-      accent: '#FFD700',
-    },
-    styles: {
-      buttonShape: 'border-radius: 8px; background: linear-gradient(45deg, #000000, #333333); color: #FFFFFF;',
-      buttonHover: 'transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);',
-      imageBorder: 'border: 1px solid #000000; border-radius: 12px;',
-      imageShadow: 'box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);',
-      divider: 'border-bottom: 1px solid #000000;',
-      card: 'border-radius: 12px; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); background: linear-gradient(135deg, #FFFFFF, #F8F9FA);',
-    },
-  })
-
+  const [selectedTheme, setSelectedTheme] = useState<Theme>(themes[0])
   const [storefront, setStorefront] = useState<Storefront>({
     id: '1',
     name: 'My Store',
@@ -99,21 +72,33 @@ export default function CustomizePage() {
       },
     ],
     collections: [],
+    theme: themes[0],
   })
 
-  // Simulate loading storefront data
+  // Load storefront data
   useEffect(() => {
     const loadStorefrontData = async () => {
       try {
-        // TODO: Replace with actual API call
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        setIsLoading(false)
+        const response = await fetch('/api/storefront')
+        if (!response.ok) {
+          throw new Error('Failed to load storefront data')
+        }
+        const data = await response.json()
+        setStorefront(data)
+        if (data.templateId) {
+          const theme = themes.find(t => t.id === data.templateId)
+          if (theme) {
+            setSelectedTheme(theme)
+          }
+        }
       } catch (error) {
+        console.error('Error loading storefront:', error)
         toast({
           title: 'Error',
           description: 'Failed to load storefront data',
           variant: 'destructive',
         })
+      } finally {
         setIsLoading(false)
       }
     }
@@ -124,13 +109,36 @@ export default function CustomizePage() {
   const handleSaveTheme = async () => {
     setIsSaving(true)
     try {
-      // TODO: Implement theme saving logic
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      const response = await fetch('/api/storefront/theme', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          storefrontId: storefront.id,
+          themeId: selectedTheme.id,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to save theme')
+      }
+
+      // Update local storefront state with new theme
+      setStorefront(prev => ({
+        ...prev,
+        theme: {
+          id: selectedTheme.id,
+          ...selectedTheme
+        }
+      }))
+
       toast({
         title: 'Success',
         description: 'Theme saved successfully',
       })
     } catch (error) {
+      console.error('Error saving theme:', error)
       toast({
         title: 'Error',
         description: 'Failed to save theme',
@@ -181,9 +189,7 @@ export default function CustomizePage() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="container mx-auto py-8 space-y-8"
-      style={{ border: '4px solid red', borderRadius: 12 }}
     >
-      <div className="bg-red-100 text-red-700 font-bold p-2 rounded mb-2 text-center w-full">DEBUG MODE: CustomizePage</div>
       <div className="flex items-center justify-between">
         <motion.div
           initial={{ opacity: 0, x: -20 }}

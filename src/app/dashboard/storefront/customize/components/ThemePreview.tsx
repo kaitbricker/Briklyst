@@ -5,218 +5,106 @@ import Image from 'next/image'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Theme } from '@/lib/themes'
 
-interface Theme {
+interface StorefrontData {
   id: string
   name: string
   description: string
-  typography: {
-    header: string
-    body: string
-    button: string
+  logoUrl: string
+  bannerUrl: string
+  socials: {
+    instagram: string
+    twitter: string
+    tiktok: string
   }
-  colors: {
-    primary: string
-    secondary: string
-    background: string
-    text: string
-    accent: string
-  }
-  styles: {
-    buttonShape: string
-    buttonHover: string
-    imageBorder: string
-    imageShadow: string
-    divider: string
-    card: string
-  }
+  products: {
+    id: string
+    title: string
+    price: number
+    imageUrl: string
+  }[]
+  collections: any[]
+  theme: Theme
 }
 
 interface ThemePreviewProps {
   theme: Theme
-  storefrontData: {
-    name: string
-    description: string
-    logoUrl: string
-    bannerUrl: string
-    socials: {
-      instagram?: string
-      twitter?: string
-      tiktok?: string
-    }
-    products: Array<{
-      id: string
-      title: string
-      price: number
-      imageUrl: string
-    }>
-  }
+  storefrontData: StorefrontData
 }
 
 export default function ThemePreview({ theme, storefrontData }: ThemePreviewProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="w-full max-w-4xl mx-auto"
-      style={{
-        fontFamily: theme.typography.body,
-        backgroundColor: theme.colors.background,
-        color: theme.colors.text,
-      }}
-    >
-      {/* Header */}
-      <div className="relative h-64 w-full">
-        <Image
-          src={storefrontData.bannerUrl}
-          alt="Banner"
-          fill
-          className="object-cover"
+    <div className="space-y-4">
+      <h2 className="text-2xl font-bold">Theme Preview</h2>
+      <Card className="p-6">
+        <div
+          className="space-y-6"
           style={{
-            filter: 'brightness(0.8)',
+            backgroundColor: theme.backgroundColor,
+            color: theme.textColor,
+            fontFamily: theme.fontFamily.body,
           }}
-        />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center">
+        >
+          <div className="space-y-2">
             <h1
-              className="text-4xl font-bold mb-2"
-              style={{
-                fontFamily: theme.typography.header,
-                color: theme.colors.primary,
-              }}
+              className="text-3xl font-bold"
+              style={{ fontFamily: theme.fontFamily.heading }}
             >
               {storefrontData.name}
             </h1>
-            <p className="text-lg opacity-90">{storefrontData.description}</p>
+            <p className="text-lg">{storefrontData.description}</p>
           </div>
-        </div>
-      </div>
 
-      {/* Profile Section */}
-      <div className="relative -mt-16 px-6">
-        <div className="flex items-end gap-4">
-          <div className="relative w-32 h-32 rounded-full overflow-hidden border-4"
-            style={{
-              borderColor: theme.colors.background,
-              boxShadow: theme.styles.imageShadow,
-            }}
-          >
-            <Image
-              src={storefrontData.logoUrl}
-              alt="Profile"
-              fill
-              className="object-cover"
-            />
-          </div>
-          <div className="flex gap-2 mb-4">
-            {storefrontData.socials.instagram && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-full"
-                style={{
-                  fontFamily: theme.typography.button,
-                  ...theme.styles.buttonShape,
-                }}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {storefrontData.products.slice(0, 2).map((product) => (
+              <Card
+                key={product.id}
+                className="overflow-hidden"
+                style={{ backgroundColor: theme.backgroundColor }}
               >
-                Instagram
-              </Button>
-            )}
-            {storefrontData.socials.twitter && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-full"
-                style={{
-                  fontFamily: theme.typography.button,
-                  ...theme.styles.buttonShape,
-                }}
-              >
-                Twitter
-              </Button>
-            )}
-            {storefrontData.socials.tiktok && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-full"
-                style={{
-                  fontFamily: theme.typography.button,
-                  ...theme.styles.buttonShape,
-                }}
-              >
-                TikTok
-              </Button>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Products Grid */}
-      <div className="px-6 py-8">
-        <h2
-          className="text-2xl font-bold mb-6"
-          style={{
-            fontFamily: theme.typography.header,
-            color: theme.colors.primary,
-          }}
-        >
-          Featured Products
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {storefrontData.products.map((product) => (
-            <Card
-              key={product.id}
-              className="overflow-hidden"
-              style={{
-                ...theme.styles.card,
-              }}
-            >
-              <div className="relative h-48">
-                <Image
-                  src={product.imageUrl}
-                  alt={product.title}
-                  fill
-                  className="object-cover"
-                  style={{
-                    ...theme.styles.imageBorder,
-                  }}
-                />
-              </div>
-              <div className="p-4">
-                <h3
-                  className="font-semibold mb-2"
-                  style={{
-                    fontFamily: theme.typography.header,
-                  }}
-                >
-                  {product.title}
-                </h3>
-                <div className="flex items-center justify-between">
-                  <Badge
-                    variant="secondary"
-                    style={{
-                      backgroundColor: theme.colors.accent,
-                      color: theme.colors.primary,
-                    }}
+                <div className="aspect-square relative">
+                  <img
+                    src={product.imageUrl}
+                    alt={product.title}
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+                <div className="p-4">
+                  <h3
+                    className="font-semibold"
+                    style={{ fontFamily: theme.fontFamily.heading }}
                   >
-                    ${product.price}
-                  </Badge>
-                  <Button
-                    size="sm"
-                    style={{
-                      fontFamily: theme.typography.button,
-                      ...theme.styles.buttonShape,
-                    }}
+                    {product.title}
+                  </h3>
+                  <p className="text-lg font-bold mt-1">${product.price}</p>
+                  <button
+                    className={`mt-2 w-full ${theme.buttonStyle}`}
+                    style={{ backgroundColor: theme.primaryColor }}
                   >
                     View Details
-                  </Button>
+                  </button>
                 </div>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            ))}
+          </div>
+
+          <div className="flex gap-4">
+            {Object.entries(storefrontData.socials).map(([platform, handle]) => (
+              <a
+                key={platform}
+                href={`https://${platform}.com/${handle}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`px-4 py-2 rounded ${theme.buttonStyle}`}
+                style={{ backgroundColor: theme.accentColor }}
+              >
+                {platform}
+              </a>
+            ))}
+          </div>
         </div>
-      </div>
-    </motion.div>
+      </Card>
+    </div>
   )
 } 
