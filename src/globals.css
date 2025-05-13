@@ -50,24 +50,25 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  /* Brand Colors */
+  --background: linear-gradient(135deg, #FFD1E3 0%, #FFF0F6 100%);
+  --foreground: #FF2D7A;
+  --card: #fff;
+  --card-foreground: #FF2D7A;
+  --popover: #fff;
+  --popover-foreground: #FF2D7A;
+  --primary: #FF2D7A;
+  --primary-foreground: #fff;
+  --secondary: #FFD1E3;
+  --secondary-foreground: #FF2D7A;
+  --muted: #FFF0F6;
+  --muted-foreground: #FF2D7A;
+  --accent: #FFD600;
+  --accent-foreground: #FF2D7A;
+  --destructive: #E6005C;
+  --border: #FFD1E3;
+  --input: #FFD1E3;
+  --ring: #FF2D7A;
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -128,5 +129,7 @@
 
 /* TEMP: Test Tailwind utility */
 body {
-  @apply bg-gradient-to-br from-pink-100 to-blue-100;
+  /* Use the blush pink gradient background */
+  background: linear-gradient(135deg, #FFD1E3 0%, #FFF0F6 100%);
+  color: #FF2D7A;
 }
