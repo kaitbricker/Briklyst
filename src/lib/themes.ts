@@ -202,8 +202,8 @@ export const themes: Theme[] = [
     description: 'Tech-savvy, bold, and futuristic. Ideal for gadget, gaming, and digital creators.',
     vibe: 'Tech-savvy, bold, and futuristic',
     primaryColor: '#8F00FF',
-    backgroundColor: 'bg-gradient-to-br from-gray-900 to-gray-800',
-    textColor: 'text-gray-100',
+    backgroundColor: '#18181B',
+    textColor: '#F3F4F6',
     accentColor: '#00FF00',
     fontFamily: {
       heading: 'font-space-grotesk',
@@ -211,17 +211,17 @@ export const themes: Theme[] = [
     },
     buttonStyle: 'bg-purple-700 text-white rounded-none px-6 py-2 font-medium border border-purple-500 hover:bg-purple-600 transition-colors',
     imageStyle: {
-      border: 'border border-purple-500',
-      shadow: 'shadow-lg shadow-purple-500/20',
+      border: '1px solid #8F00FF',
+      shadow: '0 4px 24px 0 #8F00FF',
     },
     accentElements: {
-      dividers: 'border-purple-500 border',
-      icons: 'text-purple-500 hover:text-green-400 transition-colors',
-      productCards: 'bg-gray-800 rounded-none shadow-lg hover:shadow-purple-500/20 transition-shadow',
+      dividers: '1px solid #8F00FF',
+      icons: 'color: #8F00FF',
+      productCards: 'background: #18181B; border-radius: 0; box-shadow: 0 2px 8px 0 #8F00FF;',
     },
     bannerStyle: {
-      overlay: 'bg-gradient-to-b from-purple-500/20 to-transparent',
-      gradient: 'bg-gradient-to-r from-purple-500/30 via-green-500/30 to-purple-500/30',
+      overlay: 'linear-gradient(to bottom, #8F00FF 20%, transparent)',
+      gradient: 'linear-gradient(to right, #8F00FF 30%, #00FF00 30%, #8F00FF 30%)',
     },
   },
   {
@@ -230,8 +230,8 @@ export const themes: Theme[] = [
     description: 'Clean, sophisticated, and product-focused. Perfect for polished, high-end brands.',
     vibe: 'Clean, sophisticated, and product-focused',
     primaryColor: '#111111',
-    backgroundColor: 'bg-white',
-    textColor: 'text-gray-900',
+    backgroundColor: '#FFFFFF',
+    textColor: '#111827',
     accentColor: '#666666',
     fontFamily: {
       heading: 'font-baskerville',
@@ -239,17 +239,17 @@ export const themes: Theme[] = [
     },
     buttonStyle: 'bg-black text-white rounded-none px-6 py-2 font-medium hover:bg-gray-800 transition-colors',
     imageStyle: {
-      border: 'border border-gray-200',
-      shadow: 'shadow-md shadow-gray-200/50',
+      border: '1px solid #E5E7EB',
+      shadow: '0 2px 12px 0 #E5E7EB',
     },
     accentElements: {
-      dividers: 'border-gray-200 border',
-      icons: 'text-gray-600 hover:text-gray-900 transition-colors',
-      productCards: 'bg-white rounded-none shadow-md hover:shadow-lg transition-shadow',
+      dividers: '1px solid #E5E7EB',
+      icons: 'color: #6B7280',
+      productCards: 'background: #fff; border-radius: 0; box-shadow: 0 2px 8px 0 #E5E7EB;',
     },
     bannerStyle: {
-      overlay: 'bg-gradient-to-b from-black/20 to-transparent',
-      gradient: 'bg-gradient-to-r from-gray-900/20 via-gray-800/20 to-gray-900/20',
+      overlay: 'linear-gradient(to bottom, #000 20%, transparent)',
+      gradient: 'linear-gradient(to right, #111111 20%, #666666 20%, #111111 20%)',
     },
   },
   {
@@ -258,8 +258,8 @@ export const themes: Theme[] = [
     description: 'The signature theme for Briklyst, designed to capture the entrepreneurial spirit and ambition of creators building their digital empires.',
     vibe: 'Sleek, professional, and impactful',
     primaryColor: '#1A1A1A',
-    backgroundColor: 'bg-white',
-    textColor: 'text-gray-900',
+    backgroundColor: '#FFFFFF',
+    textColor: '#111827',
     accentColor: '#F5A623',
     fontFamily: {
       heading: 'font-montserrat',
@@ -267,17 +267,17 @@ export const themes: Theme[] = [
     },
     buttonStyle: 'bg-gradient-to-r from-gray-900 to-gray-800 text-white rounded-lg px-6 py-2 font-medium shadow-md hover:shadow-lg transition-shadow',
     imageStyle: {
-      border: 'border border-gray-100',
-      shadow: 'shadow-lg shadow-gray-200/50',
+      border: '1px solid #F3F4F6',
+      shadow: '0 4px 24px 0 #F3F4F6',
     },
     accentElements: {
-      dividers: 'border-gray-100 border',
-      icons: 'text-gray-600 hover:text-gray-900 transition-colors',
-      productCards: 'bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow',
+      dividers: '1px solid #F3F4F6',
+      icons: 'color: #6B7280',
+      productCards: 'background: #fff; border-radius: 0.75rem; box-shadow: 0 2px 8px 0 #F3F4F6;',
     },
     bannerStyle: {
-      overlay: 'bg-gradient-to-b from-gray-900/30 to-transparent',
-      gradient: 'bg-gradient-to-r from-gray-900/40 via-gray-800/40 to-gray-900/40',
+      overlay: 'linear-gradient(to bottom, #1A1A1A 30%, transparent)',
+      gradient: 'linear-gradient(to right, #1A1A1A 40%, #F5A623 40%, #1A1A1A 40%)',
     },
   },
 ];
