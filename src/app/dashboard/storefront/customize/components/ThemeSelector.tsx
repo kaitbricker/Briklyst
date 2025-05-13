@@ -250,7 +250,8 @@ interface ThemeSelectorProps {
 
 export default function ThemeSelector({ selectedTheme, onSelectTheme }: ThemeSelectorProps) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" style={{ border: '4px solid red', borderRadius: 12 }}>
+      <div className="bg-red-100 text-red-700 font-bold p-2 rounded mb-2 text-center">DEBUG MODE: ThemeSelector</div>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

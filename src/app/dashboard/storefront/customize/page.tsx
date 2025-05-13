@@ -162,7 +162,8 @@ export default function CustomizePage() {
 
   if (isLoading) {
     return (
-      <div className="h-screen flex items-center justify-center">
+      <div className="h-screen flex items-center justify-center" style={{ border: '4px solid red', borderRadius: 12 }}>
+        <div className="bg-red-100 text-red-700 font-bold p-2 rounded mb-2 text-center w-full">DEBUG MODE: CustomizePage</div>
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -180,7 +181,9 @@ export default function CustomizePage() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="container mx-auto py-8 space-y-8"
+      style={{ border: '4px solid red', borderRadius: 12 }}
     >
+      <div className="bg-red-100 text-red-700 font-bold p-2 rounded mb-2 text-center w-full">DEBUG MODE: CustomizePage</div>
       <div className="flex items-center justify-between">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
