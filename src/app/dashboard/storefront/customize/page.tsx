@@ -249,7 +249,11 @@ export default function CustomizePage() {
               transition={{ duration: 0.2 }}
             >
               <h2 className="text-xl font-semibold mb-4">Live Preview</h2>
-              <StorefrontPreview storefront={previewStorefront} isEditing={true} />
+              <StorefrontPreview 
+                key={selectedTheme.id}
+                storefront={previewStorefront} 
+                isEditing={true} 
+              />
             </motion.div>
           </TabsContent>
 
