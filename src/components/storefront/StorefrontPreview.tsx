@@ -30,11 +30,35 @@ export default function StorefrontPreview({ storefront, isEditing = false }: Sto
 
   if (!previewData) return null;
 
+  // Theme styles
+  const theme = previewData.theme || {};
+  const containerStyle = {
+    background: theme.backgroundColor || '#fff',
+    color: theme.textColor || '#111827',
+    fontFamily: theme.fontFamily || 'inherit',
+  };
+  const headingStyle = {
+    color: theme.textColor || '#111827',
+    fontFamily: theme.fontFamily || 'inherit',
+  };
+  const cardStyle = {
+    background: theme.accentColor || '#f9fafb',
+    color: theme.textColor || '#111827',
+    fontFamily: theme.fontFamily || 'inherit',
+  };
+  const buttonStyle = {
+    background: theme.primaryColor || '#2563eb',
+    color: '#fff',
+    border: 'none',
+    fontFamily: theme.fontFamily || 'inherit',
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="w-full max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden"
+      style={containerStyle}
+      className="w-full max-w-4xl mx-auto rounded-xl shadow-lg overflow-hidden transition-colors duration-300"
     >
       {/* Banner */}
       {previewData.bannerUrl && (
@@ -60,40 +84,40 @@ export default function StorefrontPreview({ storefront, isEditing = false }: Sto
             />
           </div>
           <div className="flex-1">
-            <h1 className="text-2xl font-bold" style={{ color: previewData.theme?.textColor }}>
+            <h1 className="text-2xl font-bold" style={headingStyle}>
               {previewData.name}
             </h1>
             {previewData.tagline && (
-              <p className="text-gray-600 mt-1">{previewData.tagline}</p>
+              <p style={{ color: theme.textColor, opacity: 0.7 }}>{previewData.tagline}</p>
             )}
           </div>
         </div>
 
         {/* Description */}
         {previewData.description && (
-          <p className="mt-4 text-gray-600">{previewData.description}</p>
+          <p style={{ color: theme.textColor, opacity: 0.7 }} className="mt-4">{previewData.description}</p>
         )}
 
         {/* Social Links */}
         {previewData.socials && (
           <div className="flex gap-4 mt-4">
             {previewData.socials.instagram && (
-              <a href={previewData.socials.instagram} target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-900">
+              <a href={previewData.socials.instagram} target="_blank" rel="noopener noreferrer" style={{ color: theme.textColor, opacity: 0.8 }}>
                 Instagram
               </a>
             )}
             {previewData.socials.twitter && (
-              <a href={previewData.socials.twitter} target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-900">
+              <a href={previewData.socials.twitter} target="_blank" rel="noopener noreferrer" style={{ color: theme.textColor, opacity: 0.8 }}>
                 Twitter
               </a>
             )}
             {previewData.socials.tiktok && (
-              <a href={previewData.socials.tiktok} target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-900">
+              <a href={previewData.socials.tiktok} target="_blank" rel="noopener noreferrer" style={{ color: theme.textColor, opacity: 0.8 }}>
                 TikTok
               </a>
             )}
             {previewData.socials.youtube && (
-              <a href={previewData.socials.youtube} target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-900">
+              <a href={previewData.socials.youtube} target="_blank" rel="noopener noreferrer" style={{ color: theme.textColor, opacity: 0.8 }}>
                 YouTube
               </a>
             )}
@@ -102,24 +126,24 @@ export default function StorefrontPreview({ storefront, isEditing = false }: Sto
 
         {/* Action Buttons */}
         <div className="flex gap-2 mt-6">
-          <Button variant="outline" size="sm" className="flex items-center gap-2">
+          <button style={buttonStyle} className="flex items-center gap-2 rounded px-4 py-2 text-sm font-medium transition-colors duration-200">
             <Heart className="w-4 h-4" />
             Follow
-          </Button>
-          <Button variant="outline" size="sm" className="flex items-center gap-2">
+          </button>
+          <button style={buttonStyle} className="flex items-center gap-2 rounded px-4 py-2 text-sm font-medium transition-colors duration-200">
             <Share2 className="w-4 h-4" />
             Share
-          </Button>
+          </button>
         </div>
       </div>
 
       {/* Products Preview */}
       {previewData.products && previewData.products.length > 0 && (
-        <div className="p-6 border-t">
-          <h2 className="text-xl font-semibold mb-4">Products</h2>
+        <div className="p-6 border-t" style={{ borderColor: theme.accentColor || '#f9fafb' }}>
+          <h2 className="text-xl font-semibold mb-4" style={headingStyle}>Products</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {previewData.products.slice(0, 6).map((product: any) => (
-              <Card key={product.id} className="overflow-hidden">
+              <div key={product.id} className="overflow-hidden rounded-xl shadow" style={cardStyle}>
                 <div className="relative aspect-square">
                   <Image
                     src={product.imageUrl || '/placeholder-product.jpg'}
@@ -129,10 +153,10 @@ export default function StorefrontPreview({ storefront, isEditing = false }: Sto
                   />
                 </div>
                 <div className="p-4">
-                  <h3 className="font-medium">{product.title}</h3>
-                  <p className="text-gray-600 text-sm mt-1">${product.price}</p>
+                  <h3 className="font-medium" style={headingStyle}>{product.title}</h3>
+                  <p style={{ color: theme.textColor, opacity: 0.7 }} className="text-sm mt-1">${product.price}</p>
                 </div>
-              </Card>
+              </div>
             ))}
           </div>
         </div>
