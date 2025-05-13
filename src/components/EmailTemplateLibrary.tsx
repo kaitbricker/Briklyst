@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from '@/components/ui/use-toast';
+import Image from 'next/image'
 
 interface EmailTemplate {
   id: string;
@@ -96,7 +97,13 @@ const EmailTemplateLibrary: React.FC<EmailTemplateLibraryProps> = ({ onUse, last
           {templates.map(t => (
             <div key={t.id} className="border rounded shadow p-4 flex flex-col gap-2 bg-white">
               {t.thumbnail ? (
-                <img src={t.thumbnail} alt={t.name + ' thumbnail'} className="w-full h-32 object-cover rounded mb-2" />
+                <Image
+                  src={t.thumbnail}
+                  alt={t.name}
+                  width={300}
+                  height={200}
+                  className="w-full h-48 object-cover rounded-lg"
+                />
               ) : (
                 <div className="w-full h-32 bg-gray-100 flex items-center justify-center rounded mb-2 text-gray-400 text-xs">No Thumbnail</div>
               )}

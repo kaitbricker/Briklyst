@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { templates } from '@/config/storefrontTemplates'
 import { cn } from '@/lib/utils'
+import Image from 'next/image'
 
 interface TemplatePickerProps {
   currentTemplate: string
@@ -52,10 +53,12 @@ export default function TemplatePicker({
               onClick={() => handleSelect(template.id)}
             >
               <div className="aspect-video w-full overflow-hidden">
-                <img
+                <Image
                   src={template.previewImage}
                   alt={template.name}
-                  className="h-full w-full object-cover"
+                  width={300}
+                  height={200}
+                  className="w-full h-48 object-cover rounded-lg"
                 />
               </div>
               <div className="p-4">

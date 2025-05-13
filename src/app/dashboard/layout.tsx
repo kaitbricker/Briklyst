@@ -10,6 +10,7 @@ import { useSession, signOut } from 'next-auth/react'
 import { TopNav } from '@/components/layout/TopNav'
 import { HomeIcon, BarChart2, ShoppingBag, LayoutGrid, Settings, Store, Mail, User, LogOut, HelpCircle, Palette, Bookmark } from 'lucide-react'
 import OnboardingModal from '@/components/OnboardingModal'
+import Image from 'next/image'
 
 const navItems = [
   { title: 'Dashboard', href: '/dashboard', icon: HomeIcon },
@@ -84,12 +85,23 @@ export default function DashboardLayout({
 
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-br from-blue-50 via-white to-orange-50">
-      {showOnboarding && <OnboardingModal onComplete={handleOnboardingComplete} user={session?.user} />}
+      <OnboardingModal
+        open={showOnboarding}
+        onOpenChange={setShowOnboarding}
+        onComplete={() => setShowOnboarding(false)}
+        user={session?.user || {}}
+      />
       <TopNav />
       <div className="flex flex-1 pt-0">
         <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-gray-200 min-h-screen px-0 py-0">
           <div className="flex items-center gap-2 px-8 py-8">
-            <img src="/logo.png" alt="Briklyst Logo" className="w-12 h-12 rounded" />
+            <Image
+              src={session?.user?.image || '/default-avatar.png'}
+              alt={session?.user?.name || 'User avatar'}
+              width={32}
+              height={32}
+              className="rounded-full"
+            />
           </div>
           <nav className="flex-1 flex flex-col gap-1 px-4">
             {navItems.map((item) => {

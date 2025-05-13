@@ -16,7 +16,7 @@ export default function ThemeSelector({ currentThemeId, onThemeChange }: ThemeSe
       <div>
         <h2 className="text-xl font-semibold">Choose Your Theme</h2>
         <p className="text-sm text-muted-foreground">
-          Select a theme to customize your storefront's look and feel
+          Select a theme to customize your storefront&apos;s look and feel
         </p>
       </div>
 

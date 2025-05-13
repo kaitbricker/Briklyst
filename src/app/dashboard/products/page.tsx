@@ -261,12 +261,12 @@ export default function ProductsPage() {
             <Card className="group overflow-hidden bg-white/80 backdrop-blur-lg rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100">
               {product.imageUrl && (
                 <div className="relative w-full h-48 overflow-hidden">
-                  <img
-                    src={product.imageUrl || '/placeholder-product.jpg'}
+                  <Image
+                    src={product.imageUrl || '/placeholder.png'}
                     alt={product.title}
-                    style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-                    onError={e => { e.currentTarget.src = '/placeholder-product.jpg'; }}
-                    className="transition-transform duration-500 group-hover:scale-105"
+                    width={100}
+                    height={100}
+                    className="object-cover rounded-lg"
                   />
                 </div>
               )}

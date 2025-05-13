@@ -45,17 +45,17 @@ export default function CategoriesPage() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [toast])
 
   useEffect(() => {
     fetchCategories()
   }, [fetchCategories])
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = useCallback(async (categoryId: string) => {
     if (!confirm('Are you sure you want to delete this category?')) return
 
     try {
-      const response = await fetch(`/api/categories?id=${id}`, {
+      const response = await fetch(`/api/categories?id=${categoryId}`, {
         method: 'DELETE',
       })
 
@@ -65,7 +65,6 @@ export default function CategoriesPage() {
         title: 'Success',
         description: 'Category deleted successfully',
       })
-
       fetchCategories()
     } catch (error) {
       console.error('Error deleting category:', error)
@@ -75,7 +74,7 @@ export default function CategoriesPage() {
         variant: 'destructive',
       })
     }
-  }
+  }, [toast, fetchCategories])
 
   const filteredCategories = categories.filter(category =>
     category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

@@ -4,7 +4,8 @@ import { useState } from 'react'
 import { Button } from './button'
 import { Input } from './input'
 import { Label } from './label'
-import { Image, Upload } from 'lucide-react'
+import { Image as ImageIcon, Upload } from 'lucide-react'
+import Image from 'next/image'
 
 interface ImageUploadProps {
   value?: string
@@ -40,9 +41,11 @@ export function ImageUpload({
     <div className="space-y-2">
       {value ? (
         <div className="relative aspect-video w-full overflow-hidden rounded-lg border">
-          <img
+          <Image
             src={value}
             alt="Uploaded"
+            width={800}
+            height={400}
             className="object-cover w-full h-full"
           />
           <Button
