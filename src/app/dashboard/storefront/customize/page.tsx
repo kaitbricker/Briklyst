@@ -47,6 +47,7 @@ export default function CustomizePage() {
   const [storefront, setStorefront] = useState<Storefront | null>(null)
   const [selectedTheme, setSelectedTheme] = useState<Theme>(themes[0])
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false)
+  const [previewKey, setPreviewKey] = useState(0);
 
   useEffect(() => {
     const fetchStorefront = async () => {
@@ -221,6 +222,7 @@ export default function CustomizePage() {
                 selectedTheme={selectedTheme}
                 onSelectTheme={(theme) => {
                   setSelectedTheme(theme);
+                  setPreviewKey(Date.now());
                   console.log('Selected theme:', theme);
                 }}
                 onSaveTheme={handleSaveTheme}
@@ -248,7 +250,7 @@ export default function CustomizePage() {
             >
               <h2 className="text-xl font-semibold mb-4">Live Preview</h2>
               <StorefrontPreview 
-                key={selectedTheme.id}
+                key={previewKey}
                 storefront={previewStorefront} 
                 isEditing={true} 
               />
