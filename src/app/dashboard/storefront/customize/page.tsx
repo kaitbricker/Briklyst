@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { ImageUpload } from '@/components/ui/image-upload'
+import StorefrontPreview from '@/components/storefront/StorefrontPreview'
 
 interface Storefront {
   id: string
@@ -239,6 +240,16 @@ export default function CustomizePage() {
                 theme={selectedTheme}
                 storefrontData={previewStorefront}
               />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+            >
+              <h2 className="text-xl font-semibold mb-4">Live Preview</h2>
+              <StorefrontPreview storefront={previewStorefront} isEditing={true} />
             </motion.div>
           </TabsContent>
 
