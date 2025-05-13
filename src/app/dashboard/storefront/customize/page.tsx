@@ -156,11 +156,6 @@ export default function CustomizePage() {
   const previewStorefront = storefront && selectedTheme ? {
     ...storefront,
     theme: selectedTheme,
-    primaryColor: selectedTheme.primaryColor,
-    accentColor: selectedTheme.accentColor,
-    backgroundColor: selectedTheme.backgroundColor,
-    textColor: selectedTheme.textColor,
-    fontFamily: selectedTheme.fontFamily,
   } : storefront;
 
   if (isLoading) {
