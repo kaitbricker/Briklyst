@@ -13,6 +13,34 @@ import { nanoid } from 'nanoid'
 import TemplateManager from './components/TemplateManager'
 import TemplatePreview from './components/TemplatePreview'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Plus, Trash2 } from 'lucide-react'
+import CollectionsManager from './components/CollectionsManager'
+
+interface Section {
+  id: string
+  type: string
+  title: string
+  content: string
+}
+
+interface Theme {
+  primaryColor: string
+  secondaryColor: string
+  fontFamily: string
+}
+
+interface Storefront {
+  id: string
+  name: string
+  description: string
+  logoUrl: string
+  bannerUrl: string
+  theme: Theme
+  sections: Section[]
+  collections: any[]
+}
 
 export default function CustomizePage() {
   const { toast } = useToast()
@@ -28,6 +56,20 @@ export default function CustomizePage() {
 
   const [previewedTemplateId, setPreviewedTemplateId] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
+  const [storefront, setStorefront] = useState<Storefront>({
+    id: '1',
+    name: 'My Store',
+    description: 'Welcome to my store',
+    logoUrl: '/placeholder-logo.png',
+    bannerUrl: '/placeholder-banner.jpg',
+    theme: {
+      primaryColor: '#000000',
+      secondaryColor: '#ffffff',
+      fontFamily: 'Inter',
+    },
+    sections: [],
+    collections: [],
+  })
 
   const handleTemplateSelect = async (templateId: string) => {
     try {
@@ -208,6 +250,25 @@ export default function CustomizePage() {
     setPreviewedTemplateId(templateId)
   }
 
+  const handleUpdateCollections = async (collections: any[]) => {
+    try {
+      setStorefront(prev => ({
+        ...prev,
+        collections,
+      }))
+      toast({
+        title: 'Success',
+        description: 'Collections updated successfully',
+      })
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to update collections',
+        variant: 'destructive',
+      })
+    }
+  }
+
   if (isLoading) {
     return <div>Loading...</div>
   }
@@ -217,68 +278,98 @@ export default function CustomizePage() {
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-8">Customize Storefront</h1>
-
-      <Tabs defaultValue="template" className="space-y-8">
-        <div className="flex justify-between items-center">
-          <TabsList>
-            <TabsTrigger value="template">Template</TabsTrigger>
-            <TabsTrigger value="sections">Sections</TabsTrigger>
-            <TabsTrigger value="branding">Branding</TabsTrigger>
-            <TabsTrigger value="templates">Templates</TabsTrigger>
-          </TabsList>
-          <Button
-            onClick={handleSaveTheme}
-            disabled={isSaving}
-            className="bg-gradient-to-r from-orange-400 to-pink-500 text-white font-semibold shadow-md hover:from-orange-500 hover:to-pink-600 transition-all"
-          >
-            {isSaving ? 'Saving...' : 'Save Theme'}
-          </Button>
+    <div className="container mx-auto py-8 space-y-8">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Customize Storefront</h1>
+          <p className="text-muted-foreground">Customize your storefront appearance and content</p>
         </div>
+        <Button onClick={handleSaveTheme}>Save Changes</Button>
+      </div>
 
-        <TabsContent value="template">
-          <TemplatePicker
-            currentTemplate={customization.templateId}
-            onSelect={handleTemplateSelect}
-            onPreview={handleTemplatePreview}
-          />
-          {previewedTemplateId && (
-            <div className="mt-6">
-              <TemplatePreview
-                selectedTemplate={previewedTemplateId}
-                customizations={customization.templateOverrides}
-              />
+      <div className="grid gap-8">
+        <Card className="p-6">
+          <h2 className="text-2xl font-bold mb-4">Theme Settings</h2>
+          <div className="grid gap-4">
+            <div>
+              <label className="text-sm font-bold">Primary Color</label>
+              <div className="flex items-center gap-2 mt-1">
+                <Input
+                  type="color"
+                  value={storefront.theme.primaryColor}
+                  onChange={(e) =>
+                    setStorefront((prev) => ({
+                      ...prev,
+                      theme: { ...prev.theme, primaryColor: e.target.value },
+                    }))
+                  }
+                  className="w-20 h-10 p-1"
+                />
+                <Input
+                  value={storefront.theme.primaryColor}
+                  onChange={(e) =>
+                    setStorefront((prev) => ({
+                      ...prev,
+                      theme: { ...prev.theme, primaryColor: e.target.value },
+                    }))
+                  }
+                  className="flex-1"
+                />
+              </div>
             </div>
-          )}
-        </TabsContent>
+            <div>
+              <label className="text-sm font-bold">Secondary Color</label>
+              <div className="flex items-center gap-2 mt-1">
+                <Input
+                  type="color"
+                  value={storefront.theme.secondaryColor}
+                  onChange={(e) =>
+                    setStorefront((prev) => ({
+                      ...prev,
+                      theme: { ...prev.theme, secondaryColor: e.target.value },
+                    }))
+                  }
+                  className="w-20 h-10 p-1"
+                />
+                <Input
+                  value={storefront.theme.secondaryColor}
+                  onChange={(e) =>
+                    setStorefront((prev) => ({
+                      ...prev,
+                      theme: { ...prev.theme, secondaryColor: e.target.value },
+                    }))
+                  }
+                  className="flex-1"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="text-sm font-bold">Font Family</label>
+              <select
+                value={storefront.theme.fontFamily}
+                onChange={(e) =>
+                  setStorefront((prev) => ({
+                    ...prev,
+                    theme: { ...prev.theme, fontFamily: e.target.value },
+                  }))
+                }
+                className="w-full mt-1 rounded-md border border-input bg-background px-3 py-2"
+              >
+                <option value="Inter">Inter</option>
+                <option value="Roboto">Roboto</option>
+                <option value="Open Sans">Open Sans</option>
+                <option value="Montserrat">Montserrat</option>
+              </select>
+            </div>
+          </div>
+        </Card>
 
-        <TabsContent value="sections">
-          <SectionManager
-            sections={customization.customSections || []}
-            onUpdateSections={handleSectionUpdate}
-            onAddSection={handleAddSection}
-            onDeleteSection={handleDeleteSection}
-          />
-        </TabsContent>
-
-        <TabsContent value="branding">
-          <BrandingSettings
-            settings={customization.brandingAssets}
-            onUpdate={handleBrandingUpdate}
-          />
-        </TabsContent>
-
-        <TabsContent value="templates">
-          <TemplateManager
-            currentTemplate={customization}
-            onSaveTemplate={handleSaveTemplate}
-            onLoadTemplate={handleLoadTemplate}
-            onDeleteTemplate={handleDeleteTemplate}
-            onShareTemplate={handleShareTemplate}
-          />
-        </TabsContent>
-      </Tabs>
+        <CollectionsManager
+          collections={storefront.collections}
+          allProducts={[]} // TODO: Fetch products from your data source
+          onUpdate={handleUpdateCollections}
+        />
+      </div>
     </div>
   )
 } 
