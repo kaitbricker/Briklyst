@@ -219,7 +219,10 @@ export default function CustomizePage() {
             >
               <ThemeSelector
                 selectedTheme={selectedTheme}
-                onSelectTheme={setSelectedTheme}
+                onSelectTheme={(theme) => {
+                  setSelectedTheme(theme);
+                  console.log('Selected theme:', theme);
+                }}
                 onSaveTheme={handleSaveTheme}
                 isSaving={isSaving}
               />

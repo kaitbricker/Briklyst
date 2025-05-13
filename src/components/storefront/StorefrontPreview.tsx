@@ -11,6 +11,7 @@ interface StorefrontPreviewProps {
 }
 
 export default function StorefrontPreview({ storefront, isEditing = false }: StorefrontPreviewProps) {
+  console.log('StorefrontPreview theme:', storefront.theme);
   // Theme styles
   const theme = storefront.theme || {};
   const containerStyle = {
