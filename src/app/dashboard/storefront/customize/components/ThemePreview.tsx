@@ -1,58 +1,28 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import Image from 'next/image'
 import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { Theme } from '@/lib/themes'
-
-interface StorefrontData {
-  id: string
-  name: string
-  description: string
-  logoUrl: string
-  bannerUrl: string
-  socials: {
-    instagram: string
-    twitter: string
-    tiktok: string
-  }
-  products: {
-    id: string
-    title: string
-    price: number
-    imageUrl: string
-  }[]
-  collections: any[]
-  theme: Theme
-}
+import Image from 'next/image'
 
 interface ThemePreviewProps {
   theme: Theme
-  storefrontData: StorefrontData
+  storefrontData: any
 }
 
 export default function ThemePreview({ theme, storefrontData }: ThemePreviewProps) {
   return (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-bold">Theme Preview</h2>
+    <div className="space-y-8">
       <Card className="p-6">
-        <div
-          className="space-y-8"
-          style={{
-            backgroundColor: theme.backgroundColor,
-            color: theme.textColor,
-            fontFamily: theme.fontFamily.body,
-          }}
-        >
+        <div className="space-y-8">
           {/* Header Section */}
           <div className="relative">
             <div className="aspect-[21/9] relative overflow-hidden rounded-lg">
-              <img
-                src={storefrontData.bannerUrl}
+              <Image
+                src={storefrontData?.bannerUrl || '/placeholder-banner.png'}
                 alt="Store Banner"
-                className="object-cover w-full h-full"
+                fill
+                className="object-cover"
               />
               <div 
                 className="absolute inset-0"
@@ -69,65 +39,85 @@ export default function ThemePreview({ theme, storefrontData }: ThemePreviewProp
             </div>
             <div className="absolute -bottom-16 left-8">
               <div 
-                className="w-32 h-32 rounded-full overflow-hidden"
+                className="w-32 h-32 rounded-full overflow-hidden relative"
                 style={{
                   border: theme.imageStyle.border,
                   boxShadow: theme.imageStyle.shadow,
                 }}
               >
-                <img
-                  src={storefrontData.logoUrl}
+                <Image
+                  src={storefrontData?.logoUrl || '/placeholder-logo.png'}
                   alt="Store Logo"
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
                 />
               </div>
             </div>
           </div>
 
           {/* Store Info */}
-          <div className="pt-16 space-y-4">
-            <div className="space-y-2">
-              <h1
-                className="text-4xl font-bold"
-                style={{ fontFamily: theme.fontFamily.heading }}
-              >
-                {storefrontData.name}
-              </h1>
-              <p className="text-lg opacity-90">{storefrontData.description}</p>
-            </div>
+          <div className="pt-20">
+            <h1 
+              className="text-3xl font-bold mb-2"
+              style={{ fontFamily: theme.fontFamily.heading }}
+            >
+              {storefrontData?.name}
+            </h1>
+            <p 
+              className="text-lg text-gray-600"
+              style={{ fontFamily: theme.fontFamily.body }}
+            >
+              {storefrontData?.description}
+            </p>
+          </div>
 
-            {/* Social Links */}
-            <div className="flex gap-3">
-              {Object.entries(storefrontData.socials).map(([platform, handle]) => (
-                <a
-                  key={platform}
-                  href={`https://${platform}.com/${handle}`}
+          {/* Social Links */}
+          {storefrontData?.socials && (
+            <div className="flex gap-4">
+              {storefrontData.socials.instagram && (
+                <a 
+                  href={storefrontData.socials.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`px-4 py-2 rounded-full ${theme.buttonStyle} transition-all duration-200`}
-                  style={{ backgroundColor: theme.primaryColor }}
+                  className="text-gray-600 hover:text-gray-900"
                 >
-                  {platform}
+                  Instagram
                 </a>
-              ))}
+              )}
+              {storefrontData.socials.twitter && (
+                <a 
+                  href={storefrontData.socials.twitter}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-600 hover:text-gray-900"
+                >
+                  Twitter
+                </a>
+              )}
+              {storefrontData.socials.tiktok && (
+                <a 
+                  href={storefrontData.socials.tiktok}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-600 hover:text-gray-900"
+                >
+                  TikTok
+                </a>
+              )}
             </div>
-          </div>
+          )}
 
           {/* Featured Products */}
           <div className="space-y-4">
-            <h2
+            <h2 
               className="text-2xl font-bold"
               style={{ fontFamily: theme.fontFamily.heading }}
             >
               Featured Products
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {storefrontData.products.slice(0, 2).map((product) => (
-                <Card
-                  key={product.id}
-                  className={`overflow-hidden transition-all duration-200 ${theme.accentElements.productCards}`}
-                  style={{ backgroundColor: theme.backgroundColor }}
-                >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {storefrontData?.products?.slice(0, 3).map((product: any) => (
+                <Card key={product.id} className="overflow-hidden">
                   <div 
                     className="aspect-square relative"
                     style={{
@@ -135,15 +125,16 @@ export default function ThemePreview({ theme, storefrontData }: ThemePreviewProp
                       boxShadow: theme.imageStyle.shadow,
                     }}
                   >
-                    <img
-                      src={product.imageUrl}
+                    <Image
+                      src={product.imageUrl || '/placeholder-product.png'}
                       alt={product.title}
-                      className="object-cover w-full h-full"
+                      fill
+                      className="object-cover"
                     />
                   </div>
-                  <div className="p-6 space-y-3">
-                    <h3
-                      className="text-xl font-semibold"
+                  <div className="p-4 space-y-2">
+                    <h3 
+                      className="font-semibold"
                       style={{ fontFamily: theme.fontFamily.heading }}
                     >
                       {product.title}
@@ -233,4 +224,4 @@ export default function ThemePreview({ theme, storefrontData }: ThemePreviewProp
       </Card>
     </div>
   )
-} 
+}

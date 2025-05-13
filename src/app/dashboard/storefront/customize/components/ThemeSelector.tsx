@@ -33,7 +33,7 @@ export default function ThemeSelector({
       <div>
         <h2 className="text-2xl font-bold">Choose Your Theme</h2>
         <p className="text-muted-foreground mt-1">
-          Select a theme to customize your storefront's look and feel
+          Select a theme to customize your storefront&apos;s look and feel
         </p>
       </div>
 

@@ -176,7 +176,7 @@ export default function CustomizePage() {
         <div>
           <h1 className="text-3xl font-bold">Customize Storefront</h1>
           <p className="text-muted-foreground mt-1">
-            Customize your storefront's appearance and layout
+            Customize your storefront&apos;s appearance and layout
           </p>
         </div>
       </div>
@@ -241,8 +241,8 @@ export default function CustomizePage() {
                   </p>
                   <div className="mt-4">
                     <ImageUpload
-                      currentImage={storefront?.logoUrl}
-                      onImageUpload={(url) => {
+                      value={storefront?.logoUrl}
+                      onChange={(url) => {
                         setStorefront(prev => ({
                           ...prev!,
                           logoUrl: url
