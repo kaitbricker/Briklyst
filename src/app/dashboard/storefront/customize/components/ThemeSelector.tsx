@@ -251,22 +251,29 @@ interface ThemeSelectorProps {
 export default function ThemeSelector({ selectedTheme, onSelectTheme }: ThemeSelectorProps) {
   return (
     <div className="space-y-6">
-      <div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         <h2 className="text-2xl font-bold mb-2">Choose Your Theme</h2>
         <p className="text-muted-foreground">Select a theme that matches your brand&apos;s personality</p>
-      </div>
+      </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {themes.map((theme) => (
+        {themes.map((theme, index) => (
           <motion.div
             key={theme.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
             <Card
               className={`p-4 cursor-pointer transition-all ${
                 selectedTheme.id === theme.id
-                  ? 'ring-2 ring-primary'
+                  ? 'ring-2 ring-primary shadow-lg'
                   : 'hover:shadow-lg'
               }`}
               onClick={() => onSelectTheme(theme)}
@@ -275,7 +282,9 @@ export default function ThemeSelector({ selectedTheme, onSelectTheme }: ThemeSel
                 <div className="flex items-center justify-between">
                   <h3 className="font-semibold">{theme.name}</h3>
                   {selectedTheme.id === theme.id && (
-                    <Badge variant="secondary">Selected</Badge>
+                    <Badge variant="secondary" className="animate-fade-in">
+                      Selected
+                    </Badge>
                   )}
                 </div>
                 <p className="text-sm text-muted-foreground">{theme.description}</p>
@@ -284,17 +293,28 @@ export default function ThemeSelector({ selectedTheme, onSelectTheme }: ThemeSel
                 </div>
                 <div className="flex gap-2">
                   <div
-                    className="w-6 h-6 rounded-full"
+                    className="w-6 h-6 rounded-full transition-transform hover:scale-110"
                     style={{ backgroundColor: theme.colors.primary }}
+                    title="Primary Color"
                   />
                   <div
-                    className="w-6 h-6 rounded-full"
+                    className="w-6 h-6 rounded-full transition-transform hover:scale-110"
                     style={{ backgroundColor: theme.colors.secondary }}
+                    title="Secondary Color"
                   />
                   <div
-                    className="w-6 h-6 rounded-full"
+                    className="w-6 h-6 rounded-full transition-transform hover:scale-110"
                     style={{ backgroundColor: theme.colors.accent }}
+                    title="Accent Color"
                   />
+                </div>
+                <div className="pt-2">
+                  <div className="text-xs text-muted-foreground mb-1">Typography</div>
+                  <div className="flex gap-2 text-xs">
+                    <span className="font-medium">{theme.typography.header}</span>
+                    <span className="text-muted-foreground">/</span>
+                    <span>{theme.typography.body}</span>
+                  </div>
                 </div>
               </div>
             </Card>
