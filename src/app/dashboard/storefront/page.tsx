@@ -322,6 +322,17 @@ export default function StorefrontPage() {
     }
   };
 
+  // Create a derived previewStorefront for live preview
+  const previewStorefront = localStorefront && selectedTheme ? {
+    ...localStorefront,
+    themeId: selectedTheme.id,
+    primaryColor: selectedTheme.primaryColor,
+    accentColor: selectedTheme.accentColor,
+    backgroundColor: selectedTheme.backgroundColor,
+    textColor: selectedTheme.textColor,
+    fontFamily: JSON.stringify(selectedTheme.fontFamily),
+  } : localStorefront;
+
   if (loading) {
     return (
       <div className="flex h-[50vh] items-center justify-center">
@@ -483,7 +494,7 @@ export default function StorefrontPage() {
           <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 p-8 border border-gray-100/50">
             <h2 className="text-xl font-semibold mb-4">Live Preview</h2>
             <div className="relative">
-              <StorefrontPreview storefront={localStorefront} isEditing={true} />
+              <StorefrontPreview storefront={previewStorefront} isEditing={true} />
             </div>
           </div>
         </div>
