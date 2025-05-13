@@ -92,7 +92,7 @@ export default function DashboardLayout({
         user={session?.user || {}}
       />
       <TopNav />
-      <div className="flex flex-1 pt-0">
+      <div className="flex flex-1 pt-16">
         <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-gray-200 min-h-screen px-0 py-0">
           <div className="flex items-center gap-2 px-8 py-8">
             <Image
@@ -104,22 +104,42 @@ export default function DashboardLayout({
             />
           </div>
           <nav className="flex-1 flex flex-col gap-1 px-4">
-            {navItems.map((item) => {
-              const isActive = pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    'flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-base transition-all',
-                    isActive ? 'bg-gradient-to-r from-[#A259E6] to-[#4F8CFF] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100',
-                  )}
-                >
-                  <item.icon className={`h-5 w-5 ${isActive ? 'text-white' : 'text-[#A259E6]'}`} />
-                  {item.title}
-                </Link>
-              );
-            })}
+            <div className="grid grid-cols-3 gap-2">
+              {navItems.slice(0, 3).map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      'flex flex-col items-center justify-center gap-2 px-3 py-4 rounded-lg font-medium text-sm transition-all text-center',
+                      isActive ? 'bg-gradient-to-r from-[#A259E6] to-[#4F8CFF] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100',
+                    )}
+                  >
+                    <item.icon className={`h-5 w-5 ${isActive ? 'text-white' : 'text-[#A259E6]'}`} />
+                    <span className="text-xs">{item.title}</span>
+                  </Link>
+                );
+              })}
+            </div>
+            <div className="grid grid-cols-3 gap-2 mt-2">
+              {navItems.slice(3).map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      'flex flex-col items-center justify-center gap-2 px-3 py-4 rounded-lg font-medium text-sm transition-all text-center',
+                      isActive ? 'bg-gradient-to-r from-[#A259E6] to-[#4F8CFF] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100',
+                    )}
+                  >
+                    <item.icon className={`h-5 w-5 ${isActive ? 'text-white' : 'text-[#A259E6]'}`} />
+                    <span className="text-xs">{item.title}</span>
+                  </Link>
+                );
+              })}
+            </div>
             <div className="my-4 border-t border-gray-200" />
             {accountItems.map((item) => (
               <Link

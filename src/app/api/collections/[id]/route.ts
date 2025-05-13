@@ -18,15 +18,30 @@ export async function PUT(
       )
     }
 
-    const { name, description, tags } = await request.json()
-
-    const existingCollection = await prisma.collection.findUnique({
+    // First get the user's storefront
+    const storefront = await prisma.storefront.findFirst({
       where: {
-        id: params.id
+        userId: session.user.id
       }
     })
 
-    if (!existingCollection || existingCollection.userId !== session.user.id) {
+    if (!storefront) {
+      return NextResponse.json(
+        { error: 'Storefront not found' },
+        { status: 404 }
+      )
+    }
+
+    const { name, description, tags } = await request.json()
+
+    const existingCollection = await prisma.collection.findFirst({
+      where: {
+        id: params.id,
+        storefrontId: storefront.id
+      }
+    })
+
+    if (!existingCollection) {
       return NextResponse.json(
         { error: 'Collection not found or unauthorized' },
         { status: 404 }
@@ -67,13 +82,28 @@ export async function DELETE(
       )
     }
 
-    const existingCollection = await prisma.collection.findUnique({
+    // First get the user's storefront
+    const storefront = await prisma.storefront.findFirst({
       where: {
-        id: params.id
+        userId: session.user.id
       }
     })
 
-    if (!existingCollection || existingCollection.userId !== session.user.id) {
+    if (!storefront) {
+      return NextResponse.json(
+        { error: 'Storefront not found' },
+        { status: 404 }
+      )
+    }
+
+    const existingCollection = await prisma.collection.findFirst({
+      where: {
+        id: params.id,
+        storefrontId: storefront.id
+      }
+    })
+
+    if (!existingCollection) {
       return NextResponse.json(
         { error: 'Collection not found or unauthorized' },
         { status: 404 }

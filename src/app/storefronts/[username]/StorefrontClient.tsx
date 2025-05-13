@@ -47,12 +47,8 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
         fontFamily: theme.fontFamily?.body || theme.fontFamily || undefined,
       }}
     >
-      {/* Banner */}
-      <div className="w-full h-48 md:h-64 relative">
-        <Image src={storefront.bannerUrl || '/placeholder-banner.jpg'} alt="Banner" fill className="object-cover" />
-      </div>
       {/* Header */}
-      <div className="flex flex-col md:flex-row items-center justify-between px-8 py-4 border-b" style={{ borderColor: theme.primaryColor || '#eee', background: theme.backgroundColor }}>
+      <div className="flex flex-col md:flex-row items-center justify-between px-8 py-6 border-b" style={{ borderColor: theme.primaryColor || '#eee', background: theme.backgroundColor }}>
         <div className="flex items-center gap-3">
           <Image src={storefront.logoUrl || '/briklyst-logo.png'} alt="Storefront Logo" width={48} height={48} className="rounded-full" />
           <span className="text-xl font-bold" style={{ color: theme.textColor }}>{storefront.name || storefront.title}</span>

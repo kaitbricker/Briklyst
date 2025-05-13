@@ -15,9 +15,23 @@ export async function GET() {
       )
     }
 
-    const collections = await prisma.collection.findMany({
+    // First get the user's storefront
+    const storefront = await prisma.storefront.findFirst({
       where: {
         userId: session.user.id
+      }
+    })
+
+    if (!storefront) {
+      return NextResponse.json(
+        { error: 'Storefront not found' },
+        { status: 404 }
+      )
+    }
+
+    const collections = await prisma.collection.findMany({
+      where: {
+        storefrontId: storefront.id
       },
       orderBy: {
         name: 'asc'
@@ -45,12 +59,26 @@ export async function POST(request: Request) {
       )
     }
 
+    // First get the user's storefront
+    const storefront = await prisma.storefront.findFirst({
+      where: {
+        userId: session.user.id
+      }
+    })
+
+    if (!storefront) {
+      return NextResponse.json(
+        { error: 'Storefront not found' },
+        { status: 404 }
+      )
+    }
+
     const { name, description, tags } = await request.json()
 
     // Check if collection with same name exists
     const existing = await prisma.collection.findFirst({
       where: {
-        userId: session.user.id,
+        storefrontId: storefront.id,
         name: name
       }
     })
@@ -68,7 +96,7 @@ export async function POST(request: Request) {
         description,
         tags: tags || [],
         slug: name.toLowerCase().replace(/\s+/g, '-'),
-        userId: session.user.id
+        storefrontId: storefront.id
       }
     })
 
@@ -93,6 +121,20 @@ export async function PUT(request: Request) {
       )
     }
 
+    // First get the user's storefront
+    const storefront = await prisma.storefront.findFirst({
+      where: {
+        userId: session.user.id
+      }
+    })
+
+    if (!storefront) {
+      return NextResponse.json(
+        { error: 'Storefront not found' },
+        { status: 404 }
+      )
+    }
+
     const { id, name, description, tags } = await request.json()
 
     if (!id) {
@@ -102,7 +144,7 @@ export async function PUT(request: Request) {
     const existingCollection = await prisma.collection.findFirst({
       where: {
         id,
-        userId: session.user.id
+        storefrontId: storefront.id
       }
     })
 
@@ -142,6 +184,20 @@ export async function DELETE(request: Request) {
       )
     }
 
+    // First get the user's storefront
+    const storefront = await prisma.storefront.findFirst({
+      where: {
+        userId: session.user.id
+      }
+    })
+
+    if (!storefront) {
+      return NextResponse.json(
+        { error: 'Storefront not found' },
+        { status: 404 }
+      )
+    }
+
     const { id } = await request.json()
 
     if (!id) {
@@ -151,7 +207,7 @@ export async function DELETE(request: Request) {
     const existingCollection = await prisma.collection.findFirst({
       where: {
         id,
-        userId: session.user.id
+        storefrontId: storefront.id
       }
     })
 
