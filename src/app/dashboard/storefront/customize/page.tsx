@@ -74,10 +74,16 @@ export default function CustomizePage() {
     fetchStorefront()
   }, [toast])
 
-  const handleSaveTheme = async () => {
-    if (!storefront) return
+  const handleSelectTheme = (theme: Theme) => {
+    setSelectedTheme(theme);
+    // Force a remount of the preview to ensure smooth transitions
+    setPreviewKey(Date.now());
+  };
 
-    setIsSaving(true)
+  const handleSaveTheme = async () => {
+    if (!storefront) return;
+
+    setIsSaving(true);
     try {
       const response = await fetch('/api/storefront/theme', {
         method: 'PATCH',
@@ -88,33 +94,33 @@ export default function CustomizePage() {
           storefrontId: storefront.id,
           themeId: selectedTheme.id,
         }),
-      })
+      });
 
       if (!response.ok) {
-        throw new Error('Failed to save theme')
+        throw new Error('Failed to save theme');
       }
 
       // Update local storefront state with new theme
       setStorefront(prev => ({
         ...prev!,
         theme: selectedTheme
-      }))
+      }));
 
       toast({
         title: 'Success',
         description: 'Theme saved successfully',
-      })
+      });
     } catch (error) {
-      console.error('Error saving theme:', error)
+      console.error('Error saving theme:', error);
       toast({
         title: 'Error',
         description: 'Failed to save theme',
         variant: 'destructive',
-      })
+      });
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   const handleUpdateProfile = async () => {
     if (!storefront) return
@@ -161,21 +167,31 @@ export default function CustomizePage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center space-y-4">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto" />
-          <p className="text-muted-foreground">Loading storefront data...</p>
-        </div>
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center"
+        >
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Loading your storefront...</p>
+        </motion.div>
       </div>
-    )
+    );
   }
 
   if (!storefront) {
     return (
-      <div className="text-center space-y-4">
-        <p className="text-muted-foreground">No storefront data found</p>
+      <div className="p-8">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-red-50 text-red-600 p-4 rounded-lg"
+        >
+          Failed to load storefront data
+        </motion.div>
       </div>
-    )
+    );
   }
 
   return (
@@ -220,11 +236,7 @@ export default function CustomizePage() {
             >
               <ThemeSelector
                 selectedTheme={selectedTheme}
-                onSelectTheme={(theme) => {
-                  setSelectedTheme(theme);
-                  setPreviewKey(Date.now());
-                  console.log('Selected theme:', theme);
-                }}
+                onSelectTheme={handleSelectTheme}
                 onSaveTheme={handleSaveTheme}
                 isSaving={isSaving}
               />
@@ -237,6 +249,7 @@ export default function CustomizePage() {
               transition={{ duration: 0.2 }}
             >
               <ThemePreview
+                key={previewKey}
                 theme={selectedTheme}
                 storefrontData={previewStorefront}
               />
