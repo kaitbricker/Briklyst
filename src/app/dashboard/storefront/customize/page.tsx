@@ -68,7 +68,7 @@ export default function CustomizePage() {
         }
         const data = await response.json()
         setStorefront(data)
-        setSelectedTheme(data.theme || themes[0])
+        setSelectedTheme(themes[0])
       } catch (error) {
         console.error('Error fetching storefront:', error)
         toast({
@@ -83,12 +83,6 @@ export default function CustomizePage() {
 
     fetchStorefront()
   }, [toast])
-
-  const handleSelectTheme = (theme: Theme) => {
-    setSelectedTheme(theme)
-    // Force a remount of the preview to ensure smooth transitions
-    setPreviewKey(Date.now())
-  }
 
   const handleSaveTheme = async () => {
     if (!storefront) return
@@ -274,12 +268,7 @@ export default function CustomizePage() {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.2 }}
             >
-              <ThemeSelector
-                selectedTheme={selectedTheme}
-                onSelectTheme={handleSelectTheme}
-                onSaveTheme={handleSaveTheme}
-                isSaving={isSaving}
-              />
+              <ThemeSelector />
             </motion.div>
 
             <motion.div
