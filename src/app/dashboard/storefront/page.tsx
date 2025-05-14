@@ -401,9 +401,7 @@ export default function StorefrontPage() {
           <Tabs value={activeTab} onValueChange={setActiveTab} className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 border border-gray-100/50">
             <TabsList className="flex gap-6 mb-8 border-b pb-2">
               <TabsTrigger value="design" className="text-lg font-semibold flex items-center gap-2 text-gray-700 hover:text-[#4F8CFF] transition-colors"><Palette className="w-5 h-5" /> Design & Theme</TabsTrigger>
-              <TabsTrigger value="products" className="text-lg font-semibold flex items-center gap-2 text-gray-700 hover:text-[#4F8CFF] transition-colors"><ShoppingBag className="w-5 h-5" /> Products</TabsTrigger>
               <TabsTrigger value="details" className="text-lg font-semibold flex items-center gap-2 text-gray-700 hover:text-[#4F8CFF] transition-colors"><Info className="w-5 h-5" /> Storefront Details</TabsTrigger>
-              <TabsTrigger value="collections" className="text-lg font-semibold flex items-center gap-2 text-gray-700 hover:text-[#4F8CFF] transition-colors"><Folder className="w-5 h-5" /> Collections</TabsTrigger>
             </TabsList>
             <TabsContent value="design">
               <Card className="p-8 rounded-2xl bg-white/90 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100/50">
@@ -414,12 +412,6 @@ export default function StorefrontPage() {
                   onSaveTheme={handleSaveTheme}
                   isSaving={isSavingTheme}
                 />
-              </Card>
-            </TabsContent>
-            <TabsContent value="products">
-              <Card className="p-8 rounded-2xl bg-white/90 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100/50">
-                <h3 className="text-xl font-bold mb-4">Manage Products</h3>
-                <ProductList products={products} onReorder={handleReorder} />
               </Card>
             </TabsContent>
             <TabsContent value="details">
@@ -457,33 +449,6 @@ export default function StorefrontPage() {
                     <Button type="submit" className="w-full bg-gradient-to-r from-[#4F8CFF] to-[#A259E6] text-white shadow-md hover:from-[#3a6fd8] hover:to-[#7d3fc7] hover:shadow-lg text-lg py-3 rounded-xl sticky bottom-0 transition-all duration-300">Save Changes</Button>
                   </div>
                 </form>
-              </Card>
-            </TabsContent>
-            <TabsContent value="collections">
-              <Card className="p-8 rounded-2xl bg-white/90 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100/50">
-                <h3 className="text-xl font-bold mb-4">Collections</h3>
-                <div className="space-y-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <h4 className="text-lg font-semibold">Your Collections</h4>
-                    <Button 
-                      onClick={() => setNewCollection({ name: '', description: '', tags: [] })}
-                      className="bg-gradient-to-r from-[#4F8CFF] to-[#A259E6] text-white shadow-md hover:from-[#3a6fd8] hover:to-[#7d3fc7] hover:shadow-lg transition-all duration-300"
-                    >
-                      <Plus className="w-4 h-4 mr-2" />
-                      Add Collection
-                    </Button>
-                  </div>
-                  <div className="grid gap-4">
-                    {collections.map((collection) => (
-                      <div key={collection.id} className="p-4 border rounded-lg bg-white/50 backdrop-blur-sm hover:bg-white/80 transition-all duration-300 shadow-sm hover:shadow-md border-gray-100/50">
-                        <h4 className="font-medium">{collection.name}</h4>
-                        {collection.description && (
-                          <p className="text-sm text-gray-600 mt-1">{collection.description}</p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
               </Card>
             </TabsContent>
           </Tabs>

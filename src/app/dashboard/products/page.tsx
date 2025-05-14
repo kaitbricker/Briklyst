@@ -27,6 +27,7 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { ImageUpload } from '@/components/ui/image-upload'
 import BulkImportProducts from '@/components/BulkImportProducts'
+import CollectionsManager from '@/app/dashboard/storefront/customize/components/CollectionsManager'
 
 interface Product {
   id: string
@@ -47,6 +48,7 @@ export default function ProductsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const { toast } = useToast()
+  const [collections, setCollections] = useState([])
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -69,16 +71,28 @@ export default function ProductsPage() {
       }
     }
 
+    const fetchCollections = async () => {
+      try {
+        const response = await fetch('/api/collections')
+        if (!response.ok) throw new Error('Failed to fetch collections')
+        const data = await response.json()
+        setCollections(data)
+      } catch (error) {
+        toast({ title: 'Error', description: 'Failed to load collections', variant: 'destructive' })
+      }
+    }
+
     fetchProducts()
+    fetchCollections()
   }, [toast])
 
   const handleAddProduct = async (product: Omit<Product, 'id' | 'clicks'>) => {
     try {
       // Fetch the current user's storefront
-      const storefrontRes = await fetch('/api/storefronts?userId=current');
-      if (!storefrontRes.ok) throw new Error('Failed to fetch storefront');
-      const storefront = await storefrontRes.json();
-      if (!storefront?.id) throw new Error('No storefront found');
+      const storefrontRes = await fetch('/api/storefronts?userId=current')
+      if (!storefrontRes.ok) throw new Error('Failed to fetch storefront')
+      const storefront = await storefrontRes.json()
+      if (!storefront?.id) throw new Error('No storefront found')
 
       const response = await fetch('/api/products', {
         method: 'POST',
@@ -178,19 +192,62 @@ export default function ProductsPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ products: bulkProducts }),
-      });
-      if (!response.ok) throw new Error('Bulk import failed');
-      toast({ title: 'Success', description: 'Products imported successfully!' });
+      })
+      if (!response.ok) throw new Error('Bulk import failed')
+      toast({ title: 'Success', description: 'Products imported successfully!' })
       // Refresh products
-      const res = await fetch('/api/products');
+      const res = await fetch('/api/products')
       if (res.ok) {
-        const data = await res.json();
-        setProducts(data);
+        const data = await res.json()
+        setProducts(data)
       }
     } catch {
-      toast({ title: 'Error', description: 'Bulk import failed', variant: 'destructive' });
+      toast({ title: 'Error', description: 'Bulk import failed', variant: 'destructive' })
     }
-  };
+  }
+
+  // Handler to update collections in backend and refresh
+  const handleUpdateCollections = async (updatedCollections) => {
+    try {
+      // For each collection, update or create as needed
+      for (const col of updatedCollections) {
+        if (col.id && collections.some(c => c.id === col.id)) {
+          // Update
+          await fetch(`/api/collections`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(col),
+          })
+        } else {
+          // Create
+          await fetch(`/api/collections`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(col),
+          })
+        }
+      }
+      // Remove deleted collections
+      for (const col of collections) {
+        if (!updatedCollections.some(c => c.id === col.id)) {
+          await fetch(`/api/collections`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: col.id }),
+          })
+        }
+      }
+      // Refresh collections
+      const response = await fetch('/api/collections')
+      if (response.ok) {
+        const data = await response.json()
+        setCollections(data)
+      }
+      toast({ title: 'Success', description: 'Collections updated successfully' })
+    } catch {
+      toast({ title: 'Error', description: 'Failed to update collections', variant: 'destructive' })
+    }
+  }
 
   if (loading) {
     return (
@@ -244,6 +301,8 @@ export default function ProductsPage() {
           Filter
         </Button>
       </div>
+
+      <CollectionsManager collections={collections} onUpdateCollections={handleUpdateCollections} />
 
       <motion.div 
         initial={{ opacity: 0 }}

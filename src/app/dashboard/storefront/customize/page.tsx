@@ -255,7 +255,7 @@ export default function CustomizePage() {
         onValueChange={setActiveTab}
         className="space-y-8"
       >
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="theme" className="gap-2">
             <Settings className="h-4 w-4" />
             Theme
@@ -263,10 +263,6 @@ export default function CustomizePage() {
           <TabsTrigger value="details" className="gap-2">
             <User className="h-4 w-4" />
             Storefront Details
-          </TabsTrigger>
-          <TabsTrigger value="collections" className="gap-2">
-            <LayoutGrid className="h-4 w-4" />
-            Collections
           </TabsTrigger>
         </TabsList>
 
@@ -300,7 +296,7 @@ export default function CustomizePage() {
             </motion.div>
           </TabsContent>
 
-          <TabsContent value="details">
+          <TabsContent value="details" className="space-y-8">
             <Card className="p-6">
               <div className="space-y-6">
                 <div>
@@ -418,18 +414,6 @@ export default function CustomizePage() {
                 </Button>
               </div>
             </Card>
-          </TabsContent>
-
-          <TabsContent value="collections">
-            <CollectionsManager
-              collections={storefront?.collections || []}
-              onUpdateCollections={(collections) => {
-                setStorefront(prev => ({
-                  ...prev!,
-                  collections
-                }))
-              }}
-            />
           </TabsContent>
         </AnimatePresence>
       </Tabs>
