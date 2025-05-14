@@ -17,6 +17,15 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { ImageUpload } from '@/components/ui/image-upload'
 import StorefrontPreview from '@/components/storefront/StorefrontPreview'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 interface Storefront {
   id: string
@@ -47,7 +56,8 @@ export default function CustomizePage() {
   const [storefront, setStorefront] = useState<Storefront | null>(null)
   const [selectedTheme, setSelectedTheme] = useState<Theme>(themes[0])
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false)
-  const [previewKey, setPreviewKey] = useState(0);
+  const [previewKey, setPreviewKey] = useState(0)
+  const [showPreview, setShowPreview] = useState(false)
 
   useEffect(() => {
     const fetchStorefront = async () => {
@@ -75,15 +85,15 @@ export default function CustomizePage() {
   }, [toast])
 
   const handleSelectTheme = (theme: Theme) => {
-    setSelectedTheme(theme);
+    setSelectedTheme(theme)
     // Force a remount of the preview to ensure smooth transitions
-    setPreviewKey(Date.now());
-  };
+    setPreviewKey(Date.now())
+  }
 
   const handleSaveTheme = async () => {
-    if (!storefront) return;
+    if (!storefront) return
 
-    setIsSaving(true);
+    setIsSaving(true)
     try {
       const response = await fetch('/api/storefront/theme', {
         method: 'PATCH',
@@ -94,33 +104,33 @@ export default function CustomizePage() {
           storefrontId: storefront.id,
           themeId: selectedTheme.id,
         }),
-      });
+      })
 
       if (!response.ok) {
-        throw new Error('Failed to save theme');
+        throw new Error('Failed to save theme')
       }
 
       // Update local storefront state with new theme
       setStorefront(prev => ({
         ...prev!,
         theme: selectedTheme
-      }));
+      }))
 
       toast({
         title: 'Success',
         description: 'Theme saved successfully',
-      });
+      })
     } catch (error) {
-      console.error('Error saving theme:', error);
+      console.error('Error saving theme:', error)
       toast({
         title: 'Error',
         description: 'Failed to save theme',
         variant: 'destructive',
-      });
+      })
     } finally {
-      setIsSaving(false);
+      setIsSaving(false)
     }
-  };
+  }
 
   const handleUpdateProfile = async () => {
     if (!storefront) return
@@ -163,7 +173,7 @@ export default function CustomizePage() {
   const previewStorefront = storefront && selectedTheme ? {
     ...storefront,
     theme: selectedTheme,
-  } : storefront;
+  } : storefront
 
   if (isLoading) {
     return (
@@ -177,7 +187,7 @@ export default function CustomizePage() {
           <p className="mt-4 text-muted-foreground">Loading your storefront...</p>
         </motion.div>
       </div>
-    );
+    )
   }
 
   if (!storefront) {
@@ -191,7 +201,7 @@ export default function CustomizePage() {
           Failed to load storefront data
         </motion.div>
       </div>
-    );
+    )
   }
 
   return (
@@ -203,6 +213,39 @@ export default function CustomizePage() {
             Customize your storefront&apos;s appearance and layout
           </p>
         </div>
+        <Dialog open={showPreview} onOpenChange={setShowPreview}>
+          <DialogTrigger asChild>
+            <Button variant="outline" className="gap-2">
+              <RefreshCw className="w-4 h-4" />
+              Preview Changes
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-6xl">
+            <DialogHeader>
+              <DialogTitle>Live Preview</DialogTitle>
+              <DialogDescription>
+                Preview how your storefront will look with the selected theme
+              </DialogDescription>
+            </DialogHeader>
+            <div className="mt-4">
+              <StorefrontPreview 
+                key={previewKey}
+                storefront={previewStorefront} 
+                isEditing={true} 
+              />
+            </div>
+            <DialogFooter>
+              <Button
+                onClick={handleSaveTheme}
+                disabled={isSaving}
+                className="gap-2"
+              >
+                <Save className="w-4 h-4" />
+                {isSaving ? 'Saving...' : 'Save Changes'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <Tabs
@@ -252,20 +295,6 @@ export default function CustomizePage() {
                 key={previewKey}
                 theme={selectedTheme}
                 storefrontData={previewStorefront}
-              />
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.2 }}
-            >
-              <h2 className="text-xl font-semibold mb-4">Live Preview</h2>
-              <StorefrontPreview 
-                key={previewKey}
-                storefront={previewStorefront} 
-                isEditing={true} 
               />
             </motion.div>
           </TabsContent>

@@ -5,6 +5,8 @@ import { Card } from '@/components/ui/card'
 import { Theme } from '@/lib/themes'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import { Heart, Share2, ShoppingCart } from 'lucide-react'
 
 interface ThemePreviewProps {
   theme: Theme
@@ -164,6 +166,18 @@ export default function ThemePreview({ theme, storefrontData }: ThemePreviewProp
                             fill
                             className="object-cover transition-transform duration-500 hover:scale-105"
                           />
+                          <motion.div 
+                            className="absolute top-2 right-2"
+                            whileHover={{ scale: 1.1 }}
+                          >
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="rounded-full bg-white/80 backdrop-blur-sm hover:bg-white"
+                            >
+                              <Heart className="w-4 h-4" />
+                            </Button>
+                          </motion.div>
                         </div>
                         <div className="p-4 space-y-2">
                           <h3 
@@ -175,17 +189,27 @@ export default function ThemePreview({ theme, storefrontData }: ThemePreviewProp
                           <p className="text-2xl font-bold transition-colors duration-300">
                             ${product.price}
                           </p>
-                          <motion.button
-                            className={cn(
-                              "w-full transition-all duration-200",
-                              theme.buttonStyle
-                            )}
-                            style={{ backgroundColor: theme.primaryColor }}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                          >
-                            View Details
-                          </motion.button>
+                          <div className="flex gap-2">
+                            <motion.button
+                              className={cn(
+                                "flex-1 transition-all duration-200",
+                                theme.buttonStyle
+                              )}
+                              style={{ backgroundColor: theme.primaryColor }}
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
+                            >
+                              <ShoppingCart className="w-4 h-4 mr-2" />
+                              Add to Cart
+                            </motion.button>
+                            <motion.button
+                              className="p-2 rounded-lg border border-gray-200 hover:border-gray-300 transition-all duration-200"
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
+                            >
+                              <Share2 className="w-4 h-4" />
+                            </motion.button>
+                          </div>
                         </div>
                       </Card>
                     </motion.div>

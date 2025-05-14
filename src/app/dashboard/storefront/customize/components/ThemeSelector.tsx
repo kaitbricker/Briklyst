@@ -6,7 +6,7 @@ import { Theme } from '@/lib/themes'
 import { themes } from '@/lib/themes'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Check, Save, Sparkles } from 'lucide-react'
+import { Check, Save, Sparkles, Eye, Palette, Type, Layout } from 'lucide-react'
 import {
   Select,
   SelectContent,
@@ -15,6 +15,15 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { cn } from '@/lib/utils'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 interface ThemeSelectorProps {
   selectedTheme: Theme
@@ -65,17 +74,76 @@ export default function ThemeSelector({
           </SelectContent>
         </Select>
 
-        <Button
-          onClick={onSaveTheme}
-          disabled={isSaving}
-          className={cn(
-            "gap-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 transition-all",
-            isSaving && "opacity-50 cursor-not-allowed"
-          )}
-        >
-          <Sparkles className="w-4 h-4" />
-          {isSaving ? 'Saving...' : 'Save Theme'}
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button
+              variant="outline"
+              className="gap-2"
+            >
+              <Eye className="w-4 h-4" />
+              Preview
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-4xl">
+            <DialogHeader>
+              <DialogTitle>Theme Preview</DialogTitle>
+              <DialogDescription>
+                Preview how your storefront will look with this theme
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <Palette className="w-4 h-4" />
+                  <h3 className="font-semibold">Color Palette</h3>
+                </div>
+                <div className="flex gap-2">
+                  {[selectedTheme.primaryColor, selectedTheme.accentColor, selectedTheme.backgroundColor].map((color, index) => (
+                    <motion.div
+                      key={index}
+                      className="w-12 h-12 rounded-lg shadow-sm transition-all duration-300"
+                      style={{ backgroundColor: color }}
+                      whileHover={{ scale: 1.1 }}
+                    />
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <Type className="w-4 h-4" />
+                  <h3 className="font-semibold">Typography</h3>
+                </div>
+                <div className="space-y-2">
+                  <p
+                    className="text-lg font-medium"
+                    style={{ fontFamily: selectedTheme.fontFamily.heading }}
+                  >
+                    {selectedTheme.name} Heading
+                  </p>
+                  <p
+                    className="text-base"
+                    style={{ fontFamily: selectedTheme.fontFamily.body }}
+                  >
+                    {selectedTheme.name} Body Text
+                  </p>
+                </div>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                onClick={onSaveTheme}
+                disabled={isSaving}
+                className={cn(
+                  "gap-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 transition-all",
+                  isSaving && "opacity-50 cursor-not-allowed"
+                )}
+              >
+                <Sparkles className="w-4 h-4" />
+                {isSaving ? 'Saving...' : 'Save Theme'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Theme Preview Card */}
@@ -101,40 +169,67 @@ export default function ThemeSelector({
               <p className="text-sm text-muted-foreground">{selectedTheme.description}</p>
               
               {/* Theme Preview Elements */}
-              <div className="space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Color Palette */}
-                <div className="flex gap-2">
-                  <div
-                    className="w-8 h-8 rounded-full shadow-sm transition-transform hover:scale-110"
-                    style={{ backgroundColor: selectedTheme.primaryColor }}
-                  />
-                  <div
-                    className="w-8 h-8 rounded-full shadow-sm transition-transform hover:scale-110"
-                    style={{ backgroundColor: selectedTheme.accentColor }}
-                  />
-                  <div
-                    className="w-8 h-8 rounded-full shadow-sm transition-transform hover:scale-110"
-                    style={{ backgroundColor: selectedTheme.backgroundColor }}
-                  />
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Palette className="w-4 h-4" />
+                    <h4 className="font-medium">Colors</h4>
+                  </div>
+                  <div className="flex gap-2">
+                    <div
+                      className="w-8 h-8 rounded-full shadow-sm transition-transform hover:scale-110"
+                      style={{ backgroundColor: selectedTheme.primaryColor }}
+                    />
+                    <div
+                      className="w-8 h-8 rounded-full shadow-sm transition-transform hover:scale-110"
+                      style={{ backgroundColor: selectedTheme.accentColor }}
+                    />
+                    <div
+                      className="w-8 h-8 rounded-full shadow-sm transition-transform hover:scale-110"
+                      style={{ backgroundColor: selectedTheme.backgroundColor }}
+                    />
+                  </div>
                 </div>
 
                 {/* Typography Preview */}
-                <div className="space-y-1">
-                  <p
-                    className="text-sm font-medium"
-                    style={{ fontFamily: selectedTheme.fontFamily.heading }}
-                  >
-                    {selectedTheme.name} Heading
-                  </p>
-                  <p
-                    className="text-xs"
-                    style={{ fontFamily: selectedTheme.fontFamily.body }}
-                  >
-                    {selectedTheme.name} Body Text
-                  </p>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Type className="w-4 h-4" />
+                    <h4 className="font-medium">Typography</h4>
+                  </div>
+                  <div className="space-y-1">
+                    <p
+                      className="text-sm font-medium"
+                      style={{ fontFamily: selectedTheme.fontFamily.heading }}
+                    >
+                      {selectedTheme.name} Heading
+                    </p>
+                    <p
+                      className="text-xs"
+                      style={{ fontFamily: selectedTheme.fontFamily.body }}
+                    >
+                      {selectedTheme.name} Body Text
+                    </p>
+                  </div>
                 </div>
 
-                {/* Button Preview */}
+                {/* Layout Preview */}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Layout className="w-4 h-4" />
+                    <h4 className="font-medium">Layout</h4>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="h-2 bg-gray-200 rounded-full w-full" />
+                    <div className="h-2 bg-gray-200 rounded-full w-3/4" />
+                    <div className="h-2 bg-gray-200 rounded-full w-1/2" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Button Preview */}
+              <div className="pt-4">
                 <button
                   className={`w-full text-sm ${selectedTheme.buttonStyle} transition-all duration-200 hover:scale-[1.02]`}
                   style={{ backgroundColor: selectedTheme.primaryColor }}
