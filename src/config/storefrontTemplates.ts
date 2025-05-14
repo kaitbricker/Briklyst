@@ -24,148 +24,33 @@ export interface StorefrontTemplate {
 
 export const templates: StorefrontTemplate[] = [
   {
-    id: 'minimal',
-    name: 'Minimal',
-    description: 'A clean, minimalist design focused on your products',
-    previewImage: '/templates/minimal.jpg',
+    id: 'sleek-noir',
+    name: 'Sleek Noir',
+    description: 'A modern, editorial storefront with a premium, high-contrast noir aesthetic. Bold typography, seamless product displays, and a cinematic, minimalist layout.',
+    previewImage: '/templates/sleek-noir.jpg',
     features: [
-      'Clean, minimalist layout',
-      'Focus on product imagery',
-      'Ample white space',
-      'Simple navigation',
-      'Mobile-responsive design'
+      'Cinematic, high-contrast black & white design',
+      'Bold, wide sans-serif typography',
+      'Seamless, layered background with image blending',
+      'Sticky, collapsible sidebar navigation',
+      'Premium product card displays with micro-interactions',
+      'Responsive and touch-friendly for all devices',
     ],
     defaultColors: {
-      primary: '#000000',
-      secondary: '#ffffff',
-      accent: '#666666',
-      background: '#ffffff',
-      text: '#000000',
+      primary: '#111112', // Deep black
+      secondary: '#ffffff', // White
+      accent: '#2D2D32', // Cool gray for cards/sidebar
+      background: '#18181B', // Slightly lighter black for main bg
+      text: '#F5F5F7', // Off-white for text
     },
     defaultFonts: {
       heading: 'Inter',
       body: 'Inter',
     },
     defaultLayout: {
-      spacing: '1.5rem',
+      spacing: '1.75rem',
       containerWidth: '1200px',
-      borderRadius: '0.5rem',
-    },
-  },
-  {
-    id: 'modern',
-    name: 'Modern',
-    description: 'A contemporary design with bold typography and vibrant colors',
-    previewImage: '/templates/modern.jpg',
-    features: [
-      'Bold typography',
-      'Vibrant color scheme',
-      'Dynamic layouts',
-      'Modern UI elements',
-      'Enhanced product showcases'
-    ],
-    defaultColors: {
-      primary: '#2563eb',
-      secondary: '#1e40af',
-      accent: '#3b82f6',
-      background: '#f8fafc',
-      text: '#1e293b',
-    },
-    defaultFonts: {
-      heading: 'Poppins',
-      body: 'Inter',
-    },
-    defaultLayout: {
-      spacing: '2rem',
-      containerWidth: '1280px',
-      borderRadius: '1rem',
-    },
-  },
-  {
-    id: 'vintage',
-    name: 'Vintage',
-    description: 'A classic design with warm colors and traditional typography',
-    previewImage: '/templates/vintage.jpg',
-    features: [
-      'Warm color palette',
-      'Traditional typography',
-      'Classic layout elements',
-      'Vintage-inspired UI',
-      'Nostalgic design touches'
-    ],
-    defaultColors: {
-      primary: '#854d0e',
-      secondary: '#fef3c7',
-      accent: '#d97706',
-      background: '#fef3c7',
-      text: '#78350f',
-    },
-    defaultFonts: {
-      heading: 'Playfair Display',
-      body: 'Lora',
-    },
-    defaultLayout: {
-      spacing: '2rem',
-      containerWidth: '1200px',
-      borderRadius: '0.25rem',
-    },
-  },
-  {
-    id: 'bold',
-    name: 'Bold',
-    description: 'A striking design with high contrast and dramatic elements',
-    previewImage: '/templates/bold.jpg',
-    features: [
-      'High contrast design',
-      'Dramatic typography',
-      'Bold color combinations',
-      'Eye-catching layouts',
-      'Strong visual hierarchy'
-    ],
-    defaultColors: {
-      primary: '#dc2626',
-      secondary: '#1f2937',
-      accent: '#f97316',
-      background: '#111827',
-      text: '#ffffff',
-    },
-    defaultFonts: {
-      heading: 'Montserrat',
-      body: 'Open Sans',
-    },
-    defaultLayout: {
-      spacing: '2.5rem',
-      containerWidth: '1400px',
-      borderRadius: '0.75rem',
-    },
-  },
-  {
-    id: 'elegant',
-    name: 'Elegant',
-    description: 'A sophisticated design with refined typography and subtle colors',
-    previewImage: '/templates/elegant.jpg',
-    features: [
-      'Refined typography',
-      'Subtle color palette',
-      'Sophisticated layouts',
-      'Premium UI elements',
-      'Luxury-inspired design'
-    ],
-    defaultColors: {
-      primary: '#4b5563',
-      secondary: '#f3f4f6',
-      accent: '#9ca3af',
-      background: '#ffffff',
-      text: '#374151',
-    },
-    defaultFonts: {
-      heading: 'Cormorant Garamond',
-      body: 'Cormorant',
-    },
-    defaultLayout: {
-      spacing: '2rem',
-      containerWidth: '1200px',
-      borderRadius: '0.375rem',
+      borderRadius: '1.25rem',
     },
   },
 ] 

@@ -72,77 +72,74 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
       </header>
       <div className="flex flex-1 w-full">
         {/* Sidebar */}
-        <aside className="hidden md:flex flex-col w-56 bg-white/80 border-r border-gray-100 py-8 px-4 gap-4 shadow-sm">
-          <nav className="flex flex-col gap-2">
+        <aside className="hidden md:flex flex-col w-56 bg-[#18181B] border-r border-[#222227] py-8 px-4 gap-4 shadow-none sticky top-0 h-screen z-20 transition-all duration-300">
+          <nav className="flex flex-col gap-3 mt-8">
             {collections.map((col: string) => (
               <button
                 key={col}
                 onClick={() => setSelectedCollection(col)}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-base transition-all
-                  ${selectedCollection === col ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'}`}
-                style={selectedCollection === col ? { background: theme.primaryColor, color: theme.textColor } : {}}
+                className={`w-full px-0 py-0 rounded-full font-semibold text-base transition-all h-12 flex items-center justify-center
+                  ${selectedCollection === col ? 'bg-[#23232A] text-white shadow-lg' : 'bg-[#23232A]/70 text-[#F5F5F7] hover:bg-[#23232A]/90 hover:text-white'}
+                `}
+                style={{ letterSpacing: '0.03em', fontFamily: theme.fontFamily?.heading, border: 'none' }}
               >
-                <Grid className="h-5 w-5" />
                 {col}
               </button>
             ))}
           </nav>
         </aside>
         {/* Main Content */}
-        <main className="flex-1 flex flex-col gap-8 px-4 py-8">
+        <main className="flex-1 flex flex-col gap-8 px-4 py-8 relative">
+          {/* Subtle noise overlay */}
+          <div className="pointer-events-none fixed inset-0 z-0" style={{ background: 'url(/noise.png)', opacity: 0.04, mixBlendMode: 'overlay' }} />
           {/* Profile Section */}
-          <section className="flex flex-col md:flex-row items-center gap-8 mb-8">
-            <div className="relative w-24 h-24 rounded-full border-4 flex items-center justify-center transition-all duration-200" style={{ borderColor: theme.primaryColor }}>
-              <Image src={storefront.logoUrl || '/briklyst-logo.png'} alt="Profile" width={96} height={96} className="rounded-full" />
+          <section className="flex flex-col items-center justify-center text-center gap-4 mb-10 z-10">
+            <div className="relative w-28 h-28 rounded-full mx-auto shadow-xl" style={{ boxShadow: '0 6px 32px 0 rgba(0,0,0,0.25)' }}>
+              <Image src={storefront.logoUrl || '/briklyst-logo.png'} alt="Profile" width={112} height={112} className="rounded-full object-cover" />
             </div>
-            <div className="flex-1">
-              <h1 className="text-3xl font-bold mb-1" style={{ color: theme.textColor, fontFamily: theme.fontFamily?.heading }}>{storefront.name || storefront.title}</h1>
-              <div className="text-lg mb-2" style={{ color: theme.textColor }}>{storefront.tagline || ''}</div>
-              <div className="text-gray-700" style={{ color: theme.textColor }}>{storefront.description || ''}</div>
-              <div className="flex gap-3 mt-3">
-                {storefront.socials?.instagram && <a href={storefront.socials.instagram} target="_blank" rel="noopener noreferrer" className="hover:underline text-blue-500">Instagram</a>}
-                {storefront.socials?.twitter && <a href={storefront.socials.twitter} target="_blank" rel="noopener noreferrer" className="hover:underline text-blue-400">Twitter</a>}
-                {storefront.socials?.tiktok && <a href={storefront.socials.tiktok} target="_blank" rel="noopener noreferrer" className="hover:underline text-black">TikTok</a>}
-              </div>
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-wide mb-1" style={{ fontFamily: theme.fontFamily?.heading, letterSpacing: '0.04em', color: theme.textColor }}>{storefront.name || storefront.title}</h1>
+            {storefront.tagline && <div className="italic text-lg text-[#B0B0B8] mb-1" style={{ fontFamily: theme.fontFamily?.body }}>{storefront.tagline}</div>}
+            {storefront.description && <div className="text-base text-[#E5E5E7] mb-2 max-w-xl mx-auto" style={{ fontFamily: theme.fontFamily?.body }}>{storefront.description}</div>}
+            <div className="flex items-center justify-center gap-4 mt-2">
+              {storefront.socials?.tiktok && <a href={storefront.socials.tiktok} target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform"><img src="/icons/tiktok.svg" alt="TikTok" className="w-6 h-6" /></a>}
+              {storefront.socials?.instagram && <a href={storefront.socials.instagram} target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform"><img src="/icons/instagram.svg" alt="Instagram" className="w-6 h-6" /></a>}
+              {storefront.socials?.spotify && <a href={storefront.socials.spotify} target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform"><img src="/icons/spotify.svg" alt="Spotify" className="w-6 h-6" /></a>}
+              {storefront.socials?.youtube && <a href={storefront.socials.youtube} target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform"><img src="/icons/youtube.svg" alt="YouTube" className="w-6 h-6" /></a>}
             </div>
             <Button
-              className="px-8 py-3 rounded-full font-bold text-lg shadow transition-all duration-200"
-              style={{ background: theme.primaryColor, color: theme.textColor }}
+              className="px-8 py-3 rounded-full font-bold text-lg shadow transition-all duration-200 bg-gradient-to-r from-[#23232A] to-[#2D2D32] hover:from-[#2D2D32] hover:to-[#23232A] border-none mt-4"
+              style={{ color: '#fff', letterSpacing: '0.04em' }}
               onClick={() => toast({ title: 'Subscribed!', description: 'You are now subscribed.' })}
             >
-              SUBSCRIBE
+              Subscribe
             </Button>
           </section>
           {/* Product Grid */}
-          <section>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+          <section className="z-10">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
               {filteredProducts.map((product: any) => (
                 <motion.div
                   key={product.id}
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
-                  className="bg-white rounded-2xl shadow-lg p-4 flex flex-col items-center relative group transition-all duration-200"
-                  style={{ borderRadius: theme.cardRadius, boxShadow: theme.cardShadow }}
+                  className="bg-[#23232A] rounded-2xl shadow-xl p-6 flex flex-col items-center relative group transition-all duration-200 overflow-hidden"
+                  style={{ borderRadius: theme.cardRadius, boxShadow: '0 8px 32px 0 rgba(0,0,0,0.25)' }}
                 >
-                  <div className="w-full aspect-square rounded-xl overflow-hidden mb-4 relative">
-                    <Image src={product.imageUrl || '/placeholder-product.jpg'} alt={product.title} width={300} height={300} className="object-cover w-full h-full" />
-                    <AnimatePresence>
-                      <motion.button
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        transition={{ duration: 0.2 }}
-                        className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full font-semibold shadow transition-all duration-200 opacity-0 group-hover:opacity-100"
-                        style={{ background: theme.primaryColor, color: theme.textColor }}
-                        onClick={() => { setModalProduct(product); setShowProductModal(true); }}
-                      >
-                        Quick View
-                      </motion.button>
-                    </AnimatePresence>
+                  {/* Heart icon */}
+                  <motion.button
+                    whileTap={{ scale: 1.3 }}
+                    className="absolute top-4 right-4 z-20 bg-black/40 rounded-full p-2 hover:bg-black/70 transition-colors"
+                    onClick={() => toast({ title: 'Favorited!', description: `Added ${product.title} to favorites.` })}
+                  >
+                    <Heart className="w-6 h-6 text-white" />
+                  </motion.button>
+                  {/* Product Image with blend mode */}
+                  <div className="w-full aspect-square rounded-xl overflow-hidden mb-4 relative" style={{ background: '#18181B' }}>
+                    <Image src={product.imageUrl || '/placeholder-product.jpg'} alt={product.title} width={300} height={300} className="object-cover w-full h-full" style={{ mixBlendMode: 'lighten' }} />
                   </div>
-                  <div className="font-semibold text-lg mb-1" style={{ color: theme.textColor }}>{product.title}</div>
-                  <div className="font-bold text-xl mb-2" style={{ color: theme.textColor }}>$ {product.price?.toLocaleString('en-US', { minimumFractionDigits: 2 })}</div>
-                  <Button className="px-6 py-2 rounded-full font-semibold shadow transition-all duration-200" style={{ background: theme.primaryColor, color: theme.textColor }} onClick={() => { setModalProduct(product); setShowProductModal(true); }}>See Details</Button>
+                  <div className="font-semibold text-lg mb-1 text-white" style={{ fontFamily: theme.fontFamily?.heading }}>{product.title}</div>
+                  <div className="font-bold text-xl mb-2 text-[#B0B0B8]" style={{ fontFamily: theme.fontFamily?.body }}>$ {product.price?.toLocaleString('en-US', { minimumFractionDigits: 2 })}</div>
+                  <Button className="px-6 py-2 rounded-full font-semibold shadow transition-all duration-200 bg-gradient-to-r from-[#23232A] to-[#2D2D32] hover:from-[#2D2D32] hover:to-[#23232A] border-none mt-2" style={{ color: '#fff', letterSpacing: '0.03em' }} onClick={() => { setModalProduct(product); setShowProductModal(true); }}>See Details</Button>
                 </motion.div>
               ))}
             </div>
