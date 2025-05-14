@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Home, Heart, Grid, User, Search as SearchIcon, X, Menu } from 'lucide-react';
+import { Home, Heart, Grid, User, Search as SearchIcon, X, Menu, PlayCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from '@/components/ui/use-toast';
 
