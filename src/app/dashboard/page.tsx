@@ -70,7 +70,7 @@ const statCards = [
 
 const quickLinks = [
   {
-    label: 'Copy Link to Storefront',
+    label: 'Copy Storefront Link',
     icon: <Link2 className="h-5 w-5 text-white" />, 
     gradient: 'bg-gradient-to-r from-[#5D9DFF] via-[#738FFF] to-[#B67AFF]',
     action: 'copy',
