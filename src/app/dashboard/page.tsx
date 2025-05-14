@@ -3,12 +3,13 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { DollarSign, Eye, ShoppingBag, Search as SearchIcon, Link2, Plus, Mail, Zap, BarChart2, MailOpen, Video, Share2, UserCheck } from 'lucide-react';
+import { DollarSign, Eye, ShoppingBag, Search as SearchIcon, Link2, Plus, Mail, Zap, BarChart2, MailOpen, Video, Share2, UserCheck, CheckCircle2, Bell, HelpCircle, X } from 'lucide-react';
 import Image from 'next/image';
 import { useSession } from "next-auth/react";
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from '@/components/ui/use-toast';
 import { useRouter } from 'next/navigation';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 
 const statCards = [
   {
@@ -96,6 +97,214 @@ const liveStorefrontImages = [
   '/living-room5.jpg',
 ];
 
+// Add these new interfaces
+interface TodoItem {
+  id: string;
+  text: string;
+  completed: boolean;
+}
+
+interface Notification {
+  id: string;
+  type: 'order' | 'message' | 'system';
+  title: string;
+  message: string;
+  time: string;
+  read: boolean;
+}
+
+// Add these new components
+const TodoList = () => {
+  const [todos, setTodos] = useState<TodoItem[]>([
+    { id: '1', text: 'Set up your storefront', completed: false },
+    { id: '2', text: 'Add your first product', completed: false },
+    { id: '3', text: 'Customize your theme', completed: false },
+  ]);
+
+  const onDragEnd = (result: any) => {
+    if (!result.destination) return;
+    const items = Array.from(todos);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+    setTodos(items);
+  };
+
+  const toggleTodo = (id: string) => {
+    setTodos(todos.map(todo =>
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo
+    ));
+  };
+
+  return (
+    <Card className="p-6 rounded-2xl bg-white/90 backdrop-blur-md border border-gray-100/50 shadow-lg hover:shadow-xl transition-all duration-300">
+      <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-[#4F8CFF]">
+        <CheckCircle2 size={20}/> To-Do List
+      </h2>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="todos">
+          {(provided) => (
+            <div {...provided.droppableProps} ref={provided.innerRef}>
+              {todos.map((todo, index) => (
+                <Draggable key={todo.id} draggableId={todo.id} index={index}>
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      className="flex items-center gap-3 p-3 mb-2 bg-white/50 rounded-lg hover:bg-white/80 transition-all duration-200 cursor-move"
+                    >
+                      <button
+                        onClick={() => toggleTodo(todo.id)}
+                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
+                          todo.completed ? 'bg-[#4F8CFF] border-[#4F8CFF]' : 'border-gray-300'
+                        }`}
+                      >
+                        {todo.completed && <CheckCircle2 className="w-4 h-4 text-white" />}
+                      </button>
+                      <span className={`flex-1 ${todo.completed ? 'line-through text-gray-400' : ''}`}>
+                        {todo.text}
+                      </span>
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
+    </Card>
+  );
+};
+
+const ActivityFeed = () => {
+  const [notifications, setNotifications] = useState<Notification[]>([
+    {
+      id: '1',
+      type: 'order',
+      title: 'New Order',
+      message: 'You received a new order for Glow Serum',
+      time: '5 min ago',
+      read: false,
+    },
+    {
+      id: '2',
+      type: 'message',
+      title: 'New Message',
+      message: 'Customer inquiry about shipping times',
+      time: '1 hour ago',
+      read: false,
+    },
+    {
+      id: '3',
+      type: 'system',
+      title: 'System Update',
+      message: 'New features available in your dashboard',
+      time: '2 hours ago',
+      read: true,
+    },
+  ]);
+
+  const markAsRead = (id: string) => {
+    setNotifications(notifications.map(notification =>
+      notification.id === id ? { ...notification, read: true } : notification
+    ));
+  };
+
+  return (
+    <Card className="p-6 rounded-2xl bg-white/90 backdrop-blur-md border border-gray-100/50 shadow-lg hover:shadow-xl transition-all duration-300">
+      <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-[#4F8CFF]">
+        <Bell size={20}/> Activity Feed
+      </h2>
+      <div className="space-y-4">
+        {notifications.map((notification) => (
+          <motion.div
+            key={notification.id}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`p-4 rounded-lg transition-all duration-200 ${
+              notification.read ? 'bg-white/50' : 'bg-[#4F8CFF]/10'
+            }`}
+          >
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="font-semibold text-gray-900">{notification.title}</h3>
+                <p className="text-sm text-gray-600">{notification.message}</p>
+                <p className="text-xs text-gray-400 mt-1">{notification.time}</p>
+              </div>
+              {!notification.read && (
+                <button
+                  onClick={() => markAsRead(notification.id)}
+                  className="text-[#4F8CFF] hover:text-[#3a6fd8] transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </Card>
+  );
+};
+
+const HelpSection = () => {
+  const [showHelp, setShowHelp] = useState(false);
+
+  return (
+    <>
+      <Button
+        onClick={() => setShowHelp(true)}
+        className="fixed bottom-6 right-6 rounded-full w-12 h-12 bg-[#4F8CFF] text-white shadow-lg hover:bg-[#3a6fd8] transition-all duration-200"
+      >
+        <HelpCircle className="w-6 h-6" />
+      </Button>
+
+      <AnimatePresence>
+        {showHelp && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center"
+            onClick={() => setShowHelp(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.95 }}
+              className="bg-white rounded-2xl p-8 max-w-md w-full mx-4"
+              onClick={e => e.stopPropagation()}
+            >
+              <h2 className="text-2xl font-bold mb-4 text-[#4F8CFF]">Need Help?</h2>
+              <div className="space-y-4">
+                <div className="p-4 bg-[#4F8CFF]/10 rounded-lg">
+                  <h3 className="font-semibold mb-2">Getting Started</h3>
+                  <p className="text-sm text-gray-600">Learn how to set up your storefront and start selling.</p>
+                </div>
+                <div className="p-4 bg-[#4F8CFF]/10 rounded-lg">
+                  <h3 className="font-semibold mb-2">Product Management</h3>
+                  <p className="text-sm text-gray-600">Tips for adding and managing your products effectively.</p>
+                </div>
+                <div className="p-4 bg-[#4F8CFF]/10 rounded-lg">
+                  <h3 className="font-semibold mb-2">Analytics Guide</h3>
+                  <p className="text-sm text-gray-600">Understanding your storefront's performance metrics.</p>
+                </div>
+              </div>
+              <Button
+                onClick={() => setShowHelp(false)}
+                className="mt-6 w-full bg-[#4F8CFF] text-white hover:bg-[#3a6fd8]"
+              >
+                Close
+              </Button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+};
+
 export default function DashboardPage() {
   const { data: session } = useSession();
   const user = {
@@ -129,7 +338,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-orange-50">
+    <div className="min-h-screen bg-gradient-to-b from-[#f9fafb] to-[#f1f5f9] p-8">
       <main className="flex-1 p-6 md:p-12 max-w-7xl mx-auto w-full">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-10">
@@ -184,6 +393,12 @@ export default function DashboardPage() {
               <div className="text-xs sm:text-sm opacity-80 font-medium truncate">{card.info}</div>
             </motion.div>
           ))}
+        </div>
+
+        {/* Add new sections after the stats grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+          <TodoList />
+          <ActivityFeed />
         </div>
 
         {/* To-Do List / Reminders & Quick Links */}
@@ -254,6 +469,9 @@ export default function DashboardPage() {
           <span className="font-medium text-gray-800">Suggestion:</span>
           <span className="text-gray-700">Try our new email templates.</span>
         </motion.div>
+
+        {/* Add help section */}
+        <HelpSection />
       </main>
     </div>
   );
