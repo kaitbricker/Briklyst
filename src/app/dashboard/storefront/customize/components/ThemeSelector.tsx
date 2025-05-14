@@ -60,7 +60,7 @@ export default function ThemeSelector({
           <SelectTrigger className="w-full sm:w-[300px] bg-white/50 backdrop-blur-sm border-2 border-gray-100 hover:border-gray-200 transition-all">
             <SelectValue placeholder="Select a theme" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-white/95 backdrop-blur-lg border-2 border-transparent shadow-2xl rounded-xl ring-1 ring-primary/20 ring-offset-2 ring-offset-white transition-all duration-200">
             {themes.map((theme) => (
               <SelectItem key={theme.id} value={theme.id}>
                 <div className="flex items-center gap-2">

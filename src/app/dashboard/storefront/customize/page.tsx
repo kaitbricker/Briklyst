@@ -146,6 +146,7 @@ export default function CustomizePage() {
           storefrontId: storefront.id,
           bio: storefront.description,
           logoUrl: storefront.logoUrl,
+          socials: storefront.socials,
         }),
       })
 
@@ -337,6 +338,64 @@ export default function CustomizePage() {
                       placeholder="Tell visitors about your storefront..."
                       className="min-h-[100px]"
                     />
+                  </div>
+                </div>
+
+                {/* Social Links */}
+                <div>
+                  <h3 className="text-lg font-semibold">Social Links</h3>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Add your social media links (optional)
+                  </p>
+                  <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <Label htmlFor="instagram">Instagram</Label>
+                      <Input
+                        id="instagram"
+                        type="url"
+                        placeholder="https://instagram.com/yourprofile"
+                        value={storefront?.socials?.instagram || ''}
+                        onChange={e => setStorefront(prev => ({
+                          ...prev!,
+                          socials: {
+                            ...prev!.socials,
+                            instagram: e.target.value
+                          }
+                        }))}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="twitter">Twitter</Label>
+                      <Input
+                        id="twitter"
+                        type="url"
+                        placeholder="https://twitter.com/yourprofile"
+                        value={storefront?.socials?.twitter || ''}
+                        onChange={e => setStorefront(prev => ({
+                          ...prev!,
+                          socials: {
+                            ...prev!.socials,
+                            twitter: e.target.value
+                          }
+                        }))}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="tiktok">TikTok</Label>
+                      <Input
+                        id="tiktok"
+                        type="url"
+                        placeholder="https://tiktok.com/@yourprofile"
+                        value={storefront?.socials?.tiktok || ''}
+                        onChange={e => setStorefront(prev => ({
+                          ...prev!,
+                          socials: {
+                            ...prev!.socials,
+                            tiktok: e.target.value
+                          }
+                        }))}
+                      />
+                    </div>
                   </div>
                 </div>
 
