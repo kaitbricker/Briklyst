@@ -288,7 +288,7 @@ const HelpSection = () => {
                 </div>
                 <div className="p-4 bg-[#4F8CFF]/10 rounded-lg">
                   <h3 className="font-semibold mb-2">Analytics Guide</h3>
-                  <p className="text-sm text-gray-600">Understanding your storefront's performance metrics.</p>
+                  <p className="text-sm text-gray-600">Understanding your storefront&apos;s performance metrics.</p>
                 </div>
               </div>
               <Button
