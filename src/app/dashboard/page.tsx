@@ -163,7 +163,7 @@ const TodoList = () => {
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
-                      className="flex items-center gap-3 p-3.5 mb-2.5 bg-white/80 rounded-lg hover:bg-white/95 hover:-translate-y-1 transition-all duration-200 cursor-move border border-gray-100/50"
+                      className="flex items-center gap-3 p-3.5 mb-2.5 bg-white/80 rounded-lg hover:bg-white/95 hover:-translate-y-1 transition-all duration-150 cursor-move border border-gray-100/50"
                     >
                       <button
                         onClick={() => toggleTodo(todo.id)}
@@ -241,7 +241,8 @@ const ActivityFeed = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             whileHover={{ y: -2 }}
-            className={`p-4 rounded-lg transition-all duration-300 border ${
+            transition={{ duration: 0.15 }}
+            className={`p-4 rounded-lg transition-all duration-150 border ${
               notification.read ? 'bg-white/80 border-gray-100/50' : 'bg-[#5D9DFF]/5 border-[#5D9DFF]/10'
             }`}
           >
@@ -276,7 +277,77 @@ const HelpSection = () => {
   const [showHelp, setShowHelp] = useState(false);
 
   return (
-    <></>
+    <>
+      <Button
+        onClick={() => setShowHelp(true)}
+        className="fixed bottom-6 right-6 rounded-full w-12 h-12 bg-gradient-to-r from-[#5D9DFF] to-[#3578E5] text-white shadow-lg hover:shadow-xl hover:from-[#3578E5] hover:to-[#5D9DFF] transition-all duration-150 border border-white/10"
+      >
+        <HelpCircle className="w-6 h-6" />
+      </Button>
+
+      <AnimatePresence>
+        {showHelp && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center"
+            onClick={() => setShowHelp(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.95 }}
+              transition={{ duration: 0.15 }}
+              className="bg-white/95 backdrop-blur-md rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl border border-white/30 relative overflow-hidden"
+              onClick={e => e.stopPropagation()}
+            >
+              {/* Subtle pattern overlay */}
+              <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.02] pointer-events-none mix-blend-overlay"></div>
+              
+              {/* Background accent */}
+              <div className="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full filter blur-3xl"></div>
+              
+              <div className="relative z-10">
+                <h2 className="text-2xl font-bold mb-5 bg-gradient-to-r from-[#5D9DFF] to-[#3578E5] bg-clip-text text-transparent flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-blue-50 text-[#5D9DFF]">
+                    <HelpCircle size={20}/>
+                  </div>
+                  Need Help?
+                </h2>
+                <div className="space-y-4">
+                  <div className="p-4 bg-white/70 rounded-lg border border-gray-100/70 hover:bg-white/90 hover:-translate-y-1 transition-all duration-150">
+                    <h3 className="font-semibold mb-2 flex items-center gap-2">
+                      <Book className="h-4 w-4 text-[#5D9DFF]" /> Getting Started
+                    </h3>
+                    <p className="text-sm text-gray-600">Learn how to set up your storefront and start selling.</p>
+                  </div>
+                  <div className="p-4 bg-white/70 rounded-lg border border-gray-100/70 hover:bg-white/90 hover:-translate-y-1 transition-all duration-150">
+                    <h3 className="font-semibold mb-2 flex items-center gap-2">
+                      <ShoppingBag className="h-4 w-4 text-[#B67AFF]" /> Product Management
+                    </h3>
+                    <p className="text-sm text-gray-600">Tips for adding and managing your products effectively.</p>
+                  </div>
+                  <div className="p-4 bg-white/70 rounded-lg border border-gray-100/70 hover:bg-white/90 hover:-translate-y-1 transition-all duration-150">
+                    <h3 className="font-semibold mb-2 flex items-center gap-2">
+                      <BarChart2 className="h-4 w-4 text-[#4AE3B5]" /> Analytics Guide
+                    </h3>
+                    <p className="text-sm text-gray-600">Understanding your storefront&apos;s performance metrics.</p>
+                  </div>
+                </div>
+                <Button
+                  onClick={() => setShowHelp(false)}
+                  className="mt-6 w-full bg-gradient-to-r from-[#5D9DFF] to-[#3578E5] text-white hover:from-[#3578E5] hover:to-[#5D9DFF] shadow-md hover:shadow-lg transition-all duration-150 border border-white/10"
+                >
+                  Close
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 
@@ -342,13 +413,17 @@ export default function DashboardPage() {
                 onChange={e => setSearch(e.target.value)}
                 onFocus={() => setFocused(true)}
                 onBlur={() => setFocused(false)}
-                className={`pl-10 pr-4 py-2.5 rounded-lg border bg-white/80 backdrop-blur-sm shadow-sm focus:outline-none focus:ring-2 transition-all duration-200 w-64 ${focused ? 'border-[#5D9DFF] ring-2 ring-[#5D9DFF]/20' : 'border-gray-200'}`}
+                className={`pl-10 pr-4 py-2.5 rounded-lg border bg-white/80 backdrop-blur-sm shadow-sm focus:outline-none focus:ring-2 transition-all duration-150 w-64 ${focused ? 'border-[#5D9DFF] ring-2 ring-[#5D9DFF]/20' : 'border-gray-200'}`}
               />
-              <SearchIcon className={`absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 transition-all duration-200 ${focused ? 'text-[#5D9DFF]' : 'text-gray-400'}`} />
+              <SearchIcon className={`absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 transition-all duration-150 ${focused ? 'text-[#5D9DFF]' : 'text-gray-400'}`} />
             </motion.div>
-            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+            <motion.div 
+              whileHover={{ scale: 1.03 }} 
+              whileTap={{ scale: 0.97 }}
+              transition={{ duration: 0.15 }}
+            >
               <Button
-                className="bg-gradient-to-r from-[#5D9DFF] to-[#B67AFF] text-white font-medium px-5 py-2.5 rounded-lg shadow-md hover:shadow-lg hover:from-[#3578E5] hover:to-[#8A4FDB] transition-all border border-white/10"
+                className="bg-gradient-to-r from-[#5D9DFF] to-[#B67AFF] text-white font-medium px-5 py-2.5 rounded-lg shadow-md hover:shadow-lg hover:from-[#3578E5] hover:to-[#8A4FDB] transition-all duration-150 border border-white/10"
                 onClick={() => router.push('/storefronts/' + (session?.user?.name || ''))}
               >
                 <Eye className="mr-2 h-4 w-4" /> View Storefront
@@ -366,7 +441,8 @@ export default function DashboardPage() {
               key={card.label}
               whileHover={{ scale: 1.02, y: -4 }}
               whileTap={{ scale: 0.98 }}
-              className={`rounded-xl p-6 flex flex-col justify-between text-white bg-gradient-to-br ${card.bg} transition-all duration-300 overflow-hidden relative border border-white/10`}
+              transition={{ duration: 0.15 }}
+              className={`rounded-xl p-6 flex flex-col justify-between text-white bg-gradient-to-br ${card.bg} transition-all duration-200 overflow-hidden relative border border-white/10`}
               style={{ 
                 boxShadow: `0 10px 30px -5px ${card.shadowColor}, 0 3px 8px -3px rgba(0,0,0,0.1), inset 0 0 0 1px rgba(255,255,255,0.12)`,
                 backdropFilter: 'blur(20px)'
@@ -394,10 +470,12 @@ export default function DashboardPage() {
                   </div>
                   <div className="text-xs sm:text-sm opacity-80 font-medium flex items-center gap-1 truncate">
                     {card.info.includes('+') ? 
-                      <span className="flex items-center text-emerald-200"><ArrowUpRight size={14} /> {card.info}</span> : 
+                      <span className="flex items-center text-emerald-100 font-semibold"><ArrowUpRight size={14} /> {card.info}</span> : 
                       card.info.includes('-') ? 
-                      <span className="flex items-center text-rose-200"><ArrowDownRight size={14} /> {card.info}</span> : 
-                      <span>{card.info}</span>
+                      <span className="flex items-center text-white font-semibold px-1.5 py-0.5 bg-black/20 rounded-full"><ArrowDownRight size={14} /> {card.info}</span> : 
+                      card.label === 'Total Subscribers' ?
+                      <span className="flex items-center text-amber-100 font-semibold">{card.info}</span> :
+                      <span className="text-white">{card.info}</span>
                     }
                   </div>
                 </div>
@@ -433,23 +511,23 @@ export default function DashboardPage() {
               Priority Tasks
             </h3>
             <ul className="space-y-3 relative z-10">
-              <li className="flex items-center justify-between p-3.5 bg-white/80 rounded-lg border border-gray-100/50 hover:bg-white/95 hover:-translate-y-1 transition-all duration-200">
+              <li className="flex items-center justify-between p-3.5 bg-white/80 rounded-lg border border-gray-100/50 hover:bg-white/95 hover:-translate-y-1 transition-all duration-150">
                 <span className="flex items-center gap-2"><Zap className="h-4 w-4 text-[#FFAC6B]" /> Create a new product drop</span>
                 <Button size="sm" variant="outline" className="rounded-lg border-gray-200 hover:border-[#FFAC6B] hover:text-[#FFAC6B] hover:bg-orange-50/50 transition-all" onClick={() => router.push('/dashboard/products')}>Create</Button>
               </li>
-              <li className="flex items-center justify-between p-3.5 bg-white/80 rounded-lg border border-gray-100/50 hover:bg-white/95 hover:-translate-y-1 transition-all duration-200">
+              <li className="flex items-center justify-between p-3.5 bg-white/80 rounded-lg border border-gray-100/50 hover:bg-white/95 hover:-translate-y-1 transition-all duration-150">
                 <span className="flex items-center gap-2"><Video className="h-4 w-4 text-[#5D9DFF]" /> Add a hero video</span>
                 <Button size="sm" variant="outline" className="rounded-lg border-gray-200 hover:border-[#5D9DFF] hover:text-[#5D9DFF] hover:bg-blue-50/50 transition-all" onClick={() => router.push('/dashboard/storefront')}>Add</Button>
               </li>
-              <li className="flex items-center justify-between p-3.5 bg-white/80 rounded-lg border border-gray-100/50 hover:bg-white/95 hover:-translate-y-1 transition-all duration-200">
+              <li className="flex items-center justify-between p-3.5 bg-white/80 rounded-lg border border-gray-100/50 hover:bg-white/95 hover:-translate-y-1 transition-all duration-150">
                 <span className="flex items-center gap-2"><Share2 className="h-4 w-4 text-[#B67AFF]" /> Share on social media</span>
                 <Button size="sm" variant="outline" className="rounded-lg border-gray-200 hover:border-[#B67AFF] hover:text-[#B67AFF] hover:bg-purple-50/50 transition-all" onClick={() => window.open('https://instagram.com', '_blank')}>Share</Button>
               </li>
-              <li className="flex items-center justify-between p-3.5 bg-white/80 rounded-lg border border-gray-100/50 hover:bg-white/95 hover:-translate-y-1 transition-all duration-200">
+              <li className="flex items-center justify-between p-3.5 bg-white/80 rounded-lg border border-gray-100/50 hover:bg-white/95 hover:-translate-y-1 transition-all duration-150">
                 <span className="flex items-center gap-2"><UserCheck className="h-4 w-4 text-[#4AE3B5]" /> Complete your profile</span>
                 <Button size="sm" variant="outline" className="rounded-lg border-gray-200 hover:border-[#4AE3B5] hover:text-[#4AE3B5] hover:bg-green-50/50 transition-all" onClick={() => router.push('/dashboard/settings')}>Complete</Button>
               </li>
-              <li className="flex items-center justify-between p-3.5 bg-white/80 rounded-lg border border-gray-100/50 hover:bg-white/95 hover:-translate-y-1 transition-all duration-200">
+              <li className="flex items-center justify-between p-3.5 bg-white/80 rounded-lg border border-gray-100/50 hover:bg-white/95 hover:-translate-y-1 transition-all duration-150">
                 <span className="flex items-center gap-2"><MailOpen className="h-4 w-4 text-[#FF8EC4]" /> Send your first email</span>
                 <Button size="sm" variant="outline" className="rounded-lg border-gray-200 hover:border-[#FF8EC4] hover:text-[#FF8EC4] hover:bg-pink-50/50 transition-all" onClick={() => router.push('/dashboard/email')}>Send</Button>
               </li>
@@ -474,10 +552,11 @@ export default function DashboardPage() {
                 {quickLinks.map(link => (
                   <motion.button
                     key={link.label}
-                    className={`w-full flex items-center justify-between px-5 py-3.5 rounded-xl font-medium ${link.gradient} text-white transition-all duration-300 relative overflow-hidden border border-white/10`}
+                    className={`w-full flex items-center justify-between px-5 py-3.5 rounded-xl font-medium ${link.gradient} text-white transition-all duration-200 relative overflow-hidden border border-white/10`}
                     onClick={() => handleQuickLink(link.action)}
                     whileHover={{ scale: 1.01, y: -2 }}
                     whileTap={{ scale: 0.98 }}
+                    transition={{ duration: 0.15 }}
                     style={{ 
                       boxShadow: '0 8px 20px -6px rgba(0,0,0,0.15), inset 0 0 0 1px rgba(255,255,255,0.12)',
                     }}
@@ -524,7 +603,7 @@ export default function DashboardPage() {
           </div>
           <Button 
             size="sm" 
-            className="bg-gradient-to-r from-[#FFAC6B] via-[#FF9D59] to-[#FF9047] text-white font-medium px-4 py-2 rounded-lg hover:shadow-md transition-all border border-white/10 whitespace-nowrap relative z-10"
+            className="bg-gradient-to-r from-[#FFAC6B] via-[#FF9D59] to-[#FF9047] text-white font-medium px-4 py-2 rounded-lg hover:shadow-md transition-all duration-150 border border-white/10 whitespace-nowrap relative z-10"
           >
             Try now
           </Button>
