@@ -46,10 +46,10 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
       <div className="fixed inset-0 z-0 pointer-events-none" style={{ background: 'url(/noise.png)', opacity: 0.06, mixBlendMode: 'overlay' }} />
       {/* Inner Content Layer */}
       <div className="relative z-10 flex justify-center items-start min-h-screen w-full py-12">
-        <div className="flex flex-row w-full max-w-6xl bg-white rounded-[2.5rem] shadow-2xl mx-auto min-h-[80vh] overflow-hidden" style={{ boxShadow: '0 12px 48px 0 rgba(0,0,0,0.18)' }}>
+        <div className="flex flex-row w-full max-w-3xl bg-white rounded-[2.5rem] shadow-2xl mx-auto min-h-[70vh] overflow-hidden" style={{ boxShadow: '0 12px 48px 0 rgba(0,0,0,0.18)', marginTop: '3.5rem', marginBottom: '3.5rem' }}>
           {/* Sidebar (inside white panel) */}
           <aside className="hidden md:flex flex-col w-56 px-4 py-0 sticky top-0 h-full z-20 transition-all duration-300 justify-start border-r border-gray-100 bg-transparent" style={{ minHeight: '100%' }}>
-            <nav className="flex flex-col gap-3 mt-0 pt-0" style={{ paddingTop: '4.5rem' }}>
+            <nav className="flex flex-col gap-3 mt-0 pt-0" style={{ paddingTop: '6.5rem' }}>
               {collections.map((col: string) => (
                 <button
                   key={col}
