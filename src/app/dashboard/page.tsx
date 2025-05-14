@@ -17,48 +17,48 @@ const statCards = [
     value: '12,345',
     info: '+12% from last week',
     icon: <DollarSign className="h-7 w-7 text-white" />, 
-    bg: 'from-[#5D9DFF] to-[#3578E5]',
-    shadow: 'shadow-blue-200',
+    bg: 'from-[#5D9DFF] via-[#4a8cff] to-[#3578E5]',
+    shadow: 'shadow-[0_10px_25px_-5px_rgba(93,157,255,0.3)]',
   },
   {
     label: 'Top Product',
     value: 'Glow Serum',
     info: 'Most clicked',
     icon: <ShoppingBag className="h-7 w-7 text-white" />, 
-    bg: 'from-[#B67AFF] to-[#8A4FDB]',
-    shadow: 'shadow-purple-200',
+    bg: 'from-[#B67AFF] via-[#9F63E8] to-[#8A4FDB]',
+    shadow: 'shadow-[0_10px_25px_-5px_rgba(182,122,255,0.3)]',
   },
   {
     label: 'Storefront Views',
     value: '12,345',
     info: '-5% from last week',
     icon: <Eye className="h-7 w-7 text-white" />, 
-    bg: 'from-[#FFE066] to-[#FFC53D]',
-    shadow: 'shadow-yellow-100',
+    bg: 'from-[#FFE066] via-[#FFD54F] to-[#FFC53D]',
+    shadow: 'shadow-[0_10px_25px_-5px_rgba(255,224,102,0.3)]',
   },
   {
     label: 'Revenue This Week',
     value: '$1,234',
     info: '+8% from last week',
     icon: <BarChart2 className="h-7 w-7 text-white" />,
-    bg: 'from-[#4AE3B5] to-[#22C993]',
-    shadow: 'shadow-green-100',
+    bg: 'from-[#4AE3B5] via-[#36D6A3] to-[#22C993]',
+    shadow: 'shadow-[0_10px_25px_-5px_rgba(74,227,181,0.3)]',
   },
   {
     label: 'Email Open Rate',
     value: '42%',
     info: 'vs. 38% last week',
     icon: <MailOpen className="h-7 w-7 text-white" />,
-    bg: 'from-[#FF8EC4] to-[#F364A2]',
-    shadow: 'shadow-pink-100',
+    bg: 'from-[#FF8EC4] via-[#FF79B3] to-[#F364A2]',
+    shadow: 'shadow-[0_10px_25px_-5px_rgba(255,142,196,0.3)]',
   },
   {
     label: 'Total Subscribers',
     value: '1,234',
     info: '+15% from last week',
     icon: <UserCheck className="h-7 w-7 text-white" />,
-    bg: 'from-[#FFAC6B] to-[#FF9047]',
-    shadow: 'shadow-orange-100',
+    bg: 'from-[#FFAC6B] via-[#FF9D59] to-[#FF9047]',
+    shadow: 'shadow-[0_10px_25px_-5px_rgba(255,172,107,0.3)]',
   },
 ];
 
@@ -66,25 +66,25 @@ const quickLinks = [
   {
     label: 'Copy Link to Storefront',
     icon: <Link2 className="h-5 w-5 text-white" />, 
-    gradient: 'bg-gradient-to-r from-[#5D9DFF] to-[#B67AFF]',
+    gradient: 'bg-gradient-to-r from-[#5D9DFF] via-[#738FFF] to-[#B67AFF]',
     action: 'copy',
   },
   {
     label: 'Add Product',
     icon: <Plus className="h-5 w-5 text-white" />, 
-    gradient: 'bg-gradient-to-r from-[#4AE3B5] to-[#5D9DFF]',
+    gradient: 'bg-gradient-to-r from-[#4AE3B5] via-[#40B8E0] to-[#5D9DFF]',
     action: 'addProduct',
   },
   {
     label: 'Generate Email',
     icon: <Mail className="h-5 w-5 text-white" />, 
-    gradient: 'bg-gradient-to-r from-[#FF8EC4] to-[#B67AFF]',
+    gradient: 'bg-gradient-to-r from-[#FF8EC4] via-[#DE85DD] to-[#B67AFF]',
     action: 'generateEmail',
   },
   {
     label: 'Create a Drop',
     icon: <Zap className="h-5 w-5 text-white" />, 
-    gradient: 'bg-gradient-to-r from-[#FFE066] to-[#FFAC6B]',
+    gradient: 'bg-gradient-to-r from-[#FFE066] via-[#FFBE7D] to-[#FFAC6B]',
     action: 'createDrop',
   },
 ];
@@ -378,19 +378,25 @@ export default function DashboardPage() {
           {statCards.map(card => (
             <motion.div
               key={card.label}
-              whileHover={{ scale: 1.025 }}
+              whileHover={{ scale: 1.03, y: -5 }}
               whileTap={{ scale: 0.98 }}
-              className={`rounded-2xl p-6 flex flex-col justify-between text-white bg-gradient-to-br ${card.bg} ${card.shadow} shadow-xl min-h-[160px]`}
-              style={{ boxShadow: '0 8px 32px 0 rgba(0,0,0,0.08)' }}
+              className={`rounded-2xl p-6 flex flex-col justify-between text-white bg-gradient-to-br ${card.bg} ${card.shadow} shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden relative`}
+              style={{ 
+                boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1)',
+                backdropFilter: 'blur(20px)'
+              }}
             >
-              <div className="flex items-center justify-between mb-4">
-                <div className="text-base font-semibold tracking-wide flex items-center gap-2 truncate">
-                  {card.icon}
-                  <span className="truncate">{card.label}</span>
+              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/10 to-transparent pointer-events-none z-0"></div>
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="text-base font-semibold tracking-wide flex items-center gap-2 truncate">
+                    {card.icon}
+                    <span className="truncate">{card.label}</span>
+                  </div>
                 </div>
+                <div className="text-2xl sm:text-3xl font-extrabold mb-2 tracking-tight truncate">{card.value}</div>
+                <div className="text-xs sm:text-sm opacity-80 font-medium truncate">{card.info}</div>
               </div>
-              <div className="text-2xl sm:text-3xl font-extrabold mb-2 tracking-tight truncate">{card.value}</div>
-              <div className="text-xs sm:text-sm opacity-80 font-medium truncate">{card.info}</div>
             </motion.div>
           ))}
         </div>
@@ -445,12 +451,16 @@ export default function DashboardPage() {
                 {quickLinks.map(link => (
                   <motion.button
                     key={link.label}
-                    className={`w-full flex items-center justify-between px-4 py-3 rounded-lg font-semibold shadow-none ${link.gradient} text-white transition-all duration-200`}
+                    className={`w-full flex items-center justify-between px-4 py-3 rounded-lg font-semibold ${link.gradient} text-white transition-all duration-300 relative overflow-hidden`}
                     onClick={() => handleQuickLink(link.action)}
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
+                    whileHover={{ scale: 1.02, y: -2 }}
+                    whileTap={{ scale: 0.98 }}
+                    style={{ 
+                      boxShadow: '0 8px 20px -6px rgba(0,0,0,0.15)',
+                    }}
                   >
-                    <span className="flex items-center gap-2">{link.icon} {link.label}</span>
+                    <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/10 to-transparent pointer-events-none"></div>
+                    <span className="flex items-center gap-2 relative z-10">{link.icon} {link.label}</span>
                   </motion.button>
                 ))}
               </div>
