@@ -93,7 +93,7 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
             </section>
             {/* Product Grid */}
             <section className="z-10 px-8 pb-16">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
+              <div className="grid grid-cols-2 gap-8">
                 {filteredProducts.map((product: any) => (
                   <motion.div
                     key={product.id}
