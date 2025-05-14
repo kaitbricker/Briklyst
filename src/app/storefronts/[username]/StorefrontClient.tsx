@@ -49,7 +49,7 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
         <div className="flex flex-row w-full max-w-6xl bg-white rounded-[2.5rem] shadow-2xl mx-auto min-h-[80vh] overflow-hidden" style={{ boxShadow: '0 12px 48px 0 rgba(0,0,0,0.18)' }}>
           {/* Sidebar (inside white panel) */}
           <aside className="hidden md:flex flex-col w-56 px-4 py-0 sticky top-0 h-full z-20 transition-all duration-300 justify-start border-r border-gray-100 bg-transparent" style={{ minHeight: '100%' }}>
-            <nav className="flex flex-col gap-3 mt-0 pt-16">
+            <nav className="flex flex-col gap-3 mt-0 pt-0" style={{ paddingTop: '4.5rem' }}>
               {collections.map((col: string) => (
                 <button
                   key={col}
@@ -67,26 +67,29 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
           {/* Main Content (inside white panel) */}
           <main className="flex-1 flex flex-col gap-8 px-0 py-0 relative bg-white min-h-screen">
             {/* Profile Section */}
-            <section className="flex flex-col items-center justify-center text-center gap-4 mb-10 z-10 pt-12">
-              <div className="relative w-28 h-28 rounded-full mx-auto shadow-xl" style={{ boxShadow: '0 6px 32px 0 rgba(0,0,0,0.25)' }}>
+            <section className="flex flex-col items-center justify-center text-center gap-2 mb-10 z-10 pt-12">
+              <div className="relative w-28 h-28 rounded-full mx-auto shadow-xl mb-2" style={{ boxShadow: '0 6px 32px 0 rgba(0,0,0,0.25)' }}>
                 <Image src={storefront.logoUrl || '/briklyst-logo.png'} alt="Profile" width={112} height={112} className="rounded-full object-cover" />
               </div>
               <h1 className="text-3xl md:text-4xl font-extrabold tracking-wide mb-1" style={{ fontFamily: theme.fontFamily?.heading, letterSpacing: '0.04em', color: theme.textColor }}>{storefront.name || storefront.title}</h1>
-              {storefront.tagline && <div className="italic text-lg text-[#B0B0B8] mb-1" style={{ fontFamily: theme.fontFamily?.body }}>{storefront.tagline}</div>}
-              {storefront.description && <div className="text-base text-[#18181B] mb-2 max-w-xl mx-auto" style={{ fontFamily: theme.fontFamily?.body }}>{storefront.description}</div>}
-              <div className="flex items-center justify-center gap-4 mt-2">
-                {storefront.socials?.tiktok && <a href={storefront.socials.tiktok} target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform"><img src="/icons/tiktok.svg" alt="TikTok" className="w-6 h-6" /></a>}
-                {storefront.socials?.instagram && <a href={storefront.socials.instagram} target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform"><img src="/icons/instagram.svg" alt="Instagram" className="w-6 h-6" /></a>}
-                {storefront.socials?.spotify && <a href={storefront.socials.spotify} target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform"><img src="/icons/spotify.svg" alt="Spotify" className="w-6 h-6" /></a>}
-                {storefront.socials?.youtube && <a href={storefront.socials.youtube} target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform"><img src="/icons/youtube.svg" alt="YouTube" className="w-6 h-6" /></a>}
+              {storefront.description && <div className="text-base text-[#18181B] mb-1 max-w-xl mx-auto" style={{ fontFamily: theme.fontFamily?.body }}>{storefront.description}</div>}
+              {storefront.tagline && <div className="text-base font-semibold text-[#18181B] mb-2 max-w-xl mx-auto" style={{ fontFamily: theme.fontFamily?.body, fontStyle: 'italic' }}>{storefront.tagline}</div>}
+              <div className="w-full flex justify-center items-center my-2">
+                <div className="w-32 h-px bg-gray-300" />
               </div>
-              <Button
-                className="px-8 py-3 rounded-full font-bold text-lg shadow transition-all duration-200 bg-gradient-to-r from-[#23232A] to-[#2D2D32] hover:from-[#2D2D32] hover:to-[#23232A] border-none mt-4"
-                style={{ color: '#fff', letterSpacing: '0.04em' }}
-                onClick={() => toast({ title: 'Subscribed!', description: 'You are now subscribed.' })}
-              >
-                Subscribe
-              </Button>
+              <div className="flex items-center justify-center gap-3 mt-2">
+                <Button
+                  className="px-6 py-2 rounded-full font-bold text-base shadow transition-all duration-200 bg-[#23232A] hover:bg-[#2D2D32] border-none"
+                  style={{ color: '#fff', letterSpacing: '0.04em' }}
+                  onClick={() => toast({ title: 'Subscribed!', description: 'You are now subscribed.' })}
+                >
+                  Subscribe
+                </Button>
+                {storefront.socials?.tiktok && <a href={storefront.socials.tiktok} target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform"><img src="/icons/tiktok.svg" alt="TikTok" className="w-7 h-7" /></a>}
+                {storefront.socials?.instagram && <a href={storefront.socials.instagram} target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform"><img src="/icons/instagram.svg" alt="Instagram" className="w-7 h-7" /></a>}
+                {storefront.socials?.spotify && <a href={storefront.socials.spotify} target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform"><img src="/icons/spotify.svg" alt="Spotify" className="w-7 h-7" /></a>}
+                {storefront.socials?.youtube && <a href={storefront.socials.youtube} target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform"><img src="/icons/youtube.svg" alt="YouTube" className="w-7 h-7" /></a>}
+              </div>
             </section>
             {/* Product Grid */}
             <section className="z-10 px-8 pb-16">
