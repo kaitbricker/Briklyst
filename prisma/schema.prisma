@@ -33,6 +33,7 @@ model User {
   storefrontSettings StorefrontSettings?
   favorites     Product[]    @relation("Favorites")
   templates     StorefrontTemplate[]
+  hasSeenWelcome Boolean     @default(false)
 
   @@index([email])
 }

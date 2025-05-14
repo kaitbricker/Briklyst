@@ -45,8 +45,7 @@ export default function DashboardLayout({
 
   useEffect(() => {
     if (session?.user && typeof window !== 'undefined') {
-      const onboardingComplete = localStorage.getItem('onboardingComplete')
-      if (!onboardingComplete) {
+      if (!session.user.hasSeenWelcome) {
         setShowOnboarding(true)
       }
     }
@@ -66,9 +65,27 @@ export default function DashboardLayout({
     }
   }
 
-  const handleOnboardingComplete = () => {
-    setShowOnboarding(false)
-    localStorage.setItem('onboardingComplete', 'true')
+  const handleOnboardingComplete = async () => {
+    try {
+      const response = await fetch('/api/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ hasSeenWelcome: true }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to update onboarding status');
+      }
+      
+      setShowOnboarding(false);
+    } catch (error) {
+      console.error('Error updating onboarding status:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to update onboarding status',
+        variant: 'destructive',
+      });
+    }
   }
 
   if (status === 'loading') {
@@ -88,7 +105,7 @@ export default function DashboardLayout({
       <OnboardingModal
         open={showOnboarding}
         onOpenChange={setShowOnboarding}
-        onComplete={() => setShowOnboarding(false)}
+        onComplete={handleOnboardingComplete}
         user={session?.user || {}}
       />
       <TopNav />

@@ -1,3 +1,5 @@
+import 'next-auth';
+
 declare module "next-auth" {
   interface Session {
     user: {
@@ -13,6 +15,7 @@ declare module "next-auth" {
       emailAlerts?: boolean
       weeklyReport?: boolean
       monthlyReport?: boolean
+      hasSeenWelcome?: boolean
     }
   }
 

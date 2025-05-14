@@ -1,4 +1,4 @@
-import { AuthOptions } from "next-auth"
+import type { NextAuthOptions } from "next-auth"
 import NextAuth from "next-auth/next"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import CredentialsProvider from "next-auth/providers/credentials"
@@ -9,7 +9,7 @@ if (!process.env.NEXTAUTH_SECRET) {
   throw new Error('NEXTAUTH_SECRET is not set')
 }
 
-export const authOptions: AuthOptions = {
+export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   secret: process.env.NEXTAUTH_SECRET,
   session: {
@@ -38,6 +38,14 @@ export const authOptions: AuthOptions = {
         const user = await prisma.user.findUnique({
           where: {
             email: credentials.email
+          },
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            image: true,
+            password: true,
+            hasSeenWelcome: true,
           }
         })
 
@@ -59,6 +67,7 @@ export const authOptions: AuthOptions = {
           email: user.email,
           name: user.name,
           image: user.image,
+          hasSeenWelcome: user.hasSeenWelcome,
         }
       }
     })
@@ -70,6 +79,7 @@ export const authOptions: AuthOptions = {
         session.user.name = token.name
         session.user.email = token.email
         session.user.image = token.picture as string | null
+        session.user.hasSeenWelcome = token.hasSeenWelcome as boolean
       }
       return session
     },
@@ -79,6 +89,7 @@ export const authOptions: AuthOptions = {
         token.name = user.name
         token.email = user.email
         token.picture = user.image
+        token.hasSeenWelcome = (user as any).hasSeenWelcome ?? false
       }
       return token
     }

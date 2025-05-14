@@ -10,7 +10,7 @@ import { useToast } from '@/components/ui/use-toast';
 interface OnboardingModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onComplete: () => void;
+  onComplete: () => Promise<void>;
   user?: { name?: string; email?: string };
 }
 
@@ -66,8 +66,11 @@ export default function OnboardingModal({ open, onOpenChange, onComplete, user }
         });
         if (!profileRes.ok) throw new Error('Failed to save profile info');
       }
+
+      // Mark onboarding as complete
+      await onComplete();
+      
       toast({ title: 'Success', description: 'Onboarding complete!' });
-      onComplete();
     } catch (err: any) {
       setError(err.message || 'Failed to save onboarding data');
       toast({ title: 'Error', description: err.message || 'Failed to save onboarding data', variant: 'destructive' });
