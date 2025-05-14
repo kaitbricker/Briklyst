@@ -17,7 +17,7 @@ const statCards = [
     value: '12,345',
     info: '+12% from last week',
     icon: <DollarSign className="h-7 w-7 text-white" />, 
-    bg: 'from-[#4F8CFF] to-[#1C3A6B]',
+    bg: 'from-[#5D9DFF] to-[#3578E5]',
     shadow: 'shadow-blue-200',
   },
   {
@@ -25,7 +25,7 @@ const statCards = [
     value: 'Glow Serum',
     info: 'Most clicked',
     icon: <ShoppingBag className="h-7 w-7 text-white" />, 
-    bg: 'from-[#A259E6] to-[#3B2063]',
+    bg: 'from-[#B67AFF] to-[#8A4FDB]',
     shadow: 'shadow-purple-200',
   },
   {
@@ -33,7 +33,7 @@ const statCards = [
     value: '12,345',
     info: '-5% from last week',
     icon: <Eye className="h-7 w-7 text-white" />, 
-    bg: 'from-[#FFD233] to-[#B89B1A]',
+    bg: 'from-[#FFE066] to-[#FFC53D]',
     shadow: 'shadow-yellow-100',
   },
   {
@@ -41,7 +41,7 @@ const statCards = [
     value: '$1,234',
     info: '+8% from last week',
     icon: <BarChart2 className="h-7 w-7 text-white" />,
-    bg: 'from-[#34D399] to-[#14532D]',
+    bg: 'from-[#4AE3B5] to-[#22C993]',
     shadow: 'shadow-green-100',
   },
   {
@@ -49,7 +49,7 @@ const statCards = [
     value: '42%',
     info: 'vs. 38% last week',
     icon: <MailOpen className="h-7 w-7 text-white" />,
-    bg: 'from-[#F472B6] to-[#831843]',
+    bg: 'from-[#FF8EC4] to-[#F364A2]',
     shadow: 'shadow-pink-100',
   },
   {
@@ -57,7 +57,7 @@ const statCards = [
     value: '1,234',
     info: '+15% from last week',
     icon: <UserCheck className="h-7 w-7 text-white" />,
-    bg: 'from-[#FB923C] to-[#9A3412]',
+    bg: 'from-[#FFAC6B] to-[#FF9047]',
     shadow: 'shadow-orange-100',
   },
 ];
@@ -66,25 +66,25 @@ const quickLinks = [
   {
     label: 'Copy Link to Storefront',
     icon: <Link2 className="h-5 w-5 text-white" />, 
-    gradient: 'bg-gradient-to-r from-[#4F8CFF] to-[#A259E6]',
+    gradient: 'bg-gradient-to-r from-[#5D9DFF] to-[#B67AFF]',
     action: 'copy',
   },
   {
     label: 'Add Product',
     icon: <Plus className="h-5 w-5 text-white" />, 
-    gradient: 'bg-gradient-to-r from-[#4F8CFF] to-[#7F4FFF]',
+    gradient: 'bg-gradient-to-r from-[#4AE3B5] to-[#5D9DFF]',
     action: 'addProduct',
   },
   {
     label: 'Generate Email',
     icon: <Mail className="h-5 w-5 text-white" />, 
-    gradient: 'bg-gradient-to-r from-[#4F8CFF] to-[#A259E6]',
+    gradient: 'bg-gradient-to-r from-[#FF8EC4] to-[#B67AFF]',
     action: 'generateEmail',
   },
   {
     label: 'Create a Drop',
     icon: <Zap className="h-5 w-5 text-white" />, 
-    gradient: 'bg-gradient-to-r from-[#4F8CFF] to-[#A259E6]',
+    gradient: 'bg-gradient-to-r from-[#FFE066] to-[#FFAC6B]',
     action: 'createDrop',
   },
 ];
@@ -137,7 +137,7 @@ const TodoList = () => {
 
   return (
     <Card className="p-6 rounded-2xl bg-white/90 backdrop-blur-md border border-gray-100/50 shadow-lg hover:shadow-xl transition-all duration-300">
-      <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-[#4F8CFF]">
+      <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-[#5D9DFF]">
         <CheckCircle2 size={20}/> To-Do List
       </h2>
       <DragDropContext onDragEnd={onDragEnd}>
@@ -156,7 +156,7 @@ const TodoList = () => {
                       <button
                         onClick={() => toggleTodo(todo.id)}
                         className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
-                          todo.completed ? 'bg-[#4F8CFF] border-[#4F8CFF]' : 'border-gray-300'
+                          todo.completed ? 'bg-[#5D9DFF] border-[#5D9DFF]' : 'border-gray-300'
                         }`}
                       >
                         {todo.completed && <CheckCircle2 className="w-4 h-4 text-white" />}
@@ -213,7 +213,7 @@ const ActivityFeed = () => {
 
   return (
     <Card className="p-6 rounded-2xl bg-white/90 backdrop-blur-md border border-gray-100/50 shadow-lg hover:shadow-xl transition-all duration-300">
-      <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-[#4F8CFF]">
+      <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-[#5D9DFF]">
         <Bell size={20}/> Activity Feed
       </h2>
       <div className="space-y-4">
@@ -223,7 +223,7 @@ const ActivityFeed = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             className={`p-4 rounded-lg transition-all duration-200 ${
-              notification.read ? 'bg-white/50' : 'bg-[#4F8CFF]/10'
+              notification.read ? 'bg-white/50' : 'bg-[#5D9DFF]/10'
             }`}
           >
             <div className="flex items-start justify-between">
@@ -235,7 +235,7 @@ const ActivityFeed = () => {
               {!notification.read && (
                 <button
                   onClick={() => markAsRead(notification.id)}
-                  className="text-[#4F8CFF] hover:text-[#3a6fd8] transition-colors"
+                  className="text-[#5D9DFF] hover:text-[#3578E5] transition-colors"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -255,7 +255,7 @@ const HelpSection = () => {
     <>
       <Button
         onClick={() => setShowHelp(true)}
-        className="fixed bottom-6 right-6 rounded-full w-12 h-12 bg-[#4F8CFF] text-white shadow-lg hover:bg-[#3a6fd8] transition-all duration-200"
+        className="fixed bottom-6 right-6 rounded-full w-12 h-12 bg-[#5D9DFF] text-white shadow-lg hover:bg-[#3578E5] transition-all duration-200"
       >
         <HelpCircle className="w-6 h-6" />
       </Button>
@@ -276,24 +276,24 @@ const HelpSection = () => {
               className="bg-white rounded-2xl p-8 max-w-md w-full mx-4"
               onClick={e => e.stopPropagation()}
             >
-              <h2 className="text-2xl font-bold mb-4 text-[#4F8CFF]">Need Help?</h2>
+              <h2 className="text-2xl font-bold mb-4 text-[#5D9DFF]">Need Help?</h2>
               <div className="space-y-4">
-                <div className="p-4 bg-[#4F8CFF]/10 rounded-lg">
+                <div className="p-4 bg-[#5D9DFF]/10 rounded-lg">
                   <h3 className="font-semibold mb-2">Getting Started</h3>
                   <p className="text-sm text-gray-600">Learn how to set up your storefront and start selling.</p>
                 </div>
-                <div className="p-4 bg-[#4F8CFF]/10 rounded-lg">
+                <div className="p-4 bg-[#5D9DFF]/10 rounded-lg">
                   <h3 className="font-semibold mb-2">Product Management</h3>
                   <p className="text-sm text-gray-600">Tips for adding and managing your products effectively.</p>
                 </div>
-                <div className="p-4 bg-[#4F8CFF]/10 rounded-lg">
+                <div className="p-4 bg-[#5D9DFF]/10 rounded-lg">
                   <h3 className="font-semibold mb-2">Analytics Guide</h3>
                   <p className="text-sm text-gray-600">Understanding your storefront&apos;s performance metrics.</p>
                 </div>
               </div>
               <Button
                 onClick={() => setShowHelp(false)}
-                className="mt-6 w-full bg-[#4F8CFF] text-white hover:bg-[#3a6fd8]"
+                className="mt-6 w-full bg-[#5D9DFF] text-white hover:bg-[#3578E5]"
               >
                 Close
               </Button>
@@ -343,8 +343,8 @@ export default function DashboardPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-10">
           <div>
-            <h2 className="text-lg font-semibold text-gray-500 tracking-wide" style={{ textShadow: '0 2px 8px rgba(79,140,255,0.15)' }}>Your Briklyst Dashboard</h2>
-            <h1 className="text-3xl font-extrabold text-gray-900 mt-1 tracking-tight leading-tight" style={{ textShadow: '0 4px 16px rgba(79,140,255,0.18)' }}>Welcome Back, {user.name}</h1>
+            <h2 className="text-lg font-semibold text-gray-500 tracking-wide" style={{ textShadow: '0 2px 8px rgba(93,157,255,0.15)' }}>Your Briklyst Dashboard</h2>
+            <h1 className="text-3xl font-extrabold text-gray-900 mt-1 tracking-tight leading-tight" style={{ textShadow: '0 4px 16px rgba(93,157,255,0.18)' }}>Welcome Back, {user.name}</h1>
           </div>
           <div className="flex items-center gap-3">
             <motion.div
@@ -360,11 +360,11 @@ export default function DashboardPage() {
                 onBlur={() => setFocused(false)}
                 className={`pl-10 pr-4 py-2 rounded-lg border border-gray-200 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400/30 transition-all duration-200 w-64 ${focused ? 'ring-2 ring-orange-400' : ''}`}
               />
-              <SearchIcon className={`absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 transition-all duration-200 ${focused ? 'text-orange-400 scale-110' : 'text-gray-400'}`} />
+              <SearchIcon className={`absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 transition-all duration-200 ${focused ? 'text-[#5D9DFF] scale-110' : 'text-gray-400'}`} />
             </motion.div>
             <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
               <Button
-                className="bg-gradient-to-r from-[#4F8CFF] to-[#A259E6] text-white font-semibold px-6 py-3 rounded-lg shadow-none hover:from-[#3a6fd8] hover:to-[#7d3fc7] transition-all"
+                className="bg-gradient-to-r from-[#5D9DFF] to-[#B67AFF] text-white font-semibold px-6 py-3 rounded-lg shadow-none hover:from-[#3578E5] hover:to-[#8A4FDB] transition-all"
                 onClick={() => router.push('/storefronts/' + (session?.user?.name || ''))}
               >
                 View My Storefront
@@ -409,7 +409,7 @@ export default function DashboardPage() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200 max-w-3xl w-full"
           >
-            <h3 className="text-xl font-bold mb-4 text-[#A259E6] flex items-center gap-2" style={{ textShadow: '0 2px 8px rgba(162,89,230,0.18)' }}>
+            <h3 className="text-xl font-bold mb-4 text-[#B67AFF] flex items-center gap-2" style={{ textShadow: '0 2px 8px rgba(182,122,255,0.18)' }}>
               <Zap className="h-5 w-5" /> To-Do List
             </h3>
             <ul className="space-y-4">
@@ -418,11 +418,11 @@ export default function DashboardPage() {
                 <Button size="sm" variant="outline" onClick={() => router.push('/dashboard/products')}>Create</Button>
               </li>
               <li className="flex items-center justify-between">
-                <span className="flex items-center gap-2"><Video className="h-4 w-4 text-[#4F8CFF]" /> Add a hero video</span>
+                <span className="flex items-center gap-2"><Video className="h-4 w-4 text-[#5D9DFF]" /> Add a hero video</span>
                 <Button size="sm" variant="outline" onClick={() => router.push('/dashboard/storefront')}>Add</Button>
               </li>
               <li className="flex items-center justify-between">
-                <span className="flex items-center gap-2"><Share2 className="h-4 w-4 text-[#A259E6]" /> Share on social media</span>
+                <span className="flex items-center gap-2"><Share2 className="h-4 w-4 text-[#B67AFF]" /> Share on social media</span>
                 <Button size="sm" variant="outline" onClick={() => window.open('https://instagram.com', '_blank')}>Share</Button>
               </li>
               <li className="flex items-center justify-between">
@@ -438,7 +438,7 @@ export default function DashboardPage() {
           {/* Quick Links */}
           <div className="w-full lg:w-80 flex-shrink-0">
             <div className="bg-white rounded-2xl shadow-none p-6 border border-0">
-              <div className="font-bold text-lg mb-4 text-[#A259E6] flex items-center gap-2">
+              <div className="font-bold text-lg mb-4 text-[#B67AFF] flex items-center gap-2">
                 <Link2 className="h-5 w-5" /> Quick Links
               </div>
               <div className="flex flex-col gap-4">
