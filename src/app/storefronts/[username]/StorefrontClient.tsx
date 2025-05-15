@@ -38,15 +38,22 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
 
   const theme = storefront.theme || {};
 
+  // Helper for product card style
+  const productCardClass = theme.accentElements?.productCards || 'bg-white rounded-2xl shadow-xl';
+  const sidebarActiveClass = theme.accentColor ? `bg-[${theme.accentColor}] text-[${theme.textColor}] shadow-lg` : 'bg-gray-800 text-white shadow-lg';
+  const sidebarInactiveClass = theme.accentColor ? `bg-[${theme.accentColor}]/70 text-[${theme.textColor}] hover:bg-[${theme.accentColor}]/90 hover:text-[${theme.textColor}]` : 'bg-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white';
+  const heartIconColor = theme.accentColor || '#2D2D32';
+  const buttonClass = theme.buttonStyle || 'bg-[#111112] text-[#F5F5F7] rounded-full px-6 py-2 font-bold shadow hover:bg-[#2D2D32] transition-all';
+
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden" style={{ fontFamily: theme.fontFamily?.body }}>
       {/* Outer Background Layer */}
-      <div className="fixed inset-0 z-0" style={{ background: 'linear-gradient(135deg, #18181B 0%, #E04FD4 100%)' }} />
+      <div className="fixed inset-0 z-0" style={{ background: theme.bannerStyle?.gradient || 'linear-gradient(135deg, #18181B 0%, #2D2D32 100%)' }} />
       {/* Subtle noise overlay */}
       <div className="fixed inset-0 z-0 pointer-events-none" style={{ background: 'url(/noise.png)', opacity: 0.06, mixBlendMode: 'overlay' }} />
       {/* Inner Content Layer */}
       <div className="relative z-10 flex justify-center items-start min-h-screen w-full py-12">
-        <div className="flex flex-row w-full max-w-3xl bg-white rounded-[2.5rem] shadow-2xl mx-auto min-h-[70vh] overflow-hidden" style={{ boxShadow: '0 12px 48px 0 rgba(0,0,0,0.18)', marginTop: '3.5rem', marginBottom: '3.5rem' }}>
+        <div className="flex flex-row w-full max-w-3xl rounded-[2.5rem] shadow-2xl mx-auto min-h-[70vh] overflow-hidden" style={{ background: theme.backgroundColor || '#18181B', boxShadow: '0 12px 48px 0 rgba(0,0,0,0.18)', marginTop: '3.5rem', marginBottom: '3.5rem' }}>
           {/* Sidebar (inside white panel) */}
           <aside className="hidden md:flex flex-col w-56 px-4 py-0 sticky top-0 h-full z-20 transition-all duration-300 justify-start border-r border-gray-100 bg-transparent" style={{ minHeight: '100%' }}>
             <nav className="flex flex-col gap-3 mt-0 pt-0" style={{ paddingTop: '6.5rem' }}>
@@ -55,7 +62,7 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
                   key={col}
                   onClick={() => setSelectedCollection(col)}
                   className={`w-full px-0 py-0 rounded-full font-semibold text-base transition-all h-12 flex items-center justify-center
-                    ${selectedCollection === col ? 'bg-[#FEC8E4] text-[#E04FD4] shadow-lg' : 'bg-[#FEC8E4]/70 text-[#E04FD4] hover:bg-[#FEC8E4]/90 hover:text-[#E04FD4]'}
+                    ${selectedCollection === col ? sidebarActiveClass : sidebarInactiveClass}
                   `}
                   style={{ letterSpacing: '0.03em', fontFamily: theme.fontFamily?.heading, border: 'none' }}
                 >
@@ -65,24 +72,20 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
             </nav>
           </aside>
           {/* Main Content (inside white panel) */}
-          <main className="flex-1 flex flex-col gap-8 px-0 py-0 relative bg-white min-h-screen">
+          <main className="flex-1 flex flex-col gap-8 px-0 py-0 relative min-h-screen">
             {/* Profile Section */}
             <section className="flex flex-col items-center justify-center text-center gap-2 mb-10 z-10 pt-12">
-              <div className="relative w-28 h-28 rounded-full mx-auto shadow-xl mb-2" style={{ boxShadow: '0 6px 32px 0 rgba(0,0,0,0.25)' }}>
-                <Image src={storefront.logoUrl || '/briklyst-logo.png'} alt="Profile" width={112} height={112} className="rounded-full object-cover" />
+              <div className="relative w-28 h-28 rounded-full mx-auto shadow-xl mb-2" style={{ boxShadow: theme.imageStyle?.shadow || '0 6px 32px 0 rgba(0,0,0,0.25)' }}>
+                <Image src={storefront.logoUrl || '/briklyst-logo.png'} alt="Profile" width={112} height={112} className="rounded-full object-cover" style={{ border: theme.imageStyle?.border || '4px solid #fff' }} />
               </div>
               <h1 className="text-3xl md:text-4xl font-extrabold tracking-wide mb-1" style={{ fontFamily: theme.fontFamily?.heading, letterSpacing: '0.04em', color: theme.textColor }}>{storefront.name || storefront.title}</h1>
-              {storefront.description && <div className="text-base text-[#18181B] mb-1 max-w-xl mx-auto" style={{ fontFamily: theme.fontFamily?.body }}>{storefront.description}</div>}
-              {storefront.tagline && <div className="text-base font-semibold text-[#18181B] mb-2 max-w-xl mx-auto" style={{ fontFamily: theme.fontFamily?.body, fontStyle: 'italic' }}>{storefront.tagline}</div>}
+              {storefront.description && <div className="text-base mb-1 max-w-xl mx-auto" style={{ fontFamily: theme.fontFamily?.body, color: theme.textColor }}>{storefront.description}</div>}
+              {storefront.tagline && <div className="text-base font-semibold mb-2 max-w-xl mx-auto" style={{ fontFamily: theme.fontFamily?.body, fontStyle: 'italic', color: theme.textColor }}>{storefront.tagline}</div>}
               <div className="w-full flex justify-center items-center my-2">
-                <div className="w-32 h-px bg-gray-300" />
+                <div className="w-32 h-px" style={{ background: theme.accentElements?.dividers || '#2D2D32' }} />
               </div>
               <div className="flex items-center justify-center gap-3 mt-2">
-                <Button
-                  className="px-6 py-2 rounded-full font-bold text-base shadow transition-all duration-200 bg-[#23232A] hover:bg-[#2D2D32] border-none"
-                  style={{ color: '#fff', letterSpacing: '0.04em' }}
-                  onClick={() => toast({ title: 'Subscribed!', description: 'You are now subscribed.' })}
-                >
+                <Button className={buttonClass} style={{ background: theme.primaryColor, color: theme.textColor, border: 'none' }} onClick={() => toast({ title: 'Subscribed!', description: 'You are now subscribed.' })}>
                   Subscribe
                 </Button>
                 {storefront.socials?.tiktok && <a href={storefront.socials.tiktok} target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform"><img src="/icons/tiktok.svg" alt="TikTok" className="w-7 h-7" /></a>}
@@ -99,24 +102,25 @@ export default function StorefrontClient({ storefront }: StorefrontClientProps) 
                     key={product.id}
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
-                    className="bg-[#FEC8E4] rounded-2xl shadow-xl p-6 flex flex-col items-center relative group transition-all duration-200 overflow-hidden"
+                    className={productCardClass + " flex flex-col items-center relative group transition-all duration-200 overflow-hidden p-6"}
                     style={{ borderRadius: theme.cardRadius, boxShadow: '0 8px 32px 0 rgba(0,0,0,0.10)' }}
                   >
                     {/* Heart icon */}
                     <motion.button
                       whileTap={{ scale: 1.3 }}
-                      className="absolute top-4 right-4 z-20 bg-white/40 rounded-full p-2 hover:bg-white/70 transition-colors"
+                      className="absolute top-4 right-4 z-20 rounded-full p-2 transition-colors"
+                      style={{ background: theme.backgroundColor || '#fff' }}
                       onClick={() => toast({ title: 'Favorited!', description: `Added ${product.title} to favorites.` })}
                     >
-                      <Heart className="w-6 h-6 text-[#E04FD4]" />
+                      <Heart className="w-6 h-6" style={{ color: heartIconColor }} />
                     </motion.button>
                     {/* Product Image with blend mode */}
-                    <div className="w-full aspect-square rounded-xl overflow-hidden mb-4 relative" style={{ background: '#fff' }}>
+                    <div className="w-full aspect-square rounded-xl overflow-hidden mb-4 relative" style={{ background: theme.backgroundColor || '#fff' }}>
                       <Image src={product.imageUrl || '/placeholder-product.jpg'} alt={product.title} width={300} height={300} className="object-cover w-full h-full" style={{ mixBlendMode: 'multiply' }} />
                     </div>
-                    <div className="font-semibold text-lg mb-1 text-[#18181B]" style={{ fontFamily: theme.fontFamily?.heading }}>{product.title}</div>
-                    <div className="font-bold text-xl mb-2 text-[#E04FD4]" style={{ fontFamily: theme.fontFamily?.body }}>$ {product.price?.toLocaleString('en-US', { minimumFractionDigits: 2 })}</div>
-                    <Button className="px-6 py-2 rounded-full font-semibold shadow transition-all duration-200 bg-gradient-to-r from-[#E04FD4] to-[#FEC8E4] hover:from-[#FEC8E4] hover:to-[#E04FD4] border-none mt-2" style={{ color: '#fff', letterSpacing: '0.03em' }} onClick={() => { setModalProduct(product); setShowProductModal(true); }}>See Details</Button>
+                    <div className="font-semibold text-lg mb-1" style={{ fontFamily: theme.fontFamily?.heading, color: theme.textColor }}>{product.title}</div>
+                    <div className="font-bold text-xl mb-2" style={{ fontFamily: theme.fontFamily?.body, color: theme.textColor }}>$ {product.price?.toLocaleString('en-US', { minimumFractionDigits: 2 })}</div>
+                    <Button className={buttonClass + " mt-2"} style={{ background: theme.primaryColor, color: theme.textColor, border: 'none' }} onClick={() => { setModalProduct(product); setShowProductModal(true); }}>See Details</Button>
                   </motion.div>
                 ))}
               </div>
