@@ -26,6 +26,9 @@ model User {
   weeklyReport  Boolean      @default(true)
   tiktok        String?
   youtube       String?
+  spotify       String?
+  facebook      String?
+  pinterest     String?
   accounts      Account[]
   clickEvents   ClickEvent[]
   sessions      Session[]

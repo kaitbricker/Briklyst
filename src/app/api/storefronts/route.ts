@@ -214,7 +214,11 @@ export async function PUT(
         instagram: data.socials.instagram,
         twitter: data.socials.twitter,
         tiktok: data.socials.tiktok,
-        youtube: data.socials.youtube
+        youtube: data.socials.youtube,
+        spotify: data.socials.spotify,
+        facebook: data.socials.facebook,
+        pinterest: data.socials.pinterest,
+        linkedin: data.socials.linkedin,
       }
     })
 
